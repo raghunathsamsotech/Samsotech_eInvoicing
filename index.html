@@ -147,7 +147,7 @@ footer{color:var(--mute);font-size:12px;margin-top:16px}
 var CFG={REFRESH_SEC:60,API_URL:"https://script.google.com/macros/s/AKfycbyMtzdsWVg899LFab0txpSSdhAAO5MFAK6KgOIIl00E_ZVn1nvb8T_x-Eg4BL4TVbr7/exec"};   // data is read from the Google Sheet by Code.gs (see getSheetData)
 var FB=[]; /* no embedded data: the page always reads the live sheet */
 var S=["Project kick-off","EmaraTax onboard","Gap assessment","Source system config","ASP onboarding","Testing (UAT)","Go-live (PROD)"];
-var KEYS=["projectkick","emaratax","gapassess","sourcesystemconf",["sqportal","asponboarding"],"testing","go-live"];
+var KEYS=["projectkick","emaratax","gapassess","sourcesystemconf",["sqportal","asponboard","aspportal"],"testing","go-live"];
 var COLORS=["var(--brand)","var(--p2)","var(--p3)","var(--p4)"];
 var ALL=FB.map(function(r,x){var s=[];for(var i=0;i<7;i++)s.push(i<r[2]?1:0);return{n:r[0],g:"Millennium",i:x+1,ph:r[1],st:s}});var A=ALL.slice(),GSEL="";
 var PH=[];
@@ -172,7 +172,8 @@ function fromRows(rows){
  var H=rows[h].map(norm);
  function col(k){var ks=[].concat(k);for(var q=0;q<ks.length;q++)for(var j=0;j<H.length;j++)if(H[j].indexOf(ks[q])>=0)return j;return -1}
  var cn=col("property"),cp=col("implementationphase"),cg=col("group"),cl=col("sl."),css=col("sourcesystem"),cv=col("version"),ct=col("trn"),cap=col("aspprovider"),cwo=col("wostatus"),ctc=col("transactioncount"),cs=KEYS.map(col);
- if(cn<0||cs.some(function(x){return x<0}))throw new Error("Expected stage columns not found");
+ var lost=[];if(cn<0)lost.push("Property");cs.forEach(function(x,k){if(x<0)lost.push(S[k])});
+ if(lost.length)throw new Error("Column header not found in the sheet: "+lost.join(", "));
  var out=[];
  for(i=h+1;i<rows.length;i++){var r=rows[i],n=String(r[cn]||"").replace(/[\u200b]/g,"").trim();if(!n)continue;
   out.push({n:n,g:(cg>=0&&String(r[cg]||"").replace(/[\u200b]/g,"").trim())||"Ungrouped",i:String(r[cl]||"").replace(/[\u200b]/g,"").trim()||out.length+1,ss:has(r,css),asp:clean(cap>=0?r[cap]:"")||"Not assigned",wo:clean(cwo>=0?r[cwo]:"")||"Not set",tx:num(ctc>=0?r[ctc]:""),ver:has(r,cv),trn:has(r,ct),ph:(cp>=0&&String(r[cp]||"").replace(/[\u200b]/g,"").trim())||"Unassigned",st:cs.map(function(j){return isDone(r[j])?1:0})})}
