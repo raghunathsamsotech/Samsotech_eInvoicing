@@ -111,7 +111,7 @@ footer{color:var(--mute);font-size:12px;margin-top:16px}
 </div></div></header>
 <div class="wrap"><main>
 <div id="banner"></div>
-<div class="tabs" id="tabs"><button type="button" class="tab on" data-v="1">Implementation status</button><button type="button" class="tab" data-v="2">Transactions &amp; ASP</button></div>
+<div class="tabs" id="tabs"><button type="button" class="tab on" data-v="1">Implementation status</button><button type="button" class="tab" data-v="2">Order Status</button></div>
 <div class="gbar" id="gbar"></div>
 <div id="v1">
 <section class="card summary">
@@ -133,12 +133,12 @@ footer{color:var(--mute);font-size:12px;margin-top:16px}
 </div>
 <div id="v2" style="display:none">
 <div id="xnote" class="mu" style="margin-bottom:10px"></div>
-<section class="tiles" id="xtiles"></section>
+<section class="tiles" id="xtiles" style="grid-template-columns:repeat(auto-fit,minmax(210px,1fr))"></section>
 <section class="grid2"><div class="card"><h2>Transactions by group</h2><div id="xgrp"></div></div><div class="card"><h2>Transactions by ASP provider</h2><div id="xasp"></div></div></section>
-<section class="grid2"><div class="card"><h2>Work order (WO) status</h2><div class="tw" id="xwo"></div></div><div class="card"><h2>ASP provider and WO status (entities)</h2><div class="tw" id="xmat"></div></div></section>
+<section class="grid2"><div class="card"><h2>Work order (WO) status</h2><div class="tw" id="xwo"></div></div><div class="card"><h2>ASP provider – entities by WO status</h2><div class="tw" id="xmat"></div></div></section>
 <section class="card"><h2>Transactions by entity</h2>
-<div class="tools"><input id="xq" type="search" placeholder="Search entity" aria-label="Search entity"><select id="xsort" aria-label="Sort"><option value="tx">Sort by transactions</option><option value="name">Sort by entity name</option></select></div>
-<div class="tw"><table class="xt"><thead><tr><th>#</th><th>Entity</th><th>Group</th><th>ASP provider</th><th>WO status</th><th class="r">Transactions</th><th>Share</th></tr></thead><tbody id="xtb"></tbody></table></div>
+<div class="tools"><input id="xq" type="search" placeholder="Search entity" aria-label="Search entity"><select id="xf1" aria-label="ASP provider"></select><select id="xf2" aria-label="WO status"></select><select id="xf3" aria-label="Group"></select></div>
+<div class="tw"><table class="xt"><thead><tr><th>#</th><th>Entity</th><th>Group</th><th>ASP provider</th><th>WO status</th><th class="r">Transactions</th></tr></thead><tbody id="xtb"></tbody></table></div>
 </section>
 </div>
 </main></div>
@@ -215,11 +215,11 @@ function renderTop(){
 }
 function cell(v){return '<td class="c">'+(v?'<span class="tick" title="Completed" aria-label="Completed">✔</span>':'<span class="dot" title="Not completed" aria-label="Not completed"></span>')+'</td>'}
 function renderTable(){
- var q=document.getElementById("q").value.toLowerCase(),s=document.getElementById("st").value,p=document.getElementById("ph").value,h="",last=null;
+ var q=document.getElementById("q").value.toLowerCase(),s=document.getElementById("st").value,p=document.getElementById("ph").value,h="",last=null,cnt=0;
  PH.reduce(function(a,p){return a.concat(sub(p))},[]).forEach(function(r){var d=sc(r),on=d>0;
   if(s=="p"&&!on)return;if(s=="n"&&on)return;if(p&&r.ph!==p)return;if(q&&r.n.toLowerCase().indexOf(q)<0)return;
   if(r.ph!==last){last=r.ph;h+='<tr class="grp"><td colspan="11">'+esc(last)+' · '+sub(last).length+' entities</td></tr>'}
-  h+='<tr><td>'+r.i+'</td><td class="nm">'+esc(r.n)+'</td>'+r.st.map(cell).join("")+'<td><div class="mini"><div class="track"><i style="width:'+d/7*100+'%"></i></div><span>'+(d/7*100).toFixed(2)+'%</span></div></td><td>'+(on?'<span class="pill p-wip">In progress</span>':'<span class="pill p-idle">Not started</span>')+'</td></tr>'});
+  h+='<tr><td>'+(++cnt)+'</td><td class="nm">'+esc(r.n)+'</td>'+r.st.map(cell).join("")+'<td><div class="mini"><div class="track"><i style="width:'+d/7*100+'%"></i></div><span>'+(d/7*100).toFixed(2)+'%</span></div></td><td>'+(on?'<span class="pill p-wip">In progress</span>':'<span class="pill p-idle">Not started</span>')+'</td></tr>'});
  document.getElementById("tb").innerHTML=h||'<tr><td colspan="11">No entities match these filters.</td></tr>'}
 function renderBar(){var G=[];ALL.forEach(function(r){if(G.indexOf(r.g)<0)G.push(r.g)});G.sort();if(GSEL&&G.indexOf(GSEL)<0)GSEL="";
  var b=document.getElementById("gbar");
@@ -251,28 +251,35 @@ var TAB="1";
 function fmt(n){return Number(n).toLocaleString("en-US")}
 function gby(arr,key){var m={},o=[];arr.forEach(function(r){var k=r[key];if(!m[k]){m[k]={k:k,n:0,tx:0};o.push(m[k])}m[k].n++;m[k].tx+=r.tx});return o.sort(function(a,b){return b.tx-a.tx||b.n-a.n||(a.k>b.k?1:-1)})}
 function woCls(s){if(s==="Not set")return"p-idle";if(/reject|cancel|block|overdue|fail|lost/i.test(s))return"p-bad";if(/complet|done|sign|approv|accept|active|live|clos|deliver|issued/i.test(s))return"p-ok";if(/pend|wait|hold|progress|draft|review|open|process|submit|raised|not /i.test(s))return"p-warn";return"p-wip"}
-function brows(list,total,color,sel){var max=Math.max.apply(null,list.map(function(x){return x.tx}).concat([1]));
- return list.map(function(x){return '<div class="brow"><div class="l" title="'+esc(x.k)+'"><span'+(sel&&x.k===sel?' style="font-weight:700"':'')+'>'+esc(x.k)+'</span><small>'+x.n+(x.n==1?' entity':' entities')+' · '+(total?(x.tx/total*100).toFixed(1):'0.0')+'%</small></div><div class="track"><i style="width:'+x.tx/max*100+'%;background:'+color+'"></i></div><b>'+fmt(x.tx)+'</b></div>'}).join("")||'<div class="mu">No data</div>'}
+function brows(list,color,sel){var max=Math.max.apply(null,list.map(function(x){return x.tx}).concat([1]));
+ return list.map(function(x){return '<div class="brow"><div class="l" title="'+esc(x.k)+'"><span'+(sel&&x.k===sel?' style="font-weight:700"':'')+'>'+esc(x.k)+'</span><small>'+x.n+(x.n==1?' entity':' entities')+'</small></div><div class="track"><i style="width:'+x.tx/max*100+'%;background:'+color+'"></i></div><b>'+fmt(x.tx)+'</b></div>'}).join("")||'<div class="mu">No data</div>'}
+function fillSel(id,first,vals){var s=$(id),cur=s.value;s.innerHTML='<option value="">'+first+'</option>'+vals.map(function(v){return '<option>'+esc(v)+'</option>'}).join("");s.value=vals.indexOf(cur)>=0?cur:""}
 function renderTx(){
- var N=A.length,tot=A.reduce(function(a,r){return a+r.tx},0),totAll=ALL.reduce(function(a,r){return a+r.tx},0);
+ var N=A.length,tot=A.reduce(function(a,r){return a+r.tx},0);
  var miss=[];if(!EXTRA.tx)miss.push("Transaction Count");if(!EXTRA.asp)miss.push("ASP Provider");if(!EXTRA.wo)miss.push("WO Status");
  $("xnote").textContent=miss.length?"Column not found in the sheet: "+miss.join(", ")+".":"";
- var withTx=A.filter(function(r){return r.tx>0}).length,asp=gby(A,"asp"),wo=gby(A,"wo"),grp=gby(ALL,"g");
- var aspN=asp.filter(function(x){return x.k!=="Not assigned"}).length,noAsp=A.filter(function(r){return r.asp==="Not assigned"}).length;
- var woSet=A.filter(function(r){return r.wo!=="Not set"}).length;
+ var asp=gby(A,"asp"),wo=gby(A,"wo"),grp=gby(ALL,"g");
+ var noAsp=A.filter(function(r){return r.asp==="Not assigned"}).length,woSet=A.filter(function(r){return r.wo!=="Not set"}).length;
  var woTop=wo.filter(function(x){return x.k!=="Not set"}).sort(function(a,b){return b.n-a.n}).slice(0,2).map(function(x){return esc(x.k)+": "+x.n}).join(" · ");
+ function rk(k){return /samsotech/i.test(k)?0:/^sq/i.test(k)?1:2}
+ var named=asp.filter(function(x){return x.k!=="Not assigned"}).sort(function(a,b){return rk(a.k)-rk(b.k)||b.tx-a.tx});
  function tile(n,sfx,t,sub){return '<div class="tile"><div class="n">'+n+(sfx?'<span> '+sfx+'</span>':'')+'</div><div class="t">'+t+'</div>'+(sub?'<div class="ph mu" style="font-weight:500">'+sub+'</div>':'')+'</div>'}
- $("xtiles").innerHTML=tile(fmt(tot),"","Total transactions","Across "+N+(N==1?" entity":" entities"))+tile(withTx,"of "+N,"Entities with transactions",(N-withTx)+" with none recorded")+tile(aspN,"","ASP providers",noAsp+" entities not assigned")+tile(woSet,"of "+N,"Entities with a WO status",woTop||"No WO status recorded");
- $("xgrp").innerHTML=brows(grp,totAll,"var(--brand)",GSEL)+(GSEL?'<div class="legend">Showing all groups for comparison; the selected group is in bold.</div>':'');
- $("xasp").innerHTML=brows(asp,tot,"var(--p2)");
+ $("xtiles").innerHTML=tile(fmt(tot),"","Total transactions","Across "+N+(N==1?" entity":" entities")+(noAsp?" · "+noAsp+" not assigned to a provider":""))
+  +named.map(function(x){return tile(fmt(x.tx),"",esc(x.k)+" transactions",x.n+(x.n==1?" entity":" entities"))}).join("")
+  +tile(woSet,"of "+N,"Entities with a WO status",woTop||"No WO status recorded");
+ $("xgrp").innerHTML=brows(grp,"var(--brand)",GSEL)+(GSEL?'<div class="legend">Showing all groups for comparison; the selected group is in bold.</div>':'');
+ $("xasp").innerHTML=brows(asp,"var(--p2)");
  $("xwo").innerHTML='<table><thead><tr><th>WO status</th><th class="r">Entities</th><th class="r">Transactions</th></tr></thead><tbody>'+wo.map(function(x){return '<tr><td><span class="pill '+woCls(x.k)+'">'+esc(x.k)+'</span></td><td class="r">'+x.n+'</td><td class="r">'+fmt(x.tx)+'</td></tr>'}).join("")+'<tr class="tot"><td>Total</td><td class="r">'+N+'</td><td class="r">'+fmt(tot)+'</td></tr></tbody></table>';
  var ws=wo.slice().sort(function(a,b){return b.n-a.n}).map(function(x){return x.k});
- $("xmat").innerHTML='<table><thead><tr><th>ASP provider</th>'+ws.map(function(s){return '<th class="r">'+esc(s)+'</th>'}).join("")+'<th class="r">Total</th></tr></thead><tbody>'+asp.map(function(p){var rows=A.filter(function(r){return r.asp===p.k});
-  return '<tr><td class="nm">'+esc(p.k)+'</td>'+ws.map(function(s){var c=rows.filter(function(r){return r.wo===s}).length;return '<td class="r">'+(c||'<span class="mu">–</span>')+'</td>'}).join("")+'<td class="r"><b>'+rows.length+'</b></td></tr>'}).join("")+'</tbody></table>';
- var q=$("xq").value.toLowerCase(),so=$("xsort").value;
- var L=A.filter(function(r){return!q||r.n.toLowerCase().indexOf(q)>=0}).sort(function(a,b){return so==="name"?(a.n>b.n?1:-1):(b.tx-a.tx||(a.n>b.n?1:-1))});
- $("xtb").innerHTML=L.map(function(r,i){var pc=tot?r.tx/tot*100:0;return '<tr><td>'+(i+1)+'</td><td class="nm">'+esc(r.n)+'</td><td>'+esc(r.g)+'</td><td>'+esc(r.asp)+'</td><td><span class="pill '+woCls(r.wo)+'">'+esc(r.wo)+'</span></td><td class="r">'+fmt(r.tx)+'</td><td><div class="mini"><div class="track"><i style="width:'+pc+'%"></i></div><span>'+pc.toFixed(1)+'%</span></div></td></tr>'}).join("")||'<tr><td colspan="7">No entities match.</td></tr>';
- if(L.length)$("xtb").innerHTML+='<tr class="tot"><td></td><td>Total</td><td></td><td></td><td></td><td class="r">'+fmt(L.reduce(function(a,r){return a+r.tx},0))+'</td><td></td></tr>';
+ $("xmat").innerHTML='<table><thead><tr><th>ASP provider</th><th class="r">Entities</th>'+ws.map(function(s){return '<th class="r">'+esc(s)+'</th>'}).join("")+'</tr></thead><tbody>'+asp.map(function(p){var rows=A.filter(function(r){return r.asp===p.k});
+  return '<tr><td class="nm">'+esc(p.k)+'</td><td class="r"><b>'+rows.length+'</b></td>'+ws.map(function(s){var c=rows.filter(function(r){return r.wo===s}).length;return '<td class="r">'+(c||'<span class="mu">–</span>')+'</td>'}).join("")+'</tr>'}).join("")+'<tr class="tot"><td>Total</td><td class="r">'+N+'</td>'+ws.map(function(s){return '<td class="r">'+wo.filter(function(x){return x.k===s})[0].n+'</td>'}).join("")+'</tr></tbody></table>';
+ fillSel("xf1","All ASP providers",asp.map(function(x){return x.k}));
+ fillSel("xf2","All WO statuses",ws);
+ fillSel("xf3","All groups",gby(A,"g").map(function(x){return x.k}).sort());
+ var q=$("xq").value.toLowerCase(),f1=$("xf1").value,f2=$("xf2").value,f3=$("xf3").value;
+ var L=A.filter(function(r){return(!q||r.n.toLowerCase().indexOf(q)>=0)&&(!f1||r.asp===f1)&&(!f2||r.wo===f2)&&(!f3||r.g===f3)}).sort(function(a,b){return b.tx-a.tx||(a.n>b.n?1:-1)});
+ $("xtb").innerHTML=L.map(function(r,i){return '<tr><td>'+(i+1)+'</td><td class="nm">'+esc(r.n)+'</td><td>'+esc(r.g)+'</td><td>'+esc(r.asp)+'</td><td><span class="pill '+woCls(r.wo)+'">'+esc(r.wo)+'</span></td><td class="r">'+fmt(r.tx)+'</td></tr>'}).join("")||'<tr><td colspan="6">No entities match these filters.</td></tr>';
+ if(L.length)$("xtb").innerHTML+='<tr class="tot"><td></td><td>Total</td><td></td><td></td><td></td><td class="r">'+fmt(L.reduce(function(a,r){return a+r.tx},0))+'</td></tr>';
 }
 function renderAll(){A=GSEL?ALL.filter(function(r){return r.g===GSEL}):ALL.slice();renderBar();renderTop();renderStatus();renderTable();renderTx()}
 
@@ -316,7 +323,7 @@ function load(){
   var d=new Date();$("when").textContent=d.toLocaleString([], {day:"2-digit",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit",second:"2-digit"});
   setLive(true,"Live · auto-refresh every "+CFG.REFRESH_SEC+"s")})
  .catch(function(e){$("when").textContent="Not connected";setLive(false,e.message||"error");if(ALL.length){hideAuth();renderAll()}else{$("hl").textContent="Unable to load the dashboard data.";$("hp").textContent="Press Refresh now to try again."}})}
-["xq","xsort"].forEach(function(id){$(id).addEventListener("input",renderTx)});
+["xq","xf1","xf2","xf3"].forEach(function(id){$(id).addEventListener("input",renderTx)});
 $("tabs").addEventListener("click",function(e){var b=e.target.closest(".tab");if(!b)return;TAB=b.getAttribute("data-v");Array.prototype.forEach.call(document.querySelectorAll(".tab"),function(x){x.className="tab"+(x===b?" on":"")});$("v1").style.display=TAB==="1"?"block":"none";$("v2").style.display=TAB==="2"?"block":"none"});
 ["q","ph","st"].forEach(function(id){document.getElementById(id).addEventListener("input",renderTable)});
 document.getElementById("rf").addEventListener("click",load);
