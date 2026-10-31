@@ -75,15 +75,30 @@ th:nth-child(n+3):nth-child(-n+9){text-align:center;width:78px}
 .legend{font-size:12px;color:var(--mute);margin-top:10px}
 .legend .tick{width:16px;height:16px;font-size:10px;vertical-align:middle}.legend .dot{width:8px;height:8px;vertical-align:middle}
 footer{color:var(--mute);font-size:12px;margin-top:16px}
+#auth{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;background:#12233a;padding:20px;overflow:auto}
+.acard{background:var(--surface);color:var(--ink);border-radius:14px;padding:28px;width:100%;max-width:400px;box-shadow:0 10px 40px rgba(0,0,0,.35)}
+.acard h1{font-size:22px;margin:0 0 4px}.asub{color:var(--mute);margin:0 0 18px;font-size:13px}
+.acard label{display:block;font-size:12px;font-weight:600;color:var(--mute);margin-bottom:12px}
+.acard input{display:block;width:100%;margin-top:4px;font:inherit;font-size:15px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink)}
+.acard button{width:100%;font:inherit;font-weight:700;padding:11px;border:0;border-radius:8px;background:var(--brand);color:var(--surface);cursor:pointer;margin-top:4px}
+.acard button:disabled{opacity:.6;cursor:wait}
+.ahint{font-size:13px;color:var(--mute);margin:0 0 14px;line-height:1.5}.ahint b{color:var(--ink)}
+.amsg{color:var(--red);font-size:13px;margin-top:12px;min-height:18px}
 .sthead{display:flex;justify-content:space-between;gap:10px;align-items:baseline;margin-bottom:14px}.sthead h2{margin:0}.sthead span{font-size:12px;color:var(--mute)}.stgrid{display:grid;grid-template-columns:1fr 1fr;gap:18px 40px}.si{display:flex;gap:12px;align-items:flex-start;font-size:13.5px;line-height:1.55}.tg{flex:0 0 92px;text-align:center;font-size:11px;font-weight:700;letter-spacing:.05em;padding:3px 0;border-radius:5px;text-transform:uppercase;margin-top:1px}.t-ok{background:rgba(35,122,59,.16);color:var(--green)}.t-next{background:var(--brand-soft);color:var(--brand)}.t-pend{background:var(--warn-soft);color:var(--warn)}.t-att{background:rgba(179,52,31,.15);color:var(--red)}.mu{color:var(--mute)}
 @media (max-width:860px){.summary,.grid2,.stgrid{grid-template-columns:1fr}.tiles{grid-template-columns:repeat(2,minmax(0,1fr))}h1{font-size:21px}}
 @media print{header{background:#12233a!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}.tools,.stamp button{display:none}}
 </style>
 </head>
 <body>
+<div id="auth"><div class="acard">
+<h1>eInvoicing Dashboard</h1><p class="asub">Samsotech eInvoicing · sign in to continue</p>
+<form id="fLogin"><label>Username<input id="lu" autocomplete="username" autocapitalize="none" required></label><label>Password<input id="lp" type="password" autocomplete="current-password" required></label><button id="bLogin" type="submit">Sign in</button></form>
+<form id="fChange" style="display:none"><p class="ahint"><b>Set a new password.</b> This is your first sign-in, so please replace the temporary password. Use at least 8 characters, with an uppercase letter, a lowercase letter and a number.</p><label>New password<input id="np" type="password" autocomplete="new-password" required></label><label>Confirm new password<input id="np2" type="password" autocomplete="new-password" required></label><button id="bChange" type="submit">Save password and continue</button></form>
+<div class="amsg" id="amsg" role="alert"></div>
+</div></div>
 <header><div class="wrap"><div class="top">
 <div><h1>eInvoicing Implementation – Status Dashboard</h1><p class="sub" id="sub">Samsotech eInvoicing</p></div>
-<div class="stamp">Last refreshed<b id="when">Loading…</b><div class="live" id="live"><i></i><span id="livetxt">Connecting to Google Sheet…</span></div><button id="rf" type="button">Refresh now</button></div>
+<div class="stamp">Last refreshed<b id="when">Loading…</b><div class="live" id="live"><i></i><span id="livetxt">Connecting to Google Sheet…</span></div><button id="rf" type="button">Refresh now</button> <button id="lo" type="button">Sign out</button><div class="live" style="margin-top:6px">Signed in as&nbsp;<span id="who"></span></div></div>
 </div></div></header>
 <div class="wrap"><main>
 <div id="banner"></div>
@@ -108,12 +123,7 @@ footer{color:var(--mute);font-size:12px;margin-top:16px}
 </main></div>
 <script>
 /* ===== CONFIGURATION ===== */
-var CFG={
-  SHEET_ID:"1wNhRuE_ExEwp4Hg_pxFHIf1hJSa_p_wzI6AZw6L9L8Y",
-  SHEET_NAME:"All Entities",
-  CSV_URL:"",          // optional: paste a "Publish to web" CSV link here to use it instead
-  REFRESH_SEC:60
-};
+var CFG={REFRESH_SEC:60,API_URL:"https://script.google.com/macros/s/AKfycbyMtzdsWVg899LFab0txpSSdhAAO5MFAK6KgOIIl00E_ZVn1nvb8T_x-Eg4BL4TVbr7/exec"};   // data is read from the Google Sheet by Code.gs (see getSheetData)
 var FB=[]; /* no embedded data: the page always reads the live sheet */
 var S=["Project kick-off","EmaraTax onboard","Gap assessment","Source system config","SQ portal onboarding","Testing (UAT)","Go-live (PROD)"];
 var KEYS=["projectkick","emaratax","gapassess","sourcesystemconf","sqportal","testing","go-live"];
@@ -215,20 +225,49 @@ function renderAll(){A=GSEL?ALL.filter(function(r){return r.g===GSEL}):ALL.slice
 
 function setLive(ok,msg){var l=document.getElementById("live");l.className="live"+(ok?"":" off");document.getElementById("livetxt").textContent=msg;
  var b=document.getElementById("banner");
- if(ok){b.style.display="none"}else{b.style.display="block";b.textContent="Live connection to the Google Sheet is unavailable, so the figures shown may be out of date. In Google Sheets, set sharing to “Anyone with the link – Viewer”, then press Refresh now. ("+msg+")"}}
+ if(ok){b.style.display="none"}else{b.style.display="block";b.textContent="Could not load the latest data, so the figures shown may be out of date. Press Refresh now to try again. ("+msg+")"}}
+var TOKEN="",USER="",CHG="";
+try{TOKEN=sessionStorage.getItem("eiv_t")||"";USER=sessionStorage.getItem("eiv_u")||""}catch(x){}
+function keep(){try{sessionStorage.setItem("eiv_t",TOKEN);sessionStorage.setItem("eiv_u",USER)}catch(x){}}
+function drop(){TOKEN="";USER="";try{sessionStorage.removeItem("eiv_t");sessionStorage.removeItem("eiv_u")}catch(x){}}
+function $(id){return document.getElementById(id)}
+function api(b){
+ if(!CFG.API_URL||CFG.API_URL.indexOf("http")!==0)return Promise.reject(new Error("API_URL is not set in index.html"));
+ return fetch(CFG.API_URL,{method:"POST",body:JSON.stringify(b),redirect:"follow"}).then(function(r){if(!r.ok)throw new Error("HTTP "+r.status);return r.json()})}
+function showAuth(view,msg){$("auth").style.display="flex";$("fLogin").style.display=view==="login"?"block":"none";$("fChange").style.display=view==="change"?"block":"none";$("amsg").textContent=msg||""}
+function hideAuth(){$("auth").style.display="none";$("who").textContent=USER}
+function busy(id,on,t){var b=$(id);b.disabled=on;if(t)b.textContent=on?"Please wait…":t}
+function enter(r){TOKEN=r.t;USER=r.u;keep();$("lp").value="";$("np").value="";$("np2").value="";hideAuth();load()}
+$("fLogin").addEventListener("submit",function(e){e.preventDefault();$("amsg").textContent="";busy("bLogin",true,"Sign in");
+ api({a:"login",u:$("lu").value,p:$("lp").value}).then(function(r){busy("bLogin",false,"Sign in");
+  if(r.status==="ok")enter(r);
+  else if(r.status==="change"){CHG=r.k;$("lp").value="";showAuth("change","")}
+  else $("amsg").textContent=r.err==="locked"?"Too many failed attempts. Please try again in 15 minutes.":(r.err==="server"?"Server error: "+(r.msg||""):"Invalid username or password.")})
+ .catch(function(x){busy("bLogin",false,"Sign in");$("amsg").textContent="Could not reach the server. "+x.message})});
+$("fChange").addEventListener("submit",function(e){e.preventDefault();var a=$("np").value,b=$("np2").value;
+ if(a!==b){$("amsg").textContent="The two passwords do not match.";return}
+ $("amsg").textContent="";busy("bChange",true,"Save password and continue");
+ api({a:"change",k:CHG,np:a}).then(function(r){busy("bChange",false,"Save password and continue");
+  if(r.status==="ok")enter(r);
+  else if(r.err==="policy")$("amsg").textContent=r.msg;
+  else if(r.err==="expired"){showAuth("login","Your temporary sign-in expired. Please sign in again.")}
+  else $("amsg").textContent="Could not save the password. "+(r.msg||"Please sign in again.")})
+ .catch(function(x){busy("bChange",false,"Save password and continue");$("amsg").textContent="Could not reach the server. "+x.message})});
+$("lo").addEventListener("click",function(){var t=TOKEN;drop();api({a:"logout",t:t}).catch(function(){}).then(function(){location.reload()})});
 function load(){
- var url=CFG.CSV_URL||("https://docs.google.com/spreadsheets/d/"+CFG.SHEET_ID+"/gviz/tq?tqx=out:csv&headers=0&sheet="+encodeURIComponent(CFG.SHEET_NAME));
- url+=(url.indexOf("?")<0?"?":"&")+"_="+Date.now();
- return fetch(url,{cache:"no-store"}).then(function(r){if(!r.ok)throw new Error("HTTP "+r.status);return r.text()})
- .then(function(t){if(/^\s*<(!doctype|html)/i.test(t))throw new Error("Sheet is not publicly viewable");ALL=fromRows(parseCSV(t));renderAll();
-  var d=new Date();document.getElementById("when").textContent=d.toLocaleString([], {day:"2-digit",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit",second:"2-digit"});
+ if(!TOKEN){showAuth("login");return Promise.resolve()}
+ return api({a:"data",t:TOKEN}).then(function(r){
+  if(r.err==="auth"){drop();showAuth("login","Your session has expired. Please sign in again.");return}
+  if(r.err)throw new Error(r.msg||r.err);
+  ALL=fromRows(r.rows);hideAuth();renderAll();
+  var d=new Date();$("when").textContent=d.toLocaleString([], {day:"2-digit",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit",second:"2-digit"});
   setLive(true,"Live · auto-refresh every "+CFG.REFRESH_SEC+"s")})
- .catch(function(e){document.getElementById("when").textContent="Not connected";setLive(false,e.message||"error");if(ALL.length)renderAll();else{document.getElementById("hl").textContent="Unable to load data from the Google Sheet.";document.getElementById("hp").textContent="Check that the sheet is shared as “Anyone with the link – Viewer”, then press Refresh now."}})}
+ .catch(function(e){$("when").textContent="Not connected";setLive(false,e.message||"error");if(ALL.length){hideAuth();renderAll()}else{$("hl").textContent="Unable to load the dashboard data.";$("hp").textContent="Press Refresh now to try again."}})}
 ["q","ph","st"].forEach(function(id){document.getElementById(id).addEventListener("input",renderTable)});
 document.getElementById("rf").addEventListener("click",load);
 document.getElementById("gbar").addEventListener("change",function(e){if(e.target.id!=="gsel")return;GSEL=e.target.value;renderAll()});
 document.addEventListener("visibilitychange",function(){if(!document.hidden)load()});
-load();setInterval(load,CFG.REFRESH_SEC*1000);
+load();setInterval(function(){if(TOKEN)load()},CFG.REFRESH_SEC*1000);
 </script>
 </body>
 </html>
