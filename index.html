@@ -63,7 +63,7 @@ th{text-align:left;font-size:12px;color:var(--mute);font-weight:600;padding:8px 
 td{padding:8px 6px;border-bottom:1px solid var(--line);vertical-align:middle}
 td.nm{font-weight:600;white-space:nowrap}
 td.c{text-align:center}
-#v1 th:nth-child(n+3):nth-child(-n+9){text-align:center;width:78px}
+#v1 .trk th:nth-child(n+3):nth-child(-n+9){text-align:center;width:78px}
 .grp td{background:var(--brand-soft);color:var(--brand);font-weight:700;padding:7px 8px}
 .tick{display:inline-flex;width:22px;height:22px;border-radius:50%;background:var(--green);color:#fff;align-items:center;justify-content:center;font-size:13px;font-weight:700;line-height:1}
 .dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:#9aa7b5;margin:0 6px}
@@ -93,12 +93,25 @@ footer{color:var(--mute);font-size:12px;margin-top:16px}
 .r{text-align:right!important;font-variant-numeric:tabular-nums}
 .p-ok{background:rgba(35,122,59,.16);color:var(--green)}.p-warn{background:var(--warn-soft);color:var(--warn)}.p-bad{background:rgba(179,52,31,.15);color:var(--red)}
 .tot td{font-weight:700;border-top:2px solid var(--line)}
+.toprow{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.toprow .tabs{margin:0}.toprow .gbar{margin:0 0 0 auto;padding:6px 12px}
+.eye{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--brand);cursor:pointer;padding:0}.eye:hover{background:var(--brand-soft)}
+.modal{position:fixed;inset:0;z-index:80;background:rgba(10,17,25,.6);display:flex;align-items:center;justify-content:center;padding:16px;overflow:auto}
+.mcard{background:var(--surface);color:var(--ink);border-radius:14px;width:100%;max-width:1100px;max-height:92vh;overflow:auto;padding:22px 24px;box-shadow:0 20px 60px rgba(0,0,0,.45)}
+.mhead{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px}.mhead h2{margin:0;font-size:18px}
+#mclose{font:inherit;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:8px;width:32px;height:32px;cursor:pointer}
+.mrow{display:grid;gap:14px 20px;padding:14px 0;border-top:1px solid var(--line)}.mrow:first-child{border-top:0;padding-top:0}
+.m5{grid-template-columns:repeat(auto-fit,minmax(160px,1fr))}.m4,.m3,.m2{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.fl{font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--mute);margin-bottom:3px}
+.fv{font-size:14px;font-weight:600;word-break:break-word;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.cpy{font:inherit;font-size:12px;font-weight:600;padding:2px 10px;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--brand);cursor:pointer}.cpy.ok{background:rgba(35,122,59,.16);color:var(--green);border-color:transparent}
 .sthead{display:flex;justify-content:space-between;gap:10px;align-items:baseline;margin-bottom:14px}.sthead h2{margin:0}.sthead span{font-size:12px;color:var(--mute)}.stgrid{display:grid;grid-template-columns:1fr 1fr;gap:18px 40px}.si{display:flex;gap:12px;align-items:flex-start;font-size:13.5px;line-height:1.55}.tg{flex:0 0 92px;text-align:center;font-size:11px;font-weight:700;letter-spacing:.05em;padding:3px 0;border-radius:5px;text-transform:uppercase;margin-top:1px}.t-ok{background:rgba(35,122,59,.16);color:var(--green)}.t-next{background:var(--brand-soft);color:var(--brand)}.t-pend{background:var(--warn-soft);color:var(--warn)}.t-att{background:rgba(179,52,31,.15);color:var(--red)}.mu{color:var(--mute)}
 @media (max-width:860px){.summary,.grid2,.stgrid{grid-template-columns:1fr}.tiles{grid-template-columns:repeat(2,minmax(0,1fr))}h1{font-size:21px}}
 @media print{header{background:#12233a!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}.tools,.stamp button{display:none}}
 </style>
 </head>
 <body>
+<div id="modal" class="modal" style="display:none" role="dialog" aria-modal="true" aria-labelledby="mt"><div class="mcard"><div class="mhead"><h2 id="mt"></h2><button type="button" id="mclose" aria-label="Close">✕</button></div><div id="mbody"></div></div></div>
 <div id="auth"><div class="acard">
 <h1>Samsotech eInvoicing Dashboard</h1><p class="asub">Sign in to continue</p>
 <form id="fLogin"><label>Username<input id="lu" autocomplete="username" autocapitalize="none" required></label><label>Password<input id="lp" type="password" autocomplete="current-password" required></label><button id="bLogin" type="submit">Sign in</button></form>
@@ -111,8 +124,8 @@ footer{color:var(--mute);font-size:12px;margin-top:16px}
 </div></div></header>
 <div class="wrap"><main>
 <div id="banner"></div>
-<div class="tabs" id="tabs"><button type="button" class="tab on" data-v="1">Implementation status</button><button type="button" class="tab" data-v="2">Order Status</button></div>
-<div class="gbar" id="gbar"></div>
+<div class="toprow"><div class="tabs" id="tabs"><button type="button" class="tab on" data-v="1">Implementation Status</button><button type="button" class="tab" data-v="2">Order Summary</button><button type="button" class="tab" data-v="3">Source System Analysis</button></div>
+<div class="gbar" id="gbar"></div></div>
 <div id="v1">
 <section class="card summary">
 <div><div class="big" id="ov">–<small>%</small></div><div class="lbl">Overall programme progress (average across all entities, 7 stages each)</div><div class="bar"><i id="ovb" style="width:0"></i></div></div>
@@ -127,7 +140,7 @@ footer{color:var(--mute);font-size:12px;margin-top:16px}
 <section class="card">
 <h2>Entity tracker</h2>
 <div class="tools"><input id="q" type="search" placeholder="Search entity" aria-label="Search entity"><select id="ph" aria-label="Phase"></select><select id="st" aria-label="Status"><option value="">All statuses</option><option value="p">In progress</option><option value="n">Not started</option></select></div>
-<div class="tw"><table><thead><tr><th>#</th><th>Entity</th><th>Project kick-off</th><th>EmaraTax onboard</th><th>Gap assessment</th><th>Source system configuration</th><th>ASP onboarding</th><th>Testing (UAT)</th><th>Go-live (PROD)</th><th>Progress</th><th>Status</th></tr></thead><tbody id="tb"></tbody></table></div>
+<div class="tw"><table class="trk"><thead><tr><th>#</th><th>Entity</th><th>Project kick-off</th><th>EmaraTax onboard</th><th>Gap assessment</th><th>Source system configuration</th><th>ASP onboarding</th><th>Testing (UAT)</th><th>Go-live (PROD)</th><th>Progress</th><th>Status</th><th></th></tr></thead><tbody id="tb"></tbody></table></div>
 <div class="legend"><span class="tick">✔</span> Stage completed &nbsp;&nbsp; <span class="dot"></span> Not yet completed</div>
 </section>
 </div>
@@ -138,7 +151,17 @@ footer{color:var(--mute);font-size:12px;margin-top:16px}
 <section class="grid2"><div class="card"><h2>Work order (WO) status</h2><div class="tw" id="xwo"></div></div><div class="card"><h2>ASP provider</h2><div class="tw" id="xmat"></div></div></section>
 <section class="card"><h2>Transactions by entity</h2>
 <div class="tools"><input id="xq" type="search" placeholder="Search entity" aria-label="Search entity"><select id="xf1" aria-label="ASP provider"></select><select id="xf2" aria-label="WO status"></select><select id="xf3" aria-label="Group"></select></div>
-<div class="tw"><table class="xt"><thead><tr><th>#</th><th>Entity</th><th>Group</th><th>ASP provider</th><th>WO status</th><th class="r">Transactions</th></tr></thead><tbody id="xtb"></tbody></table></div>
+<div class="tw"><table class="xt"><thead><tr><th>#</th><th>Entity</th><th>Group</th><th>ASP provider</th><th>WO status</th><th class="r">Transactions</th><th></th></tr></thead><tbody id="xtb"></tbody></table></div>
+</section>
+</div>
+<div id="v3" style="display:none">
+<section class="grid2" style="grid-template-columns:minmax(0,1.5fr) minmax(0,1fr)">
+<div class="card"><h2>Group vs source system (entities)</h2><div class="tw" id="sgm"></div></div>
+<div class="card"><h2>Source system configuration status</h2><div class="tw" id="scs"></div></div>
+</section>
+<section class="card" style="margin-bottom:14px"><h2>Entity vs source system</h2>
+<div class="tools"><input id="sfq" type="search" placeholder="Search entity" aria-label="Search entity"><select id="sf1" aria-label="Source system"></select><select id="sf2" aria-label="Configuration status"></select></div>
+<div class="tw"><table><thead><tr><th>#</th><th>Entity</th><th>Group</th><th>Source systems</th><th>Source system configuration</th><th></th></tr></thead><tbody id="stb"></tbody></table></div>
 </section>
 </div>
 </main></div>
@@ -165,18 +188,21 @@ function isDone(v){v=norm(v);return v==="completed"||v==="complete"||v==="done"|
 function clean(v){return String(v||"").replace(/[\u200b]/g,"").trim()}
 function num(v){var n=parseFloat(String(v||"").replace(/[^0-9.\-]/g,""));return isNaN(n)?0:n}
 var EXTRA={asp:true,wo:true,tx:true};
+function splitSrc(s){var seen={},o=[];String(s||"").split(/[,;\n\r]+/).forEach(function(p){p=p.trim();if(p&&!seen[p.toLowerCase()]){seen[p.toLowerCase()]=1;o.push(p)}});return o}
 function has(r,j){return j>=0&&String(r[j]||"").replace(/[\u200b\s]/g,"")!==""}
 function fromRows(rows){
  var h=-1,i;for(i=0;i<rows.length;i++){if(rows[i].some(function(c){return norm(c)==="property"})){h=i;break}}
  if(h<0)throw new Error("Header row with 'Property' not found");
  var H=rows[h].map(norm);
  function col(k){var ks=[].concat(k);for(var q=0;q<ks.length;q++)for(var j=0;j<H.length;j++)if(H[j].indexOf(ks[q])>=0)return j;return -1}
+ function cx(k){for(var j=0;j<H.length;j++)if(H[j]===k)return j;return col(k)}
+ var cf=["dofname","dofemail","itemailid","phone","trn","tin","sourcesystem","version"].map(function(k){return cx(k)});
  var cn=col("property"),cp=col("implementationphase"),cg=col("group"),cl=col("sl."),css=col("sourcesystem"),cv=col("version"),ct=col("trn"),cap=col("aspprovider"),cwo=col("wostatus"),ctc=col("transactioncount"),cs=KEYS.map(col);
  var lost=[];if(cn<0)lost.push("Property");cs.forEach(function(x,k){if(x<0)lost.push(S[k])});
  if(lost.length)throw new Error("Column header not found in the sheet: "+lost.join(", "));
  var out=[];
  for(i=h+1;i<rows.length;i++){var r=rows[i],n=String(r[cn]||"").replace(/[\u200b]/g,"").trim();if(!n)continue;
-  out.push({n:n,g:(cg>=0&&String(r[cg]||"").replace(/[\u200b]/g,"").trim())||"Ungrouped",i:String(r[cl]||"").replace(/[\u200b]/g,"").trim()||out.length+1,ss:has(r,css),asp:clean(cap>=0?r[cap]:"")||"Not assigned",wo:clean(cwo>=0?r[cwo]:"")||"Not set",tx:num(ctc>=0?r[ctc]:""),ver:has(r,cv),trn:has(r,ct),ph:(cp>=0&&String(r[cp]||"").replace(/[\u200b]/g,"").trim())||"Unassigned",st:cs.map(function(j){return isDone(r[j])?1:0})})}
+  out.push({n:n,g:(cg>=0&&String(r[cg]||"").replace(/[\u200b]/g,"").trim())||"Ungrouped",i:String(r[cl]||"").replace(/[\u200b]/g,"").trim()||out.length+1,x:out.length,srcs:splitSrc(r[cf[6]]),f:{dn:clean(r[cf[0]]),de:clean(r[cf[1]]),ie:clean(r[cf[2]]),ph:clean(r[cf[3]]),trn:clean(r[cf[4]]),tin:clean(r[cf[5]]),src:clean(r[cf[6]]),ver:clean(r[cf[7]])},ss:has(r,css),asp:clean(cap>=0?r[cap]:"")||"Not assigned",wo:clean(cwo>=0?r[cwo]:"")||"Not set",tx:num(ctc>=0?r[ctc]:""),ver:has(r,cv),trn:has(r,ct),ph:(cp>=0&&String(r[cp]||"").replace(/[\u200b]/g,"").trim())||"Unassigned",st:cs.map(function(j){return isDone(r[j])?1:0})})}
  EXTRA={asp:cap>=0,wo:cwo>=0,tx:ctc>=0};
  if(!out.length)throw new Error("No entity rows found");return out}
 
@@ -218,9 +244,9 @@ function renderTable(){
  var q=document.getElementById("q").value.toLowerCase(),s=document.getElementById("st").value,p=document.getElementById("ph").value,h="",last=null,cnt=0;
  PH.reduce(function(a,p){return a.concat(sub(p))},[]).forEach(function(r){var d=sc(r),on=d>0;
   if(s=="p"&&!on)return;if(s=="n"&&on)return;if(p&&r.ph!==p)return;if(q&&r.n.toLowerCase().indexOf(q)<0)return;
-  if(r.ph!==last){last=r.ph;h+='<tr class="grp"><td colspan="11">'+esc(last)+' · '+sub(last).length+' entities</td></tr>'}
-  h+='<tr><td>'+(++cnt)+'</td><td class="nm">'+esc(r.n)+'</td>'+r.st.map(cell).join("")+'<td><div class="mini"><div class="track"><i style="width:'+d/7*100+'%"></i></div><span>'+(d/7*100).toFixed(2)+'%</span></div></td><td>'+(on?'<span class="pill p-wip">In progress</span>':'<span class="pill p-idle">Not started</span>')+'</td></tr>'});
- document.getElementById("tb").innerHTML=h||'<tr><td colspan="11">No entities match these filters.</td></tr>'}
+  if(r.ph!==last){last=r.ph;h+='<tr class="grp"><td colspan="12">'+esc(last)+' · '+sub(last).length+' entities</td></tr>'}
+  h+='<tr><td>'+(++cnt)+'</td><td class="nm">'+esc(r.n)+'</td>'+r.st.map(cell).join("")+'<td><div class="mini"><div class="track"><i style="width:'+d/7*100+'%"></i></div><span>'+(d/7*100).toFixed(2)+'%</span></div></td><td>'+(on?'<span class="pill p-wip">In progress</span>':'<span class="pill p-idle">Not started</span>')+'</td><td>'+eye(r)+'</td></tr>'});
+ document.getElementById("tb").innerHTML=h||'<tr><td colspan="12">No entities match these filters.</td></tr>'}
 function renderBar(){var G=[];ALL.forEach(function(r){if(G.indexOf(r.g)<0)G.push(r.g)});G.sort();if(GSEL&&G.indexOf(GSEL)<0)GSEL="";
  var b=document.getElementById("gbar");
  var h='<label class="gl" for="gsel">Group</label><select id="gsel" class="gsel"><option value="">All groups ('+ALL.length+')</option>'+G.map(function(g){var c=ALL.filter(function(r){return r.g===g}).length;return '<option value="'+esc(g)+'"'+(GSEL===g?' selected':'')+'>'+esc(g)+' ('+c+')</option>'}).join("")+'</select>';
@@ -279,10 +305,42 @@ function renderTx(){
  fillSel("xf3","All groups",gby(A,"g").map(function(x){return x.k}).sort());
  var q=$("xq").value.toLowerCase(),f1=$("xf1").value,f2=$("xf2").value,f3=$("xf3").value;
  var L=A.filter(function(r){return(!q||r.n.toLowerCase().indexOf(q)>=0)&&(!f1||r.asp===f1)&&(!f2||r.wo===f2)&&(!f3||r.g===f3)}).sort(function(a,b){return b.tx-a.tx||(a.n>b.n?1:-1)});
- $("xtb").innerHTML=L.map(function(r,i){return '<tr><td>'+(i+1)+'</td><td class="nm">'+esc(r.n)+'</td><td>'+esc(r.g)+'</td><td>'+esc(r.asp)+'</td><td><span class="pill '+woCls(r.wo)+'">'+esc(r.wo)+'</span></td><td class="r">'+fmt(r.tx)+'</td></tr>'}).join("")||'<tr><td colspan="6">No entities match these filters.</td></tr>';
- if(L.length)$("xtb").innerHTML+='<tr class="tot"><td></td><td>Total</td><td></td><td></td><td></td><td class="r">'+fmt(L.reduce(function(a,r){return a+r.tx},0))+'</td></tr>';
+ $("xtb").innerHTML=L.map(function(r,i){return '<tr><td>'+(i+1)+'</td><td class="nm">'+esc(r.n)+'</td><td>'+esc(r.g)+'</td><td>'+esc(r.asp)+'</td><td><span class="pill '+woCls(r.wo)+'">'+esc(r.wo)+'</span></td><td class="r">'+fmt(r.tx)+'</td><td>'+eye(r)+'</td></tr>'}).join("")||'<tr><td colspan="7">No entities match these filters.</td></tr>';
+ if(L.length)$("xtb").innerHTML+='<tr class="tot"><td></td><td>Total</td><td></td><td></td><td></td><td class="r">'+fmt(L.reduce(function(a,r){return a+r.tx},0))+'</td><td></td></tr>';
 }
-function renderAll(){A=GSEL?ALL.filter(function(r){return r.g===GSEL}):ALL.slice();renderBar();renderTop();renderStatus();renderTable();renderTx()}
+function eye(r){return '<button type="button" class="eye" data-x="'+r.x+'" aria-label="View details for '+esc(r.n)+'" title="View details"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg></button>'}
+function fld(l,v){return '<div class="fld"><div class="fl">'+l+'</div><div class="fv">'+(v===""?'<span class="mu">–</span>':v)+'</div></div>'}
+function cfld(l,v){return '<div class="fld"><div class="fl">'+l+'</div><div class="fv">'+(v===""?'<span class="mu">–</span>':'<span>'+esc(v)+'</span><button type="button" class="cpy" data-v="'+esc(v)+'" aria-label="Copy '+l+'">Copy</button>')+'</div></div>'}
+function openM(r){var f=r.f;$("mt").textContent=r.n;
+ $("mbody").innerHTML='<div class="mrow m5">'+fld("Entity name",esc(r.n))+fld("Group",esc(r.g))+fld("Transaction count",fmt(r.tx))+fld("Order status",'<span class="pill '+woCls(r.wo)+'">'+esc(r.wo)+'</span>')+fld("ASP provider",esc(r.asp))+'</div>'+
+  '<div class="mrow m2">'+fld("Source system",esc(r.srcs.join(", ")))+fld("Version",esc(f.ver))+'</div>'+
+  '<div class="mrow m4">'+fld("DOF name",esc(f.dn))+cfld("DOF email",f.de)+cfld("IT email",f.ie)+cfld("Phone",f.ph)+'</div>'+
+  '<div class="mrow m3">'+cfld("TRN",f.trn)+cfld("TIN",f.tin)+fld("Implementation phase",esc(r.ph))+'</div>';
+ $("modal").style.display="flex";$("mclose").focus()}
+function closeM(){$("modal").style.display="none"}
+function fbCopy(t,done){var a=document.createElement("textarea");a.value=t;a.style.position="fixed";a.style.opacity="0";document.body.appendChild(a);a.select();try{document.execCommand("copy");done()}catch(x){}document.body.removeChild(a)}
+function copyText(t,btn){var done=function(){btn.textContent="Copied ✓";btn.classList.add("ok");setTimeout(function(){btn.textContent="Copy";btn.classList.remove("ok")},1500)};
+ if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(done,function(){fbCopy(t,done)})}else fbCopy(t,done)}
+function renderSrc(){
+ var nm={};ALL.forEach(function(r){r.srcs.forEach(function(s){var k=s.toLowerCase();if(!nm[k])nm[k]=s})});
+ function sv(r){var a=r.srcs.map(function(s){return nm[s.toLowerCase()]});return a.length?a:["Not recorded"]}
+ var cnt={};ALL.forEach(function(r){sv(r).forEach(function(s){cnt[s]=(cnt[s]||0)+1})});
+ var cols=Object.keys(cnt).sort(function(a,b){return cnt[b]-cnt[a]||(a>b?1:-1)});
+ var groups=[];ALL.forEach(function(r){if(groups.indexOf(r.g)<0)groups.push(r.g)});groups.sort();
+ $("sgm").innerHTML='<table><thead><tr><th>Group</th>'+cols.map(function(c){return '<th class="r">'+esc(c)+'</th>'}).join("")+'<th class="r">Entities</th></tr></thead><tbody>'+
+  groups.map(function(g){var rows=ALL.filter(function(r){return r.g===g});return '<tr><td'+(GSEL&&g===GSEL?' style="font-weight:700"':'')+'>'+esc(g)+'</td>'+cols.map(function(c){var n=rows.filter(function(r){return sv(r).indexOf(c)>=0}).length;return '<td class="r">'+(n||'<span class="mu">–</span>')+'</td>'}).join("")+'<td class="r"><b>'+rows.length+'</b></td></tr>'}).join("")+
+  '<tr class="tot"><td>Total</td>'+cols.map(function(c){return '<td class="r">'+cnt[c]+'</td>'}).join("")+'<td class="r">'+ALL.length+'</td></tr></tbody></table><div class="legend">An entity with more than one source system is counted under each of them. The Entities column and total row show distinct entities.'+(GSEL?' The selected group is in bold.':'')+'</div>';
+ var sa={},so=[];A.forEach(function(r){sv(r).forEach(function(s){if(!sa[s]){sa[s]={n:0,c:0};so.push(s)}sa[s].n++;sa[s].c+=r.st[3]})});
+ so.sort(function(a,b){return sa[b].n-sa[a].n||(a>b?1:-1)});
+ var tc=A.filter(function(r){return r.st[3]}).length;
+ $("scs").innerHTML='<table><thead><tr><th>Source system</th><th class="r">Entities</th><th class="r">Configured</th><th class="r">Pending</th></tr></thead><tbody>'+so.map(function(s){var x=sa[s];return '<tr><td>'+esc(s)+'</td><td class="r">'+x.n+'</td><td class="r">'+(x.c||'<span class="mu">–</span>')+'</td><td class="r">'+((x.n-x.c)||'<span class="mu">–</span>')+'</td></tr>'}).join("")+'<tr class="tot"><td>Total (distinct entities)</td><td class="r">'+A.length+'</td><td class="r">'+tc+'</td><td class="r">'+(A.length-tc)+'</td></tr></tbody></table>';
+ fillSel("sf1","All source systems",so);
+ fillSel("sf2","All configuration statuses",["Completed","Pending"]);
+ var q=$("sfq").value.toLowerCase(),f1=$("sf1").value,f2=$("sf2").value;
+ var L=A.filter(function(r){var c=r.st[3]?"Completed":"Pending";return(!q||r.n.toLowerCase().indexOf(q)>=0)&&(!f1||sv(r).indexOf(f1)>=0)&&(!f2||c===f2)}).sort(function(a,b){var x=sv(a).join(", "),y=sv(b).join(", ");return x===y?(a.n>b.n?1:-1):(x>y?1:-1)});
+ $("stb").innerHTML=L.map(function(r,i){return '<tr><td>'+(i+1)+'</td><td class="nm">'+esc(r.n)+'</td><td>'+esc(r.g)+'</td><td>'+esc(sv(r).join(", "))+'</td><td><span class="pill '+(r.st[3]?'p-ok':'p-warn')+'">'+(r.st[3]?'Completed':'Pending')+'</span></td><td>'+eye(r)+'</td></tr>'}).join("")||'<tr><td colspan="6">No entities match these filters.</td></tr>';
+}
+function renderAll(){A=GSEL?ALL.filter(function(r){return r.g===GSEL}):ALL.slice();renderBar();renderTop();renderStatus();renderSrc();renderTable();renderTx()}
 
 function setLive(ok,msg){var l=document.getElementById("live");l.className="live"+(ok?"":" off");document.getElementById("livetxt").textContent=msg;
  var b=document.getElementById("banner");
@@ -324,8 +382,14 @@ function load(){
   var d=new Date();$("when").textContent=d.toLocaleString([], {day:"2-digit",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit",second:"2-digit"});
   setLive(true,"Live · auto-refresh every "+CFG.REFRESH_SEC+"s")})
  .catch(function(e){$("when").textContent="Not connected";setLive(false,e.message||"error");if(ALL.length){hideAuth();renderAll()}else{$("hl").textContent="Unable to load the dashboard data.";$("hp").textContent="Press Refresh now to try again."}})}
+document.addEventListener("click",function(e){var t=e.target,b=t.closest&&t.closest(".eye");
+ if(b){var r=ALL[+b.getAttribute("data-x")];if(r)openM(r);return}
+ var c=t.closest&&t.closest(".cpy");if(c){copyText(c.getAttribute("data-v"),c);return}
+ if(t.id==="modal"||(t.closest&&t.closest("#mclose")))closeM()});
+document.addEventListener("keydown",function(e){if(e.key==="Escape")closeM()});
+["sfq","sf1","sf2"].forEach(function(id){$(id).addEventListener("input",renderSrc)});
 ["xq","xf1","xf2","xf3"].forEach(function(id){$(id).addEventListener("input",renderTx)});
-$("tabs").addEventListener("click",function(e){var b=e.target.closest(".tab");if(!b)return;TAB=b.getAttribute("data-v");Array.prototype.forEach.call(document.querySelectorAll(".tab"),function(x){x.className="tab"+(x===b?" on":"")});$("v1").style.display=TAB==="1"?"block":"none";$("v2").style.display=TAB==="2"?"block":"none"});
+$("tabs").addEventListener("click",function(e){var b=e.target.closest(".tab");if(!b)return;TAB=b.getAttribute("data-v");Array.prototype.forEach.call(document.querySelectorAll(".tab"),function(x){x.className="tab"+(x===b?" on":"")});$("v1").style.display=TAB==="1"?"block":"none";$("v2").style.display=TAB==="2"?"block":"none";$("v3").style.display=TAB==="3"?"block":"none"});
 ["q","ph","st"].forEach(function(id){document.getElementById(id).addEventListener("input",renderTable)});
 document.getElementById("rf").addEventListener("click",load);
 document.getElementById("gbar").addEventListener("change",function(e){if(e.target.id!=="gsel")return;GSEL=e.target.value;renderAll()});
