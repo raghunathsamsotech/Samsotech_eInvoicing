@@ -426,7 +426,7 @@ function saveU(){var b=$("uSave"),body;
   if(r.err==="auth"){drop();showAuth("login","Your session has expired. Please sign in again.");return}
   umsg(r.err==="forbidden"?"You do not have permission to edit data.":r.err==="conflict"?"This record was changed by someone else. Go back to the list, press Refresh now and edit it again.":r.err==="invalid"?(r.msg||"Some values are not valid."):"Could not save. "+(r.msg||r.err||""),"err")})
  .catch(function(x){b.disabled=false;umsg("Could not reach the server. "+x.message,"err")})}
-function applyRole(){var ed=ROLE==="Editor";$("who").textContent=USER+" · "+ROLE;$("tabUpd").style.display=ed?"":"none";
+function applyRole(){var ed=ROLE==="Editor";$("tabUpd").style.display=ed?"":"none";
  if(ed&&UMODE==="upd"&&$("uListWrap").style.display!=="none")renderUList();
  if(!ed&&TAB==="4")$("tabs").querySelector('[data-v="1"]').click()}
 function initUpd(){$("uq").addEventListener("input",renderUList);$("ug").addEventListener("change",renderUList);$("uBack").addEventListener("click",backToList);
@@ -471,7 +471,7 @@ function load(){
  return api({a:"data",t:TOKEN}).then(function(r){
   if(r.err==="auth"){drop();showAuth("login","Your session has expired. Please sign in again.");return}
   if(r.err)throw new Error(r.msg||r.err);
-  if(r.t){TOKEN=r.t;keep()}ROLE=r.role||"Viewer";DV=r.dv||{};ALL=fromRows(r.rows);hideAuth();renderAll();applyRole();
+  ROLE=r.role||"Viewer";DV=r.dv||{};ALL=fromRows(r.rows);hideAuth();renderAll();applyRole();
   var d=new Date();$("when").textContent=d.toLocaleString([], {day:"2-digit",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit",second:"2-digit"});
   setLive(true,"Live · auto-refresh every "+CFG.REFRESH_SEC+"s")})
  .catch(function(e){if(TOKEN)hideAuth();$("when").textContent="Not connected";setLive(false,e.message||"error");if(ALL.length){hideAuth();renderAll()}else{$("hl").textContent="Unable to load the dashboard data.";$("hp").textContent="Press Refresh now to try again."}})}
