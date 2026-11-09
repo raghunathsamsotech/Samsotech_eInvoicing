@@ -6,9 +6,9 @@
 <title>Samsotech eInvoicing Dashboard</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&display=swap">
 <style>
-:root{--bg:#f3f5f7;--surface:#fff;--ink:#12233a;--mute:#5b6b7e;--line:#dde3ea;--brand:#0b6e79;--brand-soft:#d9eef0;--p2:#5a4bb5;--p3:#b86e00;--p4:#237a3b;--red:#b3341f;--warn-soft:#fbeccf;--warn:#8a5200;--green:#237a3b;--track:#e6ebf0;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1722;--surface:#16222f;--ink:#e8eef5;--mute:#98a8ba;--line:#26364a;--brand:#4cc3cf;--brand-soft:#173a40;--p2:#a99bff;--p3:#f0b04f;--p4:#6fcf8a;--red:#f08a76;--warn-soft:#3b2d12;--warn:#f0b04f;--green:#6fcf8a;--track:#243446;color-scheme:dark}}
-:root[data-theme="dark"]{--bg:#0e1722;--surface:#16222f;--ink:#e8eef5;--mute:#98a8ba;--line:#26364a;--brand:#4cc3cf;--brand-soft:#173a40;--p2:#a99bff;--p3:#f0b04f;--p4:#6fcf8a;--red:#f08a76;--warn-soft:#3b2d12;--warn:#f0b04f;--green:#6fcf8a;--track:#243446;color-scheme:dark}
+:root{--bg:#f3f5f7;--surface:#fff;--ink:#12233a;--mute:#5b6b7e;--line:#dde3ea;--brand:#0b6e79;--brand-soft:#d9eef0;--p2:#5a4bb5;--p3:#b86e00;--orange:#e8710a;--orange-soft:#fde8d3;--p4:#237a3b;--red:#b3341f;--warn-soft:#fbeccf;--warn:#8a5200;--green:#237a3b;--track:#e6ebf0;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1722;--surface:#16222f;--ink:#e8eef5;--mute:#98a8ba;--line:#26364a;--brand:#4cc3cf;--brand-soft:#173a40;--p2:#a99bff;--p3:#f0b04f;--orange:#ffa14a;--orange-soft:#44280f;--p4:#6fcf8a;--red:#f08a76;--warn-soft:#3b2d12;--warn:#f0b04f;--green:#6fcf8a;--track:#243446;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0e1722;--surface:#16222f;--ink:#e8eef5;--mute:#98a8ba;--line:#26364a;--brand:#4cc3cf;--brand-soft:#173a40;--p2:#a99bff;--p3:#f0b04f;--orange:#ffa14a;--orange-soft:#44280f;--p4:#6fcf8a;--red:#f08a76;--warn-soft:#3b2d12;--warn:#f0b04f;--green:#6fcf8a;--track:#243446;color-scheme:dark}
 *{box-sizing:border-box}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
 body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 "Public Sans",system-ui,-apple-system,"Segoe UI",Arial,sans-serif}
@@ -116,6 +116,7 @@ footer{color:var(--mute);font-size:12px;margin-top:16px}
 .btns{font:inherit;font-weight:600;padding:9px 16px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);cursor:pointer}
 #uTop.ok{color:var(--green)}.uhead{display:flex;align-items:center;gap:12px;margin-top:14px;flex-wrap:wrap}
 #uMsg{font-size:13px}#uMsg.err{color:var(--red)}#uMsg.ok{color:var(--green)}
+.p-prog{background:var(--orange-soft);color:var(--orange)}.wipm{display:inline-block;vertical-align:middle}
 .sthead{display:flex;justify-content:space-between;gap:10px;align-items:baseline;margin-bottom:14px}.sthead h2{margin:0}.sthead span{font-size:12px;color:var(--mute)}.stgrid{display:grid;grid-template-columns:1fr 1fr;gap:18px 40px}.si{display:flex;gap:12px;align-items:flex-start;font-size:13.5px;line-height:1.55}.tg{flex:0 0 92px;text-align:center;font-size:11px;font-weight:700;letter-spacing:.05em;padding:3px 0;border-radius:5px;text-transform:uppercase;margin-top:1px}.t-ok{background:rgba(35,122,59,.16);color:var(--green)}.t-next{background:var(--brand-soft);color:var(--brand)}.t-pend{background:var(--warn-soft);color:var(--warn)}.t-att{background:rgba(179,52,31,.15);color:var(--red)}.mu{color:var(--mute)}
 @media (max-width:860px){.summary,.grid2,.stgrid{grid-template-columns:1fr}.tiles{grid-template-columns:repeat(2,minmax(0,1fr))}h1{font-size:21px}}
 @media print{header{background:#12233a!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}.tools,.stamp button{display:none}}
@@ -145,14 +146,14 @@ footer{color:var(--mute);font-size:12px;margin-top:16px}
 <section class="tiles" id="tiles"></section>
 <section class="card" style="margin-bottom:14px"><div class="sthead"><h2 id="sttitle">Status update</h2><span>Drawn from the project tracker</span></div><div class="stgrid" id="stgrid"></div></section>
 <section class="grid2">
-<div class="card"><h2>Entities completed at each stage, by phase</h2><div id="stages"></div></div>
+<div class="card"><h2>Entities completed at each stage, by phase</h2><div id="stages"></div><div class="legend">Solid bar = completed · <span style="color:var(--orange);font-weight:600">orange</span> = in progress</div></div>
 <div class="card"><h2>Progress by phase</h2><div id="phases"></div></div>
 </section>
 <section class="card">
 <h2>Entity tracker</h2>
 <div class="tools"><input id="q" type="search" placeholder="Search entity" aria-label="Search entity"><select id="ph" aria-label="Phase"></select><select id="st" aria-label="Status"><option value="">All statuses</option><option value="p">In progress</option><option value="n">Not started</option></select></div>
 <div class="tw"><table class="trk"><thead><tr><th>#</th><th>Entity</th><th>Project kick-off</th><th>EmaraTax onboard</th><th>Gap assessment</th><th>Source system configuration</th><th>ASP onboarding</th><th>Testing (UAT)</th><th>Go-live (PROD)</th><th>Progress</th><th>Status</th><th></th></tr></thead><tbody id="tb"></tbody></table></div>
-<div class="legend"><span class="tick">✔</span> Stage completed &nbsp;&nbsp; <span class="dot"></span> Not yet completed</div>
+<div class="legend"><span class="tick">✔</span> Stage completed &nbsp;&nbsp; <svg class="wipm" viewBox="0 0 22 22" width="16" height="16" aria-hidden="true"><circle cx="11" cy="11" r="11" style="fill:var(--orange)"/><circle cx="6" cy="11" r="2" fill="#fff"/><circle cx="11" cy="11" r="2" fill="#fff"/><circle cx="16" cy="11" r="2" fill="#fff"/></svg> Stage in progress &nbsp;&nbsp; <span class="dot"></span> Not yet started</div>
 </section>
 </div>
 <div id="v2" style="display:none">
@@ -211,6 +212,7 @@ function parseCSV(t){var rows=[],row=[],f="",q=false,i,c;
   else f+=c}
  if(f!==""||row.length){row.push(f);rows.push(row)}return rows}
 function norm(s){return String(s||"").replace(/[\u200b\s]/g,"").toLowerCase()}
+function isProg(v){v=norm(v);return v==="inprogress"||v==="in-progress"||v==="ongoing"||v==="wip"||v==="inprocess"}
 function isDone(v){v=norm(v);return v==="completed"||v==="complete"||v==="done"||v==="yes"||v==="✔"}
 function clean(v){return String(v||"").replace(/[\u200b]/g,"").trim()}
 function num(v){var n=parseFloat(String(v||"").replace(/[^0-9.\-]/g,""));return isNaN(n)?0:n}
@@ -233,14 +235,16 @@ function fromRows(rows){
  if(lost.length)throw new Error("Column header not found in the sheet: "+lost.join(", "));
  var out=[];
  for(i=h+1;i<rows.length;i++){var r=rows[i],n=String(r[cn]||"").replace(/[\u200b]/g,"").trim();if(!n)continue;
-  out.push({n:n,g:(cg>=0&&String(r[cg]||"").replace(/[\u200b]/g,"").trim())||"Ungrouped",i:String(r[cl]||"").replace(/[\u200b]/g,"").trim()||out.length+1,x:out.length,rn:i+1,raw:rawOf(r),ov:num(FC.ov>=0?r[FC.ov]:""),srcs:splitSrc(r[cf[6]]),f:{dn:clean(r[cf[0]]),de:clean(r[cf[1]]),ie:clean(r[cf[2]]),ph:clean(r[cf[3]]),trn:clean(r[cf[4]]),tin:clean(r[cf[5]]),src:clean(r[cf[6]]),ver:clean(r[cf[7]])},ss:has(r,css),asp:clean(cap>=0?r[cap]:"")||"Not assigned",wo:clean(cwo>=0?r[cwo]:"")||"Not set",tx:num(ctc>=0?r[ctc]:""),ver:has(r,cv),trn:has(r,ct),ph:(cp>=0&&String(r[cp]||"").replace(/[\u200b]/g,"").trim())||"Unassigned",st:cs.map(function(j){return isDone(r[j])?1:0})})}
+  out.push({n:n,g:(cg>=0&&String(r[cg]||"").replace(/[\u200b]/g,"").trim())||"Ungrouped",i:String(r[cl]||"").replace(/[\u200b]/g,"").trim()||out.length+1,x:out.length,rn:i+1,raw:rawOf(r),ov:num(FC.ov>=0?r[FC.ov]:""),srcs:splitSrc(r[cf[6]]),f:{dn:clean(r[cf[0]]),de:clean(r[cf[1]]),ie:clean(r[cf[2]]),ph:clean(r[cf[3]]),trn:clean(r[cf[4]]),tin:clean(r[cf[5]]),src:clean(r[cf[6]]),ver:clean(r[cf[7]])},ss:has(r,css),asp:clean(cap>=0?r[cap]:"")||"Not assigned",wo:clean(cwo>=0?r[cwo]:"")||"Not set",tx:num(ctc>=0?r[ctc]:""),ver:has(r,cv),trn:has(r,ct),ph:(cp>=0&&String(r[cp]||"").replace(/[\u200b]/g,"").trim())||"Unassigned",st:cs.map(function(j){return isDone(r[j])?1:0}),ip:cs.map(function(j){return isProg(r[j])?1:0})})}
  EXTRA={asp:cap>=0,wo:cwo>=0,tx:ctc>=0,ov:FC.ov>=0};
  if(!out.length)throw new Error("No entity rows found");return out}
 
 function sc(r){return r.st.reduce(function(a,b){return a+b},0)}
 function sub(p){return A.filter(function(r){return r.ph===p})}
 function prog(g){return g.length?g.reduce(function(a,r){return a+sc(r)},0)/(7*g.length):0}
-function act(g){return g.filter(function(r){return sc(r)>0}).length}
+function anyIp(r){return r.ip.some(function(x){return x})}
+function ipc(g,k){return g.reduce(function(a,r){return a+r.ip[k]},0)}
+function act(g){return g.filter(function(r){return sc(r)>0||anyIp(r)}).length}
 function cnt(g,k){return g.reduce(function(a,r){return a+r.st[k]},0)}
 function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
 function pc(x){return (x*100).toFixed(1)+"%"}
@@ -263,20 +267,22 @@ function renderTop(){
   tile(live?"":"bad",live,N,"Live on eInvoicing (PROD)",function(g){return cnt(g,6)});
  var gc="150px repeat("+PH.length+",1fr)";
  document.getElementById("stages").innerHTML='<div class="sh" style="grid-template-columns:'+gc+'"><span>Stage</span>'+PH.map(function(p,i){return '<span style="color:'+COLORS[i%4]+'">'+esc(p)+' ('+sub(p).length+')</span>'}).join("")+'</div>'+
-  S.map(function(s,k){return '<div class="stage" style="grid-template-columns:'+gc+'"><span>'+s+'</span>'+PH.map(function(p,i){var g=sub(p),v=cnt(g,k);return '<div class="cell"><div class="track"><i style="width:'+(g.length?v/g.length*100:0)+'%;background:'+COLORS[i%4]+'"></i></div><b>'+v+' / '+g.length+'</b></div>'}).join("")+'</div>'}).join("");
+  S.map(function(s,k){return '<div class="stage" style="grid-template-columns:'+gc+'"><span>'+s+'</span>'+PH.map(function(p,i){var g=sub(p),v=cnt(g,k),w=ipc(g,k);return '<div class="cell"><div class="track" style="display:flex"><i style="flex:none;width:'+(g.length?v/g.length*100:0)+'%;background:'+COLORS[i%4]+'"></i><i style="flex:none;width:'+(g.length?w/g.length*100:0)+'%;background:var(--orange)"></i></div>'+(w?'<span style="color:var(--orange);font-size:11px;font-weight:600;white-space:nowrap">+'+w+'</span>':'')+'<b>'+v+' / '+g.length+'</b></div>'}).join("")+'</div>'}).join("");
  document.getElementById("phases").innerHTML=PH.map(function(p,i){var g=sub(p),v=prog(g);
   return '<div class="phase"><div class="row"><span style="color:'+COLORS[i%4]+'">'+esc(p)+' · '+g.length+' entities</span><b>'+pc(v)+'</b></div><div class="bar"><i style="width:'+v*100+'%;background:'+COLORS[i%4]+'"></i></div><div class="sm">'+act(g)+' of '+g.length+' entities in progress · '+cnt(g,1)+' EmaraTax onboarded</div></div>'}).join("");
  var sel=document.getElementById("ph"),cur=sel.value;
  sel.innerHTML='<option value="">All phases</option>'+PH.map(function(p){return '<option>'+esc(p)+'</option>'}).join("");
  sel.value=PH.indexOf(cur)>=0?cur:"";
 }
-function cell(v){return '<td class="c">'+(v?'<span class="tick" title="Completed" aria-label="Completed">✔</span>':'<span class="dot" title="Not completed" aria-label="Not completed"></span>')+'</td>'}
+var TICK='<span class="tick" title="Completed" aria-label="Completed">✔</span>',DOT='<span class="dot" title="Not started" aria-label="Not started"></span>',
+ WIP='<svg class="wipm" viewBox="0 0 22 22" width="22" height="22" role="img" aria-label="In progress"><title>In progress</title><circle cx="11" cy="11" r="11" style="fill:var(--orange)"/><circle cx="6" cy="11" r="1.8" fill="#fff"/><circle cx="11" cy="11" r="1.8" fill="#fff"/><circle cx="16" cy="11" r="1.8" fill="#fff"/></svg>';
+function cell(v,p){return '<td class="c">'+(v?TICK:p?WIP:DOT)+'</td>'}
 function renderTable(){
  var q=document.getElementById("q").value.toLowerCase(),s=document.getElementById("st").value,p=document.getElementById("ph").value,h="",last=null,cnt=0;
- PH.reduce(function(a,p){return a.concat(sub(p))},[]).forEach(function(r){var d=sc(r),on=d>0;
+ PH.reduce(function(a,p){return a.concat(sub(p))},[]).forEach(function(r){var d=sc(r),on=d>0||anyIp(r);
   if(s=="p"&&!on)return;if(s=="n"&&on)return;if(p&&r.ph!==p)return;if(q&&r.n.toLowerCase().indexOf(q)<0)return;
   if(r.ph!==last){last=r.ph;h+='<tr class="grp"><td colspan="12">'+esc(last)+' · '+sub(last).length+' entities</td></tr>'}
-  h+='<tr><td>'+(++cnt)+'</td><td class="nm">'+esc(r.n)+'</td>'+r.st.map(cell).join("")+'<td><div class="mini"><div class="track"><i style="width:'+d/7*100+'%"></i></div><span>'+(d/7*100).toFixed(2)+'%</span></div></td><td>'+(on?'<span class="pill p-wip">In progress</span>':'<span class="pill p-idle">Not started</span>')+'</td><td>'+eye(r)+'</td></tr>'});
+  h+='<tr><td>'+(++cnt)+'</td><td class="nm">'+esc(r.n)+'</td>'+r.st.map(function(v,k){return cell(v,r.ip[k])}).join("")+'<td><div class="mini"><div class="track"><i style="width:'+d/7*100+'%"></i></div><span>'+(d/7*100).toFixed(2)+'%</span></div></td><td>'+(on?'<span class="pill p-prog">In progress</span>':'<span class="pill p-idle">Not started</span>')+'</td><td>'+eye(r)+'</td></tr>'});
  document.getElementById("tb").innerHTML=h||'<tr><td colspan="12">No entities match these filters.</td></tr>'}
 function renderBar(){var G=[];ALL.forEach(function(r){if(G.indexOf(r.g)<0)G.push(r.g)});G.sort();if(GSEL&&G.indexOf(GSEL)<0)GSEL="";
  var b=document.getElementById("gbar");
@@ -296,7 +302,8 @@ function renderStatus(){
  var ss=A.filter(function(r){return r.ss}).length,vr=A.filter(function(r){return r.ver}).length,tr=A.filter(function(r){return r.trn}).length;
  var done='<b>'+em+'</b> of <b>'+N+'</b> entities have finished EmaraTax onboarding and <b>'+ko+'</b> have held their kick-off meeting.'+(live?' <b>'+live+'</b> are live in production.':'');
  var next='<b>'+ready+'</b> entities have both kick-off and EmaraTax complete and are positioned for the gap assessment. '+(gap?'<b>'+gap+'</b> have completed the gap assessment.':'No gap assessment has been recorded yet at any entity.');
- var pend='<b>'+(N-em)+'</b> entities still need EmaraTax onboarding and <b>'+(N-ko)+'</b> still need a kick-off.'+(emNoKo.length?' <b>'+emNoKo.length+'</b> of those have EmaraTax done without a kick-off recorded.':'');
+ var ipS=A.reduce(function(a,r){return a+r.ip.reduce(function(x,y){return x+y},0)},0),ipE=A.filter(anyIp).length;
+ var pend='<b>'+(N-em)+'</b> entities still need EmaraTax onboarding and <b>'+(N-ko)+'</b> still need a kick-off.'+(emNoKo.length?' <b>'+emNoKo.length+'</b> of those have EmaraTax done without a kick-off recorded.':'')+(ipS?' <b>'+ipS+'</b> '+(ipS==1?'stage is':'stages are')+' currently in progress across <b>'+ipE+'</b> '+(ipE==1?'entity':'entities')+'.':'');
  var att=[];
  if(idle.length)att.push('<b>'+idle.length+'</b> '+esc(first)+' entities show no activity: <b>'+nl(idle,4)+'</b>.');
  if(unas)att.push('<b>'+unas+'</b> entities have no implementation phase set.');
@@ -352,6 +359,7 @@ function closeM(){$("modal").style.display="none"}
 function fbCopy(t,done){var a=document.createElement("textarea");a.value=t;a.style.position="fixed";a.style.opacity="0";document.body.appendChild(a);a.select();try{document.execCommand("copy");done()}catch(x){}document.body.removeChild(a)}
 function copyText(t,btn){var done=function(){btn.textContent="Copied ✓";btn.classList.add("ok");setTimeout(function(){btn.textContent="Copy";btn.classList.remove("ok")},1500)};
  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(done,function(){fbCopy(t,done)})}else fbCopy(t,done)}
+function cst(r){return r.st[3]?"Completed":r.ip[3]?"In progress":"Pending"}
 function renderSrc(){
  var nm={};ALL.forEach(function(r){r.srcs.forEach(function(s){var k=s.toLowerCase();if(!nm[k])nm[k]=s})});
  function sv(r){var a=r.srcs.map(function(s){return nm[s.toLowerCase()]});return a.length?a:["Not recorded"]}
@@ -361,15 +369,15 @@ function renderSrc(){
  $("sgm").innerHTML='<table><thead><tr><th>Group</th>'+cols.map(function(c){return '<th class="r">'+esc(c)+'</th>'}).join("")+'<th class="r">Entities</th></tr></thead><tbody>'+
   groups.map(function(g){var rows=ALL.filter(function(r){return r.g===g});return '<tr><td'+(GSEL&&g===GSEL?' style="font-weight:700"':'')+'>'+esc(g)+'</td>'+cols.map(function(c){var n=rows.filter(function(r){return sv(r).indexOf(c)>=0}).length;return '<td class="r">'+(n||'<span class="mu">–</span>')+'</td>'}).join("")+'<td class="r"><b>'+rows.length+'</b></td></tr>'}).join("")+
   '<tr class="tot"><td>Total</td>'+cols.map(function(c){return '<td class="r">'+cnt[c]+'</td>'}).join("")+'<td class="r">'+ALL.length+'</td></tr></tbody></table><div class="legend">An entity with more than one source system is counted under each of them. The Entities column and total row show distinct entities.'+(GSEL?' The selected group is in bold.':'')+'</div>';
- var sa={},so=[];A.forEach(function(r){sv(r).forEach(function(s){if(!sa[s]){sa[s]={n:0,c:0};so.push(s)}sa[s].n++;sa[s].c+=r.st[3]})});
+ var sa={},so=[];A.forEach(function(r){sv(r).forEach(function(s){if(!sa[s]){sa[s]={n:0,c:0,p:0};so.push(s)}sa[s].n++;sa[s].c+=r.st[3];sa[s].p+=(!r.st[3]&&r.ip[3])?1:0})});
  so.sort(function(a,b){return sa[b].n-sa[a].n||(a>b?1:-1)});
- var tc=A.filter(function(r){return r.st[3]}).length;
- $("scs").innerHTML='<table><thead><tr><th>Source system</th><th class="r">Entities</th><th class="r">Configured</th><th class="r">Pending</th></tr></thead><tbody>'+so.map(function(s){var x=sa[s];return '<tr><td>'+esc(s)+'</td><td class="r">'+x.n+'</td><td class="r">'+(x.c||'<span class="mu">–</span>')+'</td><td class="r">'+((x.n-x.c)||'<span class="mu">–</span>')+'</td></tr>'}).join("")+'<tr class="tot"><td>Total (distinct entities)</td><td class="r">'+A.length+'</td><td class="r">'+tc+'</td><td class="r">'+(A.length-tc)+'</td></tr></tbody></table>';
+ var tc=A.filter(function(r){return r.st[3]}).length,tp=A.filter(function(r){return!r.st[3]&&r.ip[3]}).length;
+ $("scs").innerHTML='<table><thead><tr><th>Source system</th><th class="r">Entities</th><th class="r">Configured</th><th class="r">In progress</th><th class="r">Pending</th></tr></thead><tbody>'+so.map(function(s){var x=sa[s];return '<tr><td>'+esc(s)+'</td><td class="r">'+x.n+'</td><td class="r">'+(x.c||'<span class="mu">–</span>')+'</td><td class="r">'+(x.p||'<span class="mu">–</span>')+'</td><td class="r">'+((x.n-x.c-x.p)||'<span class="mu">–</span>')+'</td></tr>'}).join("")+'<tr class="tot"><td>Total (distinct entities)</td><td class="r">'+A.length+'</td><td class="r">'+tc+'</td><td class="r">'+tp+'</td><td class="r">'+(A.length-tc-tp)+'</td></tr></tbody></table>';
  fillSel("sf1","All source systems",so);
- fillSel("sf2","All configuration statuses",["Completed","Pending"]);
+ fillSel("sf2","All configuration statuses",["Completed","In progress","Pending"]);
  var q=$("sfq").value.toLowerCase(),f1=$("sf1").value,f2=$("sf2").value;
- var L=A.filter(function(r){var c=r.st[3]?"Completed":"Pending";return(!q||r.n.toLowerCase().indexOf(q)>=0)&&(!f1||sv(r).indexOf(f1)>=0)&&(!f2||c===f2)}).sort(function(a,b){var x=sv(a).join(", "),y=sv(b).join(", ");return x===y?(a.n>b.n?1:-1):(x>y?1:-1)});
- $("stb").innerHTML=L.map(function(r,i){return '<tr><td>'+(i+1)+'</td><td class="nm">'+esc(r.n)+'</td><td>'+esc(r.g)+'</td><td>'+esc(sv(r).join(", "))+'</td><td><span class="pill '+(r.st[3]?'p-ok':'p-warn')+'">'+(r.st[3]?'Completed':'Pending')+'</span></td><td>'+eye(r)+'</td></tr>'}).join("")||'<tr><td colspan="6">No entities match these filters.</td></tr>';
+ var L=A.filter(function(r){var c=cst(r);return(!q||r.n.toLowerCase().indexOf(q)>=0)&&(!f1||sv(r).indexOf(f1)>=0)&&(!f2||c===f2)}).sort(function(a,b){var x=sv(a).join(", "),y=sv(b).join(", ");return x===y?(a.n>b.n?1:-1):(x>y?1:-1)});
+ $("stb").innerHTML=L.map(function(r,i){return '<tr><td>'+(i+1)+'</td><td class="nm">'+esc(r.n)+'</td><td>'+esc(r.g)+'</td><td>'+esc(sv(r).join(", "))+'</td><td><span class="pill '+({"Completed":"p-ok","In progress":"p-prog","Pending":"p-idle"})[cst(r)]+'">'+cst(r)+'</span></td><td>'+eye(r)+'</td></tr>'}).join("")||'<tr><td colspan="6">No entities match these filters.</td></tr>';
 }
 var ROLE="Viewer",DV={},UMODE="upd",UCUR=null;
 function fmtr(r){return r.raw.ov===""?'<span class="mu">–</span>':Number(r.ov).toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:4})}
@@ -378,7 +386,7 @@ var FLB={n:"Entity name",g:"Group",pp:"Implementation phase",asp:"ASP provider",
 var FTYPE={n:"text",g:"list",pp:"list",asp:"list",wo:"list",tx:"num",ov:"num",src:"multi",ver:"text",dn:"text",de:"text",ie:"text",ph:"text",trn:"text",tin:"text",s0:"stage",s1:"stage",s2:"stage",s3:"stage",s4:"stage",s5:"stage",s6:"stage"};
 function optsFor(id){
  if(DV[id]&&DV[id].length)return{list:DV[id],strict:true};
- if(FTYPE[id]==="stage")return{list:["Completed"],strict:true};
+ if(FTYPE[id]==="stage")return{list:["Completed","In Progress"],strict:true};
  var set={},o=[];ALL.forEach(function(r){(id==="src"?r.srcs:[r.raw[id]]).forEach(function(v){if(v&&!set[v.toLowerCase()]){set[v.toLowerCase()]=1;o.push(v)}})});
  o.sort();return{list:o,strict:false}}
 function ctl(id,val){var o=optsFor(id),nid="u_"+id,t=FTYPE[id],list,low=String(val).toLowerCase();
