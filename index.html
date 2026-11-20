@@ -137,13 +137,13 @@ body:not(.ed) .editcol{display:none}
 <div id="modal" class="modal" style="display:none" role="dialog" aria-modal="true" aria-labelledby="mt"><div class="mcard"><div class="mhead"><h2 id="mt"></h2><div class="hb"><button type="button" class="cpy" id="mcopyall" data-all="1">Copy all details</button><button type="button" id="mclose" aria-label="Close">✕</button></div></div><div id="mbody"></div></div></div>
 <div id="auth"><div class="acard">
 <h1>Samsotech eInvoicing Dashboard</h1><p class="asub">Sign in to continue</p>
-<form id="fLogin"><label>Username<input id="lu" autocomplete="username" autocapitalize="none" required></label><label>Password<input id="lp" type="password" autocomplete="current-password" required></label><button id="bLogin" type="submit">Sign in</button></form><p class="asub" style="margin:10px 0 0;font-size:11px">Page version 4</p>
+<form id="fLogin"><label>Username<input id="lu" autocomplete="username" autocapitalize="none" required></label><label>Password<input id="lp" type="password" autocomplete="current-password" required></label><button id="bLogin" type="submit">Sign in</button></form><p class="asub" style="margin:10px 0 0;font-size:11px">Page version 5</p>
 <form id="fChange" style="display:none"><p class="ahint"><b>Set a new password.</b> This is your first sign-in, so please replace the temporary password. Use at least 8 characters, with an uppercase letter, a lowercase letter and a number.</p><label>New password<input id="np" type="password" autocomplete="new-password" required></label><label>Confirm new password<input id="np2" type="password" autocomplete="new-password" required></label><button id="bChange" type="submit">Save password and continue</button></form>
 <div class="amsg" id="amsg" role="alert"></div>
 </div></div>
 <header><div class="wrap"><div class="top">
 <div><h1>Samsotech eInvoicing Dashboard</h1><p class="sub" id="sub">&nbsp;</p></div>
-<div class="stamp">Last refreshed<b id="when">Loading…</b><div class="live" id="live"><i></i><span id="livetxt">Connecting to Google Sheet…</span></div><button id="rf" type="button">Refresh now</button> <button id="lo" type="button">Sign out</button><div class="live" style="margin-top:6px">Signed in as&nbsp;<span id="who"></span></div><div class="live" style="margin-top:2px;opacity:.7">Page version 4 · copy icons</div></div>
+<div class="stamp">Last refreshed<b id="when">Loading…</b><div class="live" id="live"><i></i><span id="livetxt">Connecting to Google Sheet…</span></div><button id="rf" type="button">Refresh now</button> <button id="lo" type="button">Sign out</button><div class="live" style="margin-top:6px">Signed in as&nbsp;<span id="who"></span></div><div class="live" style="margin-top:2px;opacity:.7">Page version 5 · copy icons</div></div>
 </div></div></header>
 <div class="wrap"><main>
 <div id="banner"></div>
@@ -392,7 +392,8 @@ function copyText(t,btn){var ic=btn.classList.contains("ic"),lab=ic?CPI:(btn.get
  var done=function(){show(ic?CPOK:"Copied ✓","ok")};
  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(done,function(){fbCopy(t,done)})}else fbCopy(t,done)}
 function yes(v){return /^(yes|y|true|1|required|✓|✔|x)$/i.test(String(v||"").trim())}
-function ouq(r){return yes(r.raw.ou)}
+function isOp(s){s=String(s||"");return /opera[\s\-]*(v(ersion)?[\s\-]*)?5(?![0-9])|opera[\s\-]*cloud/i.test(s)}   /* Opera V5 / Opera Cloud only */
+function ouq(r){return yes(r.raw.ou)&&r.srcs.some(isOp)}
 function cst(r){return r.st[3]?"Completed":r.ip[3]?"In progress":"Pending"}
 function renderSrc(){
  var nm={};ALL.forEach(function(r){r.srcs.forEach(function(s){var k=s.toLowerCase();if(!nm[k])nm[k]=s})});
@@ -403,11 +404,11 @@ function renderSrc(){
  $("sgm").innerHTML='<table><thead><tr><th>Group</th>'+cols.map(function(c){return '<th class="r">'+esc(c)+'</th>'}).join("")+'<th class="r">Entities</th></tr></thead><tbody>'+
   groups.map(function(g){var rows=B.filter(function(r){return r.g===g});return '<tr><td'+(GSEL&&g===GSEL?' style="font-weight:700"':'')+'>'+esc(g)+'</td>'+cols.map(function(c){var n=rows.filter(function(r){return sv(r).indexOf(c)>=0}).length;return '<td class="r">'+(n||'<span class="mu">–</span>')+'</td>'}).join("")+'<td class="r"><b>'+rows.length+'</b></td></tr>'}).join("")+
   '<tr class="tot"><td>Total</td>'+cols.map(function(c){return '<td class="r">'+cnt[c]+'</td>'}).join("")+'<td class="r">'+B.length+'</td></tr></tbody></table><div class="legend">An entity with more than one source system is counted under each of them. The Entities column and total row show distinct entities.'+(GSEL?' The selected group is in bold.':'')+'</div>';
- var sa={},so=[];A.forEach(function(r){sv(r).forEach(function(s){if(!sa[s]){sa[s]={n:0,c:0,p:0,u:0};so.push(s)}sa[s].n++;sa[s].c+=r.st[3];sa[s].p+=(!r.st[3]&&r.ip[3])?1:0;sa[s].u+=ouq(r)?1:0})});
+ var sa={},so=[];A.forEach(function(r){sv(r).forEach(function(s){if(!sa[s]){sa[s]={n:0,c:0,p:0,u:0};so.push(s)}sa[s].n++;sa[s].c+=r.st[3];sa[s].p+=(!r.st[3]&&r.ip[3])?1:0;sa[s].u+=(ouq(r)&&isOp(s))?1:0})});
  var tu=A.filter(ouq).length,dash='<span class="mu">–</span>';
  so.sort(function(a,b){return sa[b].n-sa[a].n||(a>b?1:-1)});
  var tc=A.filter(function(r){return r.st[3]}).length,tp=A.filter(function(r){return!r.st[3]&&r.ip[3]}).length;
- $("scs").innerHTML='<table><thead><tr><th>Source system</th><th class="r">Entities</th><th class="r">Configured</th><th class="r">In progress</th><th class="r">Pending</th><th class="r">Opera upgrade required</th></tr></thead><tbody>'+so.map(function(s){var x=sa[s];return '<tr><td>'+esc(s)+'</td><td class="r">'+x.n+'</td><td class="r">'+(x.c||dash)+'</td><td class="r">'+(x.p||dash)+'</td><td class="r">'+((x.n-x.c-x.p)||dash)+'</td><td class="r">'+(x.u?'<b style="color:#d97706">'+x.u+'</b>':dash)+'</td></tr>'}).join("")+'<tr class="tot"><td>Total (distinct entities)</td><td class="r">'+A.length+'</td><td class="r">'+tc+'</td><td class="r">'+tp+'</td><td class="r">'+(A.length-tc-tp)+'</td><td class="r">'+tu+'</td></tr></tbody></table><div class="legend">Opera upgrade required counts entities ticked in the Edit / Add form.</div>';
+ $("scs").innerHTML='<table><thead><tr><th>Source system</th><th class="r">Entities</th><th class="r">Configured</th><th class="r">In progress</th><th class="r">Pending</th><th class="r">Opera upgrade required</th></tr></thead><tbody>'+so.map(function(s){var x=sa[s];return '<tr><td>'+esc(s)+'</td><td class="r">'+x.n+'</td><td class="r">'+(x.c||dash)+'</td><td class="r">'+(x.p||dash)+'</td><td class="r">'+((x.n-x.c-x.p)||dash)+'</td><td class="r">'+(!isOp(s)?'<span class="mu">n/a</span>':x.u?'<b style="color:#d97706">'+x.u+'</b>':dash)+'</td></tr>'}).join("")+'<tr class="tot"><td>Total (distinct entities)</td><td class="r">'+A.length+'</td><td class="r">'+tc+'</td><td class="r">'+tp+'</td><td class="r">'+(A.length-tc-tp)+'</td><td class="r">'+tu+'</td></tr></tbody></table><div class="legend">Opera upgrade required applies to Opera V5 and Opera Cloud only. It counts entities on those systems that are ticked in the Edit / Add form.</div>';
  fillSel("sf1","All source systems",so);
  fillSel("sf2","All configuration statuses",["Completed","In progress","Pending","Opera upgrade required"]);
  var q=$("sfq").value.toLowerCase(),f1=$("sf1").value,f2=$("sf2").value;
@@ -429,7 +430,7 @@ function optsFor(id){
  var set={},o=[];ALL.forEach(function(r){(id==="src"?r.srcs:[r.raw[id]]).forEach(function(v){if(v&&!set[v.toLowerCase()]){set[v.toLowerCase()]=1;o.push(v)}})});
  o.sort();return{list:o,strict:false}}
 function ctl(id,val){var nid="u_"+id,t=FTYPE[id];
- if(t==="flag")return '<label class="cb flag"><input type="checkbox" id="'+nid+'"'+(yes(val)?' checked':'')+'> Opera upgrade required</label>';
+ if(t==="flag")return '<label class="cb flag"><input type="checkbox" id="'+nid+'"'+(yes(val)?' checked':'')+'> Opera upgrade required</label><div class="mu" style="font-size:11px;margin-top:4px">Applies to Opera V5 / Opera Cloud only</div>';
  var o=optsFor(id),list,low=String(val).toLowerCase();
  if(t==="multi"){var cur=splitSrc(val),cl=cur.map(function(x){return x.toLowerCase()});list=o.list.slice();
   cur.forEach(function(c){if(!list.some(function(l){return l.toLowerCase()===c.toLowerCase()}))list.push(c)});
