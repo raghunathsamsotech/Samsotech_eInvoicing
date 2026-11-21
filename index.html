@@ -131,23 +131,109 @@ body:not(.ed) .editcol{display:none}
 .sthead{display:flex;justify-content:space-between;gap:10px;align-items:baseline;margin-bottom:14px}.sthead h2{margin:0}.sthead span{font-size:12px;color:var(--mute)}.stgrid{display:grid;grid-template-columns:1fr 1fr;gap:18px 40px}.si{display:flex;gap:12px;align-items:flex-start;font-size:13.5px;line-height:1.55}.tg{flex:0 0 92px;text-align:center;font-size:11px;font-weight:700;letter-spacing:.05em;padding:3px 0;border-radius:5px;text-transform:uppercase;margin-top:1px}.t-ok{background:rgba(35,122,59,.16);color:var(--green)}.t-next{background:var(--brand-soft);color:var(--brand)}.t-pend{background:var(--warn-soft);color:var(--warn)}.t-att{background:rgba(179,52,31,.15);color:var(--red)}.mu{color:var(--mute)}
 @media (max-width:860px){.summary,.grid2,.stgrid{grid-template-columns:1fr}.tiles{grid-template-columns:repeat(2,minmax(0,1fr))}h1{font-size:21px}}
 @media print{header{background:#12233a!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}.tools,.stamp button{display:none}}
+/* ===== Project plan ===== */
+.pe{}body:not(.pedit) .pe{display:none!important}
+.pphead{margin-bottom:14px}
+.pptop{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-end;justify-content:space-between}
+.ppg label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--mute);margin-bottom:4px}
+.ppg select{font:inherit;font-size:16px;font-weight:700;padding:8px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);min-width:260px}
+.ppbtns{display:flex;flex-wrap:wrap;gap:8px}
+.pkpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-top:16px}
+.pk{border:1px solid var(--line);border-radius:10px;padding:12px 14px;background:var(--bg)}
+.pk small{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--mute)}
+.pk b{display:block;font-size:22px;line-height:1.2;margin-top:4px}.pk span{font-size:12px;color:var(--mute)}
+.pmeta{display:flex;flex-wrap:wrap;gap:6px 22px;margin-top:14px;font-size:13px;color:var(--mute)}.pmeta b{color:var(--ink);font-weight:600}
+.ptbl{width:100%;border-collapse:collapse}
+.ptbl th{font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--mute);text-align:left;padding:8px 10px;border-bottom:2px solid var(--line);white-space:nowrap}
+.ptbl td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:middle}
+.ptbl .r{text-align:right}
+.pstep td{background:var(--brand-soft);font-weight:700;border-bottom:1px solid var(--line)}
+.pstep .sn{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:var(--brand);color:var(--surface);font-size:12px;margin-right:8px}
+.ptask{cursor:pointer}.ptask:hover td{background:var(--bg)}
+.ptask .tn{color:var(--mute);font-variant-numeric:tabular-nums}
+.ptask .rm{display:block;font-size:12px;color:var(--mute);margin-top:2px}
+.pbar{display:flex;align-items:center;gap:8px;min-width:130px}.pbar .tr{position:relative;flex:1;height:8px;border-radius:5px;background:var(--track);overflow:visible}
+.pbar .tr i{display:block;height:100%;border-radius:5px;background:var(--brand)}.pbar .tr i.d{background:var(--green)}
+.pbar .tr b{position:absolute;top:-3px;width:2px;height:14px;background:var(--ink);opacity:.55}
+.pbar span{font-size:12px;font-weight:600;min-width:36px;text-align:right}
+.pact{display:flex;gap:6px;justify-content:flex-end}
+.pib{display:inline-flex;align-items:center;gap:4px;font:inherit;font-size:12px;padding:3px 8px;border:1px solid var(--line);border-radius:7px;background:var(--surface);color:var(--brand);cursor:pointer;white-space:nowrap}
+.pib:hover{background:var(--brand-soft)}
+.pempty{text-align:center;padding:40px 20px;color:var(--mute)}.pempty b{display:block;font-size:16px;color:var(--ink);margin-bottom:6px}
+.pfg{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px 16px}
+.pff label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--mute);margin-bottom:4px}
+.pff input,.pff select,.pff textarea{width:100%;font:inherit;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink)}
+.pff textarea{min-height:70px;resize:vertical}.pff.w{grid-column:1/-1}
+.pff input:disabled,.pff select:disabled,.pff textarea:disabled{opacity:.8;background:var(--bg)}
+.prng{display:flex;gap:10px;align-items:center}.prng input[type=range]{flex:1;padding:0}.prng input[type=number]{width:80px}
+.pmc{max-width:860px}.pfoot{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:16px}
+.pfoot .sp{flex:1}.pmsg{font-size:13px}.pmsg.err{color:var(--red)}.pmsg.ok{color:var(--green)}
+.btnd{font:inherit;font-weight:600;padding:9px 16px;border:1px solid var(--red);border-radius:8px;background:transparent;color:var(--red);cursor:pointer}
+.pcm{margin-top:20px;border-top:1px solid var(--line);padding-top:14px}.pcm h3{margin:0 0 10px;font-size:14px;color:var(--brand)}
+.pc{border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:8px;background:var(--bg)}
+.pc .h{font-size:12px;color:var(--mute);margin-bottom:3px}.pc .h b{color:var(--ink)}.pc p{margin:0;white-space:pre-wrap;overflow-wrap:anywhere}
+.pcadd{display:flex;gap:8px;align-items:flex-start;margin-top:8px}.pcadd textarea{flex:1;font:inherit;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);min-height:44px;resize:vertical}
+.pchk{display:flex;align-items:center;gap:8px;margin:8px 0;font-weight:600;cursor:pointer}.pchk input{width:16px;height:16px;margin:0}
+.pnote{font-size:12px;color:var(--mute);margin-top:6px}
+/* timeline */
+.gtw{overflow-x:auto;border:1px solid var(--line);border-radius:10px}
+.gt{min-width:900px;font-size:12px}
+.gtr{display:grid;grid-template-columns:260px 1fr;border-bottom:1px solid var(--line)}.gtr:last-child{border-bottom:0}
+.gl{padding:6px 10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border-right:1px solid var(--line)}
+.gc{position:relative;min-height:28px}
+.gth{background:var(--bg);font-weight:700;color:var(--mute);font-size:11px}.gth .gc{min-height:44px}
+.gm{position:absolute;top:0;height:22px;line-height:22px;padding-left:6px;border-left:1px solid var(--line);white-space:nowrap;overflow:hidden;font-size:11px;text-transform:uppercase;letter-spacing:.03em}
+.gw{position:absolute;top:22px;height:22px;line-height:22px;padding-left:4px;border-left:1px solid var(--line);font-weight:500;color:var(--mute);white-space:nowrap;overflow:hidden;font-size:10px}
+.gs .gl{font-weight:700;background:var(--brand-soft)}.gs .gc{background:var(--brand-soft)}
+.gb{position:absolute;top:7px;height:14px;border-radius:4px;background:var(--track);overflow:hidden;min-width:3px}
+.gb i{display:block;height:100%;background:var(--brand)}
+.gs .gb{top:9px;height:10px;background:rgba(11,110,121,.25)}.gs .gb i{background:var(--brand)}
+.gb.c i{background:var(--green)}.gb.l{outline:2px solid var(--red);outline-offset:-2px}.gb.h{background:var(--warn-soft)}
+.gtd{position:absolute;top:0;bottom:0;width:2px;background:var(--red);opacity:.7;z-index:1}
+.glg{display:flex;flex-wrap:wrap;gap:16px;font-size:12px;color:var(--mute);margin-top:10px}.glg i{display:inline-block;width:14px;height:10px;border-radius:3px;vertical-align:middle;margin-right:5px}
+/* report (print only) */
+#rpt{display:none}
+#rpt{--bg:#f6f8fa;--surface:#fff;--ink:#12233a;--mute:#5b6b7e;--line:#d5dde6;--brand:#0b6e79;--brand-soft:#e3f1f2;--track:#e6ebf0;--orange:#c25e00;--orange-soft:#fde8d3;--green:#237a3b;--red:#b3341f;--warn:#8a5200;--warn-soft:#fbeccf;color-scheme:light;color:#12233a;background:#fff;font:11px/1.45 "Public Sans",Arial,sans-serif}
+#rpt h2{font-size:15px;color:#0b6e79;margin:22px 0 8px;padding-bottom:4px;border-bottom:2px solid #0b6e79}
+#rpt table{width:100%;border-collapse:collapse}#rpt th{background:#12233a;color:#fff;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.03em;padding:6px 8px}
+#rpt td{padding:5px 8px;border-bottom:1px solid #d5dde6;vertical-align:top}
+#rpt .rc{display:flex;justify-content:space-between;align-items:flex-end;background:#12233a;color:#fff;padding:22px 26px;border-radius:6px}
+#rpt .rc h1{font-size:26px;margin:4px 0 2px}#rpt .rc .b{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#9fd8de}#rpt .rc .c{font-size:18px;font-weight:700}
+#rpt .rc .m{text-align:right;font-size:11px;color:#dfe8f2}
+#rpt .kv td:first-child{width:200px;color:#5b6b7e;font-weight:600}
+#rpt .rk{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}#rpt .rk div{border:1px solid #d5dde6;border-radius:6px;padding:10px}
+#rpt .rk small{display:block;font-size:9px;text-transform:uppercase;letter-spacing:.05em;color:#5b6b7e;font-weight:700}#rpt .rk b{font-size:18px}
+#rpt .pstep td{background:#e3f1f2;font-weight:700}
+#rpt .gt{min-width:0}#rpt .gtw{overflow:visible}
+#rpt .rf{margin-top:24px;padding-top:8px;border-top:1px solid #d5dde6;color:#5b6b7e;font-size:10px}
+#rpt .pill{border:1px solid currentColor}
+@media print{
+ @page{size:A4 landscape;margin:11mm}
+ body.prt{background:#fff!important}
+ body.prt>*:not(#rpt){display:none!important}
+ body.prt #rpt{display:block!important}
+ #rpt,#rpt *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ #rpt .pb{break-before:page}#rpt tr,#rpt .gtr,#rpt .rk{break-inside:avoid}#rpt thead{display:table-header-group}
+}
 </style>
 </head>
 <body>
+<div id="pm" class="modal" style="display:none" role="dialog" aria-modal="true" aria-labelledby="pmt"><div class="mcard pmc"><div class="mhead"><h2 id="pmt"></h2><button type="button" class="pmx" id="pmx" aria-label="Close" style="font:inherit;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:8px;width:32px;height:32px;cursor:pointer">✕</button></div><div id="pmb"></div></div></div>
+<div id="rpt"></div>
 <div id="modal" class="modal" style="display:none" role="dialog" aria-modal="true" aria-labelledby="mt"><div class="mcard"><div class="mhead"><h2 id="mt"></h2><div class="hb"><button type="button" class="cpy" id="mcopyall" data-all="1">Copy all details</button><button type="button" id="mclose" aria-label="Close">✕</button></div></div><div id="mbody"></div></div></div>
 <div id="auth"><div class="acard">
 <h1>Samsotech eInvoicing Dashboard</h1><p class="asub">Sign in to continue</p>
-<form id="fLogin"><label>Username<input id="lu" autocomplete="username" autocapitalize="none" required></label><label>Password<input id="lp" type="password" autocomplete="current-password" required></label><button id="bLogin" type="submit">Sign in</button></form><p class="asub" style="margin:10px 0 0;font-size:11px">Page version 5</p>
+<form id="fLogin"><label>Username<input id="lu" autocomplete="username" autocapitalize="none" required></label><label>Password<input id="lp" type="password" autocomplete="current-password" required></label><button id="bLogin" type="submit">Sign in</button></form><p class="asub" style="margin:10px 0 0;font-size:11px">Page version 6</p>
 <form id="fChange" style="display:none"><p class="ahint"><b>Set a new password.</b> This is your first sign-in, so please replace the temporary password. Use at least 8 characters, with an uppercase letter, a lowercase letter and a number.</p><label>New password<input id="np" type="password" autocomplete="new-password" required></label><label>Confirm new password<input id="np2" type="password" autocomplete="new-password" required></label><button id="bChange" type="submit">Save password and continue</button></form>
 <div class="amsg" id="amsg" role="alert"></div>
 </div></div>
 <header><div class="wrap"><div class="top">
 <div><h1>Samsotech eInvoicing Dashboard</h1><p class="sub" id="sub">&nbsp;</p></div>
-<div class="stamp">Last refreshed<b id="when">Loading…</b><div class="live" id="live"><i></i><span id="livetxt">Connecting to Google Sheet…</span></div><button id="rf" type="button">Refresh now</button> <button id="lo" type="button">Sign out</button><div class="live" style="margin-top:6px">Signed in as&nbsp;<span id="who"></span></div><div class="live" style="margin-top:2px;opacity:.7">Page version 5 · copy icons</div></div>
+<div class="stamp">Last refreshed<b id="when">Loading…</b><div class="live" id="live"><i></i><span id="livetxt">Connecting to Google Sheet…</span></div><button id="rf" type="button">Refresh now</button> <button id="lo" type="button">Sign out</button><div class="live" style="margin-top:6px">Signed in as&nbsp;<span id="who"></span></div><div class="live" style="margin-top:2px;opacity:.7">Page version 6 · copy icons</div></div>
 </div></div></header>
 <div class="wrap"><main>
 <div id="banner"></div>
-<div class="toprow"><div class="tabs" id="tabs"><button type="button" class="tab on" data-v="1">Implementation Status</button><button type="button" class="tab" data-v="2">Order Summary</button><button type="button" class="tab" data-v="3">Source System Analysis</button><button type="button" class="tab" id="tabUpd" data-v="4" style="display:none">Update Data</button></div>
+<div class="toprow"><div class="tabs" id="tabs"><button type="button" class="tab on" data-v="1">Implementation Status</button><button type="button" class="tab" data-v="2">Order Summary</button><button type="button" class="tab" data-v="3">Source System Analysis</button><button type="button" class="tab" id="tabUpd" data-v="4" style="display:none">Update Data</button><button type="button" class="tab" id="tabPlan" data-v="5" style="display:none">Project Plan</button></div>
 <div class="gbar" id="gbar"></div></div>
 <div id="v1">
 <section class="card summary">
@@ -186,6 +272,29 @@ body:not(.ed) .editcol{display:none}
 <section class="card" style="margin-bottom:14px"><h2>Entity vs source system</h2>
 <div class="tools"><input id="sfq" type="search" placeholder="Search entity" aria-label="Search entity"><select id="sf1" aria-label="Source system"></select><select id="sf2" aria-label="Configuration status"></select></div>
 <div class="tw"><table><thead><tr><th>#</th><th>Entity</th><th>Group</th><th>Source systems</th><th>Source system configuration</th><th></th></tr></thead><tbody id="stb"></tbody></table></div>
+</section>
+</div>
+<div id="v5" style="display:none">
+<section class="card pphead">
+ <div class="pptop">
+  <div class="ppg"><label for="pg">Client group</label><select id="pg"></select></div>
+  <div class="ppbtns">
+   <button type="button" class="btns" id="pInfoB">Project details</button>
+   <button type="button" class="btns pe" id="pTplB">Create plan from template</button>
+   <button type="button" class="btns pe" id="pStepB">+ Add step</button>
+   <button type="button" class="btnp pe" id="pAddB">+ Add task</button>
+   <button type="button" class="btns" id="pExpB">Export</button>
+  </div>
+ </div>
+ <div class="pmeta" id="pMeta"></div>
+ <div class="pkpi" id="pKpi"></div>
+</section>
+<section class="card">
+ <div class="sthead" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px"><h2 style="margin:0">Project plan</h2>
+  <div class="seg" style="margin:0"><button type="button" class="segb on" id="pvT">Plan</button><button type="button" class="segb" id="pvG">Timeline</button></div></div>
+ <div class="tools" style="margin-top:12px"><input id="pq" type="search" placeholder="Search task or owner" aria-label="Search task or owner"><select id="pfs" aria-label="Filter by status"></select></div>
+ <div id="pBody" style="margin-top:6px"></div>
+ <div id="pMsg" class="pmsg" role="status"></div>
 </section>
 </div>
 <div id="v4" style="display:none">
@@ -532,7 +641,7 @@ function load(){
  return api({a:"data",t:TOKEN}).then(function(r){
   if(r.err==="auth"){drop();showAuth("login","Your session has expired. Please sign in again.");return}
   if(r.err)throw new Error(r.msg||r.err);
-  ROLE=r.role||"Viewer";DV=r.dv||{};SRV_EX=Array.isArray(r.ex);if(SRV_EX)EX=r.ex;ALL=fromRows(r.rows);applyEx();hideAuth();renderAll();applyRole();
+  ROLE=r.role||"Viewer";DV=r.dv||{};SRV_EX=Array.isArray(r.ex);if(SRV_EX)EX=r.ex;ALL=fromRows(r.rows);applyEx();hideAuth();renderAll();applyRole();if(typeof planOnData==="function")planOnData(r.plan||"");
   var d=new Date();$("when").textContent=d.toLocaleString([], {day:"2-digit",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit",second:"2-digit"});
   setLive(true,"Live · auto-refresh every "+CFG.REFRESH_SEC+"s")})
  .catch(function(e){if(TOKEN)hideAuth();$("when").textContent="Not connected";setLive(false,e.message||"error");if(ALL.length){hideAuth();renderAll()}else{$("hl").textContent="Unable to load the dashboard data.";$("hp").textContent="Press Refresh now to try again."}})}
@@ -554,6 +663,236 @@ document.getElementById("gbar").addEventListener("change",function(e){var id=e.t
 document.addEventListener("visibilitychange",function(){if(!document.hidden)load()});
 if(TOKEN)showAuth("busy","Restoring your session…");
 load();setInterval(function(){if(TOKEN)load()},CFG.REFRESH_SEC*1000);
+</script>
+<script>
+/* ================= PROJECT PLAN ================= */
+var PL={acc:"",groups:"*",tasks:[],cm:[],info:{},g:"",view:"T",loading:false,ready:false};
+var PSTAT=["Not started","In progress","Completed","On hold","At risk"];
+var PSC={"Not started":"p-idle","In progress":"p-prog","Completed":"p-ok","On hold":"p-warn","At risk":"p-bad","Delayed":"p-bad","Overdue":"p-bad"};
+/* standard eInvoicing implementation template: [step, [[task, working days, flag]]] */
+var PTPL=[
+ ["Project kick-off",[["Kick-off meeting with client stakeholders",1],["Confirm project team, roles and responsibilities (RACI)",2],["Share data and requirements checklist",2],["Agree project plan and timeline",1]]],
+ ["EmaraTax onboarding",[["Validate TRN / TIN details for all entities",3],["Register entities on the EmaraTax portal",5],["Confirm registration and approvals",2]]],
+ ["Gap assessment",[["Review current invoicing processes",3],["Map invoice data fields to PINT AE",4],["Identify gaps and agree remediation actions",3],["Gap assessment sign-off",1]]],
+ ["Source system configuration",[["Upgrade Opera to a supported version",10,"opera"],["Configure e-invoice output in the source system",8],["Configure invoice templates and field mapping",5],["Internal unit testing",3]]],
+ ["ASP onboarding",[["ASP account set-up and agreement",3],["Connect source system to the ASP",5],["Register Peppol participant IDs",3]]],
+ ["Testing (UAT)",[["Prepare UAT test scenarios",2],["Execute user acceptance testing",5],["Fix defects and retest",3],["UAT sign-off",1]]],
+ ["Go-live (PROD)",[["Production cut-over",2],["Go-live",1],["Hypercare support",10],["Project closure and handover",1]]]
+];
+function pn(s){return String(s==null?"":s).replace(/[\u200b\s]/g,"").toLowerCase()}
+function pd(s){var m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(s||"");return m?new Date(+m[1],+m[2]-1,+m[3]):null}
+function ps(d){return d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)+"-"+("0"+d.getDate()).slice(-2)}
+function pf(s){var d=pd(s);return d?d.toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"}):"–"}
+function isWk(d){var x=d.getDay();return x!==0&&x!==6}            /* UAE weekend: Saturday and Sunday */
+function wdays(a,b){var d=pd(a),e=pd(b);if(!d||!e||e<d)return 0;var n=0;for(var x=new Date(d);x<=e;x.setDate(x.getDate()+1))if(isWk(x))n++;return n}
+function firstW(d){var x=new Date(d);while(!isWk(x))x.setDate(x.getDate()+1);return x}
+function addW(d,n){var x=firstW(d),c=1;while(c<n){x.setDate(x.getDate()+1);if(isWk(x))c++}return x}
+function nextW(d){var x=new Date(d);x.setDate(x.getDate()+1);return firstW(x)}
+function t0(){var t=new Date();t.setHours(0,0,0,0);return t}
+function tw(t){return Math.max(1,wdays(t.start,t.end))}
+function tplan(t){var s=pd(t.start),e=pd(t.end),n=t0();if(!s||!e||n<s)return 0;if(n>e)return 100;return Math.min(100,wdays(t.start,ps(n))/(wdays(t.start,t.end)||1)*100)}
+function tlate(t){var e=pd(t.end);return !!e&&e<t0()&&t.pr<100}
+function agg(L){var w=0,a=0,p=0,s="",e="";L.forEach(function(t){var x=tw(t);w+=x;a+=x*t.pr;p+=x*tplan(t);if(t.start&&(!s||t.start<s))s=t.start;if(t.end&&(!e||t.end>e))e=t.end});
+ return{act:w?a/w:0,plan:w?p/w:0,start:s,end:e,n:L.length,done:L.filter(function(t){return t.pr>=100}).length,late:L.filter(tlate).length}}
+function health(A){if(!A.n)return["No tasks","p-idle"];if(A.act>=99.95)return["Completed","p-ok"];var d=A.plan-A.act;if(d<=5)return["On track","p-ok"];if(d<=15)return["Slight delay","p-warn"];return["Behind schedule","p-bad"]}
+function stepStat(L,A){if(A.act>=99.95)return"Completed";if(L.some(tlate))return"Delayed";if(L.some(function(t){return t.st==="At risk"}))return"At risk";if(A.act>0)return"In progress";if(L.length&&L.every(function(t){return t.st==="On hold"}))return"On hold";return"Not started"}
+function pct(x){return(Math.round(x*10)/10).toFixed(x>=99.95||x===0?0:1)+"%"}
+function pbar(a,p){a=Math.max(0,Math.min(100,a));return '<div class="pbar"><div class="tr"><i class="'+(a>=100?"d":"")+'" style="width:'+a+'%"></i>'+(p==null?"":'<b style="left:calc('+Math.min(100,p)+'% - 1px)" title="Planned '+pct(p)+'"></b>')+'</div><span>'+pct(a)+'</span></div>'}
+function pill(s){return '<span class="pill '+(PSC[s]||"p-idle")+'">'+esc(s)+'</span>'}
+function canG(g){return PL.groups==="*"||PL.groups.indexOf(pn(g))>=0}
+function pgroups(){var m={},o=[];function add(g){if(!g||g==="Ungrouped"&&!ALL.some(function(r){return r.g===g}))return;var k=pn(g);if(!m[k]&&canG(g)){m[k]=1;o.push(g)}}
+ ALL.forEach(function(r){add(r.g)});PL.tasks.forEach(function(t){add(t.g)});return o.sort(function(a,b){return a.toLowerCase()>b.toLowerCase()?1:-1})}
+function gtasks(g){var k=pn(g);return PL.tasks.filter(function(t){return pn(t.g)===k}).sort(function(a,b){return a.sn-b.sn||(a.step>b.step?1:a.step<b.step?-1:0)||a.tn-b.tn||(a.start>b.start?1:-1)})}
+function gsteps(L){var o=[],m={};L.forEach(function(t){var k=t.sn+"|"+t.step;if(!m[k]){m[k]={sn:t.sn,step:t.step,L:[]};o.push(m[k])}m[k].L.push(t)});return o}
+function gcm(id){return PL.cm.filter(function(c){return c.tid===id}).sort(function(a,b){return a.at<b.at?1:-1})}
+function ginfo(g){return PL.info[pn(g)]||{}}
+function gents(g){return ALL.filter(function(r){return pn(r.g)===pn(g)})}
+function pedit(){return PL.acc==="Edit"}
+
+window.planOnData=function(mode){PL.acc=mode||"";var tb=$("tabPlan");if(tb)tb.style.display=PL.acc?"":"none";
+ document.body.classList.toggle("pedit",pedit());
+ if(!PL.acc&&TAB==="5"){$("tabs").querySelector('[data-v="1"]').click();return}
+ if(TAB==="5"&&$("pm").style.display==="none")planLoad()};
+function planLoad(){if(PL.loading||!TOKEN)return Promise.resolve();PL.loading=true;if(!PL.ready)$("pBody").innerHTML='<div class="pempty">Loading project plans…</div>';
+ return api({a:"plan",t:TOKEN}).then(function(r){PL.loading=false;
+  if(r.err==="auth"){drop();showAuth("login","Your session has expired. Please sign in again.");return}
+  if(r.err==="forbidden"){PL.acc="";planOnData("");return}
+  if(r.err)throw new Error(r.msg||r.err);
+  PL.acc=r.acc;PL.groups=r.groups;PL.tasks=r.tasks||[];PL.cm=r.comments||[];PL.info=r.info||{};PL.ready=true;document.body.classList.toggle("pedit",pedit());planRender()})
+ .catch(function(e){PL.loading=false;pmsgMain("Could not load the project plans. "+(e.message||""),"err")})}
+function pmsgMain(t,c){var m=$("pMsg");m.textContent=t||"";m.className="pmsg"+(c?" "+c:"")}
+
+function planRender(){if(!PL.ready)return;
+ var gs=pgroups(),sel=$("pg");if(!PL.g||gs.map(pn).indexOf(pn(PL.g))<0)PL.g=(GSEL&&gs.map(pn).indexOf(pn(GSEL))>=0)?GSEL:(gs[0]||"");
+ sel.innerHTML=gs.map(function(g){var n=gtasks(g).length;return '<option value="'+esc(g)+'"'+(pn(g)===pn(PL.g)?" selected":"")+'>'+esc(g)+(n?"":" (no plan yet)")+'</option>'}).join("")||'<option value="">No groups available</option>';
+ var fs=$("pfs"),cur=fs.value;fs.innerHTML='<option value="">All statuses</option>'+PSTAT.concat(["Overdue"]).map(function(s){return '<option'+(s===cur?" selected":"")+'>'+s+'</option>'}).join("");
+ var g=PL.g,L=gtasks(g),A=agg(L),H=health(A),I=ginfo(g),E=gents(g);
+ $("pTplB").style.display=pedit()&&g&&!L.length?"":"none";$("pAddB").disabled=!g;$("pStepB").disabled=!g;
+ var left=A.end?Math.max(0,wdays(ps(nextW(t0())),A.end)):0;
+ $("pMeta").innerHTML=g?['Project manager: <b>'+esc(I.pm||"–")+'</b>','Client contact: <b>'+esc(I.cc||"–")+'</b>','Kick-off: <b>'+pf(I.ko||A.start)+'</b>','Target go-live: <b>'+pf(I.gl||A.end)+'</b>','Entities in scope: <b>'+E.length+'</b>'].map(function(x){return '<span>'+x+'</span>'}).join(""):"";
+ $("pKpi").innerHTML=!L.length?"":
+  '<div class="pk"><small>Overall progress</small><b>'+pct(A.act)+'</b>'+pbar(A.act,A.plan)+'<span>Planned by today: '+pct(A.plan)+'</span></div>'+
+  '<div class="pk"><small>Schedule status</small><b style="font-size:16px;margin-top:8px">'+pill(H[0])+'</b><span>'+(A.plan-A.act>0.05?pct(A.plan-A.act)+" behind plan":"At or ahead of plan")+'</span></div>'+
+  '<div class="pk"><small>Tasks completed</small><b>'+A.done+' / '+A.n+'</b><span>'+(A.n-A.done)+' open</span></div>'+
+  '<div class="pk"><small>Overdue tasks</small><b style="color:'+(A.late?"var(--red)":"inherit")+'">'+A.late+'</b><span>Past end date, not complete</span></div>'+
+  '<div class="pk"><small>Timeline</small><b style="font-size:15px;margin-top:6px">'+pf(A.start)+' – '+pf(A.end)+'</b><span>'+(A.act>=99.95?"Completed":left+" working days remaining")+'</span></div>';
+ $("pvT").className="segb"+(PL.view==="T"?" on":"");$("pvG").className="segb"+(PL.view==="G"?" on":"");
+ if(!g){$("pBody").innerHTML='<div class="pempty"><b>No groups assigned</b>Ask the administrator to add groups to your project plan access.</div>';return}
+ if(!L.length){$("pBody").innerHTML='<div class="pempty"><b>No project plan for '+esc(g)+' yet</b>'+(pedit()?'Use <b>Create plan from template</b> to start with the standard eInvoicing implementation steps, or add steps and tasks yourself.':'An editor has not created this plan yet.')+'</div>';return}
+ var q=$("pq").value.trim().toLowerCase(),f=fs.value;
+ var F=L.filter(function(t){return(!q||(t.name+" "+t.owner+" "+t.step).toLowerCase().indexOf(q)>=0)&&(!f||(f==="Overdue"?tlate(t):t.st===f))});
+ $("pBody").innerHTML=PL.view==="G"?ganttHtml(F,false):tableHtml(F,{act:true});
+}
+function tableHtml(F,o){var S=gsteps(F);if(!S.length)return '<div class="pempty">No tasks match these filters.</div>';
+ var h='<div class="tw"><table class="ptbl"><thead><tr><th>#</th><th>Task</th><th>Owner</th><th>Start</th><th>End</th><th class="r">Days</th><th>Progress</th><th>Status</th>'+(o.cm?'<th>Latest comment</th>':'')+(o.act?'<th></th>':'')+'</tr></thead><tbody>';
+ S.forEach(function(s){var A=agg(s.L),st=stepStat(s.L,A);
+  h+='<tr class="pstep"><td><span class="sn">'+s.sn+'</span></td><td colspan="2">'+esc(s.step)+'</td><td>'+pf(A.start)+'</td><td>'+pf(A.end)+'</td><td class="r">'+(A.start?wdays(A.start,A.end):"")+'</td><td>'+pbar(A.act,o.act?A.plan:null)+'</td><td>'+pill(st)+'</td>'+(o.cm?'<td></td>':'')+
+   (o.act?'<td><div class="pact pe"><button type="button" class="pib" data-padd="'+s.sn+'|'+esc(s.step)+'" title="Add a task to this step">+ Task</button><button type="button" class="pib" data-pren="'+s.sn+'|'+esc(s.step)+'" title="Rename step">Rename</button></div></td>':'')+'</tr>';
+  s.L.forEach(function(t){var c=gcm(t.id),lt=tlate(t);
+   h+='<tr class="ptask" data-pid="'+esc(t.id)+'"><td class="tn">'+s.sn+'.'+t.tn+'</td><td>'+esc(t.name)+(lt?' <span class="pill p-bad">Overdue</span>':'')+(t.rem?'<span class="rm">'+esc(t.rem)+'</span>':'')+'</td><td>'+esc(t.owner||"–")+'</td><td>'+pf(t.start)+'</td><td>'+pf(t.end)+'</td><td class="r">'+wdays(t.start,t.end)+'</td><td>'+pbar(t.pr,o.act?tplan(t):null)+'</td><td>'+pill(t.st||"Not started")+'</td>'+
+    (o.cm?'<td>'+(c.length?'<b>'+esc(c[0].by)+'</b> · '+esc(c[0].at)+'<br>'+esc(c[0].text):'<span style="color:#5b6b7e">–</span>')+'</td>':'')+
+    (o.act?'<td><div class="pact"><button type="button" class="pib" data-pid="'+esc(t.id)+'" title="Comments">💬 '+c.length+'</button><button type="button" class="pib" data-pid="'+esc(t.id)+'">'+(pedit()?"Edit":"View")+'</button></div></td>':'')+'</tr>'})});
+ return h+'</tbody></table></div>'+(o.act?'<div class="legend">Days are working days (Monday to Friday). The dark tick on each bar is where progress should be today according to the plan.</div>':'')}
+function ganttHtml(F,pr){var S=gsteps(F);if(!S.length)return '<div class="pempty">No tasks match these filters.</div>';
+ var A=agg(F),s=pd(A.start),e=pd(A.end);if(!s||!e)return '<div class="pempty">Tasks need start and end dates.</div>';
+ var a=new Date(s);a.setDate(a.getDate()-((a.getDay()+6)%7));var b=new Date(e);b.setDate(b.getDate()+(7-((b.getDay()+6)%7))-1);
+ var D=Math.round((b-a)/864e5)+1;function x(d){return(Math.round((d-a)/864e5))/D*100}
+ var wk=7/D*100,grid='background-image:linear-gradient(to right,var(--line) 1px,transparent 1px);background-size:'+wk+'% 100%';
+ var hm="",hw="",c=new Date(a.getFullYear(),a.getMonth(),1);
+ while(c<=b){var ms=c<a?a:c,ne=new Date(c.getFullYear(),c.getMonth()+1,1),me=ne>b?new Date(b.getTime()+864e5):ne;hm+='<div class="gm" style="left:'+x(ms)+'%;width:'+(x(me)-x(ms))+'%">'+ms.toLocaleDateString("en-GB",{month:"short",year:"numeric"})+'</div>';c=ne}
+ for(var w=new Date(a);w<=b;w.setDate(w.getDate()+7))hw+='<div class="gw" style="left:'+x(w)+'%;width:'+wk+'%">'+w.getDate()+'</div>';
+ var td=t0(),tl=(td>=a&&td<=b)?'<div class="gtd" style="left:'+x(td)+'%" title="Today"></div>':'';
+ function bar(st,en,p,cls,tt){var d1=pd(st),d2=pd(en);if(!d1||!d2)return"";var l=x(d1),r=x(new Date(d2.getTime()+864e5));return '<div class="gb '+cls+'" style="left:'+l+'%;width:'+Math.max(.4,r-l)+'%" title="'+esc(tt)+'"><i style="width:'+p+'%"></i></div>'}
+ var h='<div class="gtw"><div class="gt"><div class="gtr gth"><div class="gl" style="padding-top:14px">Step / task</div><div class="gc">'+hm+hw+'</div></div>';
+ S.forEach(function(sg){var SA=agg(sg.L);h+='<div class="gtr gs"><div class="gl">'+sg.sn+'. '+esc(sg.step)+'</div><div class="gc" style="'+grid+'">'+tl+bar(SA.start,SA.end,SA.act,"",sg.step+": "+pf(SA.start)+" – "+pf(SA.end)+" · "+pct(SA.act))+'</div></div>';
+  sg.L.forEach(function(t){var cls=(t.pr>=100?"c ":"")+(tlate(t)?"l ":"")+(t.st==="On hold"?"h":"");
+   h+='<div class="gtr'+(pr?'':' ptask')+'" data-pid="'+esc(t.id)+'"><div class="gl" title="'+esc(t.name)+'">'+sg.sn+'.'+t.tn+' '+esc(t.name)+'</div><div class="gc" style="'+grid+'">'+tl+bar(t.start,t.end,t.pr,cls,t.name+": "+pf(t.start)+" – "+pf(t.end)+" · "+t.pr+"%")+'</div></div>'})});
+ return h+'</div></div><div class="glg"><span><i style="background:var(--brand)"></i>Progress</span><span><i style="background:var(--green)"></i>Completed</span><span><i style="background:var(--track);outline:2px solid var(--red);outline-offset:-2px"></i>Overdue</span><span><i style="background:var(--warn-soft)"></i>On hold</span>'+(tl?'<span><i style="background:var(--red);width:3px"></i>Today</span>':'')+'</div>'}
+
+/* ---------- modal ---------- */
+var PM={kind:"",t:null};
+function pmOpen(title,html,kind){PM.kind=kind;$("pmt").textContent=title;$("pmb").innerHTML=html;$("pm").style.display="flex";var f=$("pmb").querySelector("input:not([disabled]),select:not([disabled]),textarea:not([disabled])");if(f)f.focus();else $("pmx").focus()}
+function pmClose(){$("pm").style.display="none";PM.kind="";PM.t=null}
+function pmsg(t,c){var m=$("pmm");if(m){m.textContent=t||"";m.className="pmsg"+(c?" "+c:"")}}
+function pfld(l,inner,w){return '<div class="pff'+(w?" w":"")+'"><label>'+l+'</label>'+inner+'</div>'}
+function ownerList(){var m={},o=[];function add(v){v=String(v||"").trim();if(v&&v!=="Unassigned"&&!m[v.toLowerCase()]){m[v.toLowerCase()]=1;o.push(v)}}PL.tasks.forEach(function(t){add(t.owner)});ALL.forEach(function(r){add(r.eng)});add("Client");add("Samsotech");return o.sort()}
+function openTask(id,preStep){var t=id?PL.tasks.filter(function(x){return x.id===id})[0]:null;if(id&&!t)return;var ed=pedit(),dis=ed?"":" disabled";
+ var g=t?t.g:PL.g,S=gsteps(gtasks(g)),ps0=t?t.sn+"|"+t.step:(preStep||(S.length?S[S.length-1].sn+"|"+S[S.length-1].step:"__new"));
+ var nextTn=function(k){var m=0;gtasks(g).forEach(function(x){if(x.sn+"|"+x.step===k)m=Math.max(m,x.tn)});return m+1};
+ var st=t?t.start:ps(firstW(t0())),en=t?t.end:ps(addW(firstW(t0()),5));
+ if(!t&&ps0!=="__new"){var sL=gtasks(g).filter(function(x){return x.sn+"|"+x.step===ps0});if(sL.length){var le=sL.reduce(function(m,x){return x.end>m?x.end:m},"");st=ps(nextW(pd(le)));en=ps(addW(pd(st),3))}}
+ PM.t=t;var h='<div class="pfg">'+
+  pfld("Step",'<select id="pfStep"'+dis+'>'+S.map(function(s){var k=s.sn+"|"+s.step;return '<option value="'+esc(k)+'"'+(k===ps0?" selected":"")+'>'+s.sn+'. '+esc(s.step)+'</option>'}).join("")+(ed?'<option value="__new"'+(ps0==="__new"?" selected":"")+'>+ New step…</option>':'')+'</select>')+
+  '<div class="pff" id="pfNewW" style="display:'+(ps0==="__new"?"block":"none")+'"><label>New step (number and name)</label><div style="display:flex;gap:8px"><input id="pfNewN" type="number" min="1" max="99" style="width:70px" value="'+(S.length?S[S.length-1].sn+1:1)+'"><input id="pfNewS" type="text" placeholder="e.g. Data migration"></div></div>'+
+  pfld("Task order",'<input id="pfTn" type="number" min="1" max="999" value="'+(t?t.tn:(ps0==="__new"?1:nextTn(ps0)))+'"'+dis+'>')+
+  pfld("Task",'<input id="pfName" type="text" value="'+esc(t?t.name:"")+'"'+dis+'>',true)+
+  pfld("Owner",'<input id="pfOwner" type="text" list="pfOwnL" value="'+esc(t?t.owner:"")+'"'+dis+'><datalist id="pfOwnL">'+ownerList().map(function(o){return '<option value="'+esc(o)+'">'}).join("")+'</datalist>')+
+  pfld("Start date",'<input id="pfStart" type="date" value="'+st+'"'+dis+'>')+
+  pfld("End date",'<input id="pfEnd" type="date" value="'+en+'"'+dis+'>')+
+  pfld("Working days",'<input id="pfDays" type="text" disabled value="'+wdays(st,en)+'">')+
+  pfld("Progress",'<div class="prng"><input id="pfPrR" type="range" min="0" max="100" step="5" value="'+(t?t.pr:0)+'"'+dis+'><input id="pfPr" type="number" min="0" max="100" value="'+(t?t.pr:0)+'"'+dis+'><span>%</span></div>',true)+
+  pfld("Status",'<select id="pfSt"'+dis+'>'+PSTAT.map(function(s){return '<option'+((t?t.st:"Not started")===s?" selected":"")+'>'+s+'</option>'}).join("")+'</select>')+
+  pfld("Remarks (shown in the plan)",'<textarea id="pfRem"'+dis+'>'+esc(t?t.rem:"")+'</textarea>',true)+'</div>'+
+  (ed?'<div class="pfoot"><button type="button" class="btnp" id="pfSave">'+(t?"Save task":"Add task")+'</button><button type="button" class="btns" id="pfCancel">Cancel</button>'+(t?'<span class="sp"></span><button type="button" class="btnd" id="pfDel">Delete task</button>':'')+'<span id="pmm" class="pmsg" role="status"></span></div>':'<div class="pfoot"><span id="pmm" class="pmsg" role="status"></span></div>')+
+  (t?'<div class="pcm"><h3>Comments</h3><div id="pcList">'+cmHtml(t.id)+'</div><div class="pcadd"><textarea id="pcText" placeholder="Add a comment for this task"></textarea><button type="button" class="btnp" id="pcAdd">Add comment</button></div>'+(t.by?'<div class="pnote">Last updated by '+esc(t.by)+(t.ver?' on '+esc(t.ver.slice(0,16).replace("T"," ")):'')+'</div>':'')+'</div>':'');
+ pmOpen(t?(t.sn+"."+t.tn+" "+t.name):"Add task · "+g,h,"task")}
+function cmHtml(id){var c=gcm(id);return c.length?c.map(function(x){return '<div class="pc"><div class="h"><b>'+esc(x.by)+'</b> · '+esc(x.at)+'</div><p>'+esc(x.text)+'</p></div>'}).join(""):'<div class="mu" style="margin-bottom:8px">No comments yet.</div>'}
+function pfSync(src){var r=$("pfPrR"),n=$("pfPr"),st=$("pfSt");if(!r)return;if(src==="r")n.value=r.value;else if(src==="n")r.value=n.value;
+ var p=+n.value;if(p>=100)st.value="Completed";else if(p<=0){if(st.value==="Completed"||st.value==="In progress")st.value="Not started"}else if(st.value==="Completed"||st.value==="Not started")st.value="In progress"}
+function pfDays(){var a=$("pfStart"),b=$("pfEnd");if(a&&b)$("pfDays").value=a.value&&b.value&&b.value>=a.value?wdays(a.value,b.value):"–"}
+function psave(body,okMsg,after){body.a="planSave";body.t=TOKEN;var b=document.querySelectorAll("#pmb .btnp,#pmb .btnd");Array.prototype.forEach.call(b,function(x){x.disabled=true});pmsg("Saving…");
+ return api(body).then(function(r){Array.prototype.forEach.call(b,function(x){x.disabled=false});
+  if(r.err==="auth"){pmClose();drop();showAuth("login","Your session has expired. Please sign in again.");return}
+  if(r.err){pmsg(r.err==="forbidden"?"You do not have permission to change this plan.":r.err==="conflict"?"Someone else changed this item. Close this window, it will reload with the latest plan.":r.err==="invalid"?(r.msg||"Some values are not valid."):"Could not save. "+(r.msg||r.err),"err");if(r.err==="conflict")planLoad();return}
+  return planLoad().then(function(){if(after)after();else pmClose();pmsgMain(okMsg,"ok");setTimeout(function(){pmsgMain("")},4000)})})
+ .catch(function(x){Array.prototype.forEach.call(b,function(y){y.disabled=false});pmsg("Could not reach the server. "+x.message,"err")})}
+function taskSave(){var k=$("pfStep").value,sn,step;
+ if(k==="__new"){sn=+$("pfNewN").value;step=$("pfNewS").value.trim();if(!step){pmsg("Enter a name for the new step.","err");return}}else{var i=k.indexOf("|");sn=+k.slice(0,i);step=k.slice(i+1)}
+ var t={id:PM.t?PM.t.id:"",g:PM.t?PM.t.g:PL.g,sn:sn,step:step,tn:+$("pfTn").value||1,name:$("pfName").value.trim(),owner:$("pfOwner").value.trim(),start:$("pfStart").value,end:$("pfEnd").value,pr:Math.round(+$("pfPr").value||0),st:$("pfSt").value,rem:$("pfRem").value.trim()};
+ if(!t.name){pmsg("Enter the task.","err");return}if(!t.start||!t.end){pmsg("Enter start and end dates.","err");return}if(t.end<t.start){pmsg("End date must be on or after the start date.","err");return}
+ if(t.pr<0||t.pr>100){pmsg("Progress must be between 0 and 100.","err");return}
+ psave({op:"task",task:t,ver:PM.t?PM.t.ver:""},PM.t?"Task saved.":"Task added.")}
+function openStep(){var S=gsteps(gtasks(PL.g));openTask("","__new");setTimeout(function(){var n=$("pfNewS");if(n)n.focus()},30)}
+function openRename(k){var i=k.indexOf("|"),sn=+k.slice(0,i),step=k.slice(i+1);
+ pmOpen("Rename step",'<div class="pfg">'+pfld("Step number",'<input id="prN" type="number" min="1" max="99" value="'+sn+'">')+pfld("Step name",'<input id="prS" type="text" value="'+esc(step)+'">',true)+'</div><div class="pfoot"><button type="button" class="btnp" id="prSave">Save</button><button type="button" class="btns" id="pfCancel">Cancel</button><span id="pmm" class="pmsg"></span></div>',"ren");
+ PM.ren={sn:sn,step:step}}
+function openInfo(){var I=ginfo(PL.g),ed=pedit(),dis=ed?"":" disabled";
+ pmOpen("Project details · "+PL.g,'<div class="pfg">'+pfld("Project manager",'<input id="piPm" type="text" value="'+esc(I.pm||"")+'"'+dis+'>')+pfld("Client contact",'<input id="piCc" type="text" value="'+esc(I.cc||"")+'"'+dis+'>')+
+  pfld("Kick-off date",'<input id="piKo" type="date" value="'+(I.ko||"")+'"'+dis+'>')+pfld("Target go-live",'<input id="piGl" type="date" value="'+(I.gl||"")+'"'+dis+'>')+
+  pfld("Scope / summary (shown on the client report)",'<textarea id="piSum" style="min-height:110px"'+dis+'>'+esc(I.sum||"")+'</textarea>',true)+'</div>'+
+  '<div class="pfoot">'+(ed?'<button type="button" class="btnp" id="piSave">Save details</button><button type="button" class="btns" id="pfCancel">Cancel</button>':'')+'<span id="pmm" class="pmsg"></span></div>'+
+  '<div class="pnote">If kick-off or go-live are left blank, the report uses the first start date and last end date in the plan.</div>',"info")}
+function openTpl(){var E=gents(PL.g),op=E.some(function(r){return r.srcs.some(function(s){return typeof isOp==="function"?isOp(s):/opera/i.test(s)})}),ou=E.some(function(r){return typeof ouq==="function"&&ouq(r)});
+ var n=PTPL.reduce(function(m,s){return m+s[1].length},0);
+ pmOpen("Create plan from template · "+PL.g,'<p style="margin-top:0">Creates the standard eInvoicing implementation plan with 7 steps and '+n+' tasks. Each task runs one after the other in working days from the start date. You can change any date, task or step afterwards.</p><div class="pfg">'+
+  pfld("Project start date",'<input id="ptStart" type="date" value="'+ps(firstW(t0()))+'">')+pfld("Default owner",'<input id="ptOwn" type="text" list="pfOwnL2" value=""><datalist id="pfOwnL2">'+ownerList().map(function(o){return '<option value="'+esc(o)+'">'}).join("")+'</datalist>')+'</div>'+
+  '<label class="pchk"><input type="checkbox" id="ptOp"'+(op||ou?" checked":"")+'> Include “Upgrade Opera to a supported version” task'+(ou?' <span class="pill p-warn">Opera upgrade required</span>':'')+'</label>'+
+  '<div class="pfoot"><button type="button" class="btnp" id="ptGo">Create plan</button><button type="button" class="btns" id="pfCancel">Cancel</button><span id="pmm" class="pmsg"></span></div>',"tpl")}
+function tplGo(){var s=$("ptStart").value;if(!s){pmsg("Choose a start date.","err");return}var own=$("ptOwn").value.trim(),inclOp=$("ptOp").checked,cur=firstW(pd(s)),out=[];
+ PTPL.forEach(function(st,i){var tn=0;st[1].forEach(function(t){if(t[2]==="opera"&&!inclOp)return;tn++;var a=new Date(cur),b=addW(a,t[1]);out.push({g:PL.g,sn:i+1,step:st[0],tn:tn,name:t[0],owner:own,start:ps(a),end:ps(b),pr:0,st:"Not started",rem:""});cur=nextW(b)})});
+ psave({op:"bulk",tasks:out},"Plan created with "+out.length+" tasks.")}
+function openExp(){if(!PL.g)return;var L=gtasks(PL.g);if(!L.length){pmsgMain("There is no plan to export for this group yet.","err");return}
+ pmOpen("Export project plan · "+PL.g,'<p style="margin-top:0">Download a client-ready plan for <b>'+esc(PL.g)+'</b>.</p>'+
+  '<label class="pchk"><input type="checkbox" id="peCm" checked> Include comments</label><label class="pchk"><input type="checkbox" id="peGt" checked> Include timeline (Gantt chart)</label><label class="pchk"><input type="checkbox" id="peEn" checked> Include entities in scope</label>'+
+  '<div class="pfoot"><button type="button" class="btnp" id="pePdf">PDF report</button><button type="button" class="btns" id="peXls">Excel</button><button type="button" class="btns" id="pfCancel">Cancel</button><span id="pmm" class="pmsg"></span></div>'+
+  '<div class="pnote">PDF report opens the print window: choose <b>Save as PDF</b> as the printer. It is laid out on A4 landscape pages.</div>',"exp")}
+
+/* ---------- export ---------- */
+function curStage(r){for(var i=0;i<7;i++)if(!r.st[i])return S[i]+(r.ip&&r.ip[i]?" (in progress)":"");return"Live"}
+function buildReport(o){var g=PL.g,L=gtasks(g),A=agg(L),H=health(A),I=ginfo(g),E=gents(g),SG=gsteps(L),now=new Date();
+ var h='<div class="rc"><div><div class="b">Samsotech · eInvoicing implementation</div><h1>Project Plan</h1><div class="c">'+esc(g)+'</div></div><div class="m">Status as of '+now.toLocaleDateString("en-GB",{day:"2-digit",month:"long",year:"numeric"})+'<br>Prepared by '+esc(USER||"")+'</div></div>';
+ h+='<h2>1. Project overview</h2><table class="kv"><tbody>'+[["Client group",g],["Project manager",I.pm||"–"],["Client contact",I.cc||"–"],["Kick-off date",pf(I.ko||A.start)],["Target go-live",pf(I.gl||A.end)],["Planned duration",pf(A.start)+" – "+pf(A.end)+" ("+wdays(A.start,A.end)+" working days)"],["Entities in scope",String(E.length)]].map(function(r){return '<tr><td>'+r[0]+'</td><td>'+esc(r[1])+'</td></tr>'}).join("")+(I.sum?'<tr><td>Scope / summary</td><td style="white-space:pre-wrap">'+esc(I.sum)+'</td></tr>':'')+'</tbody></table>';
+ h+='<h2>2. Executive summary</h2><div class="rk"><div><small>Overall progress</small><b>'+pct(A.act)+'</b><br>Planned: '+pct(A.plan)+'</div><div><small>Schedule status</small><b style="font-size:13px">'+pill(H[0])+'</b></div><div><small>Tasks completed</small><b>'+A.done+' / '+A.n+'</b></div><div><small>Overdue tasks</small><b>'+A.late+'</b></div><div><small>Steps completed</small><b>'+SG.filter(function(s){return agg(s.L).act>=99.95}).length+' / '+SG.length+'</b></div></div>';
+ h+='<h2>3. Step summary</h2><table><thead><tr><th>#</th><th>Step</th><th>Start</th><th>End</th><th>Working days</th><th>Progress</th><th>Status</th></tr></thead><tbody>'+SG.map(function(s){var a=agg(s.L);return '<tr><td>'+s.sn+'</td><td><b>'+esc(s.step)+'</b></td><td>'+pf(a.start)+'</td><td>'+pf(a.end)+'</td><td>'+wdays(a.start,a.end)+'</td><td style="width:170px">'+pbar(a.act,null)+'</td><td>'+pill(stepStat(s.L,a))+'</td></tr>'}).join("")+'</tbody></table>';
+ h+='<h2 class="pb">4. Detailed project plan</h2>'+tableHtml(L,{cm:o.cm}).replace('<div class="tw">','<div>');
+ if(o.gt)h+='<h2 class="pb">5. Timeline</h2>'+ganttHtml(L,true);
+ var n=o.gt?6:5;
+ if(o.en&&E.length){h+='<h2 class="pb">'+n+'. Entities in scope</h2><table><thead><tr><th>#</th><th>Entity</th><th>Source system</th><th>Phase</th><th>Current stage</th><th>Stages completed</th></tr></thead><tbody>'+E.map(function(r,i){var c=r.st.reduce(function(m,x){return m+(x?1:0)},0);return '<tr><td>'+(i+1)+'</td><td>'+esc(r.n)+'</td><td>'+esc(r.srcs.join(", ")||"–")+'</td><td>'+esc(r.ph||"–")+'</td><td>'+esc(curStage(r))+'</td><td>'+c+' / 7</td></tr>'}).join("")+'</tbody></table>';n++}
+ if(o.cm){var C=[];L.forEach(function(t){gcm(t.id).slice().reverse().forEach(function(c){C.push([t,c])})});if(C.length)h+='<h2 class="pb">'+n+'. Comments log</h2><table><thead><tr><th>Task</th><th>Date</th><th>By</th><th>Comment</th></tr></thead><tbody>'+C.map(function(x){return '<tr><td>'+x[0].sn+'.'+x[0].tn+' '+esc(x[0].name)+'</td><td style="white-space:nowrap">'+esc(x[1].at)+'</td><td>'+esc(x[1].by)+'</td><td style="white-space:pre-wrap">'+esc(x[1].text)+'</td></tr>'}).join("")+'</tbody></table>'}
+ h+='<div class="rf">Working days exclude Saturdays and Sundays. Progress is weighted by task duration. Planned progress is where the project should be today according to the plan dates. Generated from the Samsotech eInvoicing portal.</div>';
+ return h}
+function exportPdf(o){var r=$("rpt"),t=document.title;r.innerHTML=buildReport(o);pmClose();document.body.classList.add("prt");
+ document.title="Project Plan - "+PL.g+" - "+ps(new Date());var done=function(){document.body.classList.remove("prt");document.title=t;r.innerHTML="";window.removeEventListener("afterprint",done)};
+ window.addEventListener("afterprint",done);setTimeout(function(){window.print();setTimeout(function(){if(document.body.classList.contains("prt")&&!window.matchMedia("print").matches)done()},1500)},80)}
+function xlsRows(o){var L=gtasks(PL.g),A=agg(L),I=ginfo(PL.g);var hdr=["Step No","Step","Task No","Task","Owner","Start date","End date","Working days","Progress %","Planned % (today)","Status","Overdue","Remarks"].concat(o.cm?["Comments"]:[]);
+ var rows=L.map(function(t){return[t.sn,t.step,t.sn+"."+t.tn,t.name,t.owner,t.start,t.end,wdays(t.start,t.end),t.pr,Math.round(tplan(t)),t.st,tlate(t)?"Yes":"",t.rem].concat(o.cm?[gcm(t.id).slice().reverse().map(function(c){return c.at+" "+c.by+": "+c.text}).join("\n")]:[])});
+ var top=[["Project plan",PL.g],["Status as of",ps(new Date())],["Project manager",I.pm||""],["Client contact",I.cc||""],["Overall progress %",Math.round(A.act*10)/10],["Planned progress % (today)",Math.round(A.plan*10)/10],["Schedule status",health(A)[0]],[]];
+ return{top:top,hdr:hdr,rows:rows}}
+function dl(blob,name){var a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},500)}
+function exportXls(o){var X=xlsRows(o),name="Project Plan - "+PL.g.replace(/[\\\/:*?"<>|]/g,"")+" - "+ps(new Date());
+ function viaSheetJS(){var ws=XLSX.utils.aoa_to_sheet(X.top.concat([X.hdr]).concat(X.rows));ws["!cols"]=[8,26,8,44,18,12,12,10,10,12,12,9,40,60].slice(0,X.hdr.length).map(function(w){return{wch:w}});
+  var wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,"Project plan");
+  if(o.en){var E=gents(PL.g);var ws2=XLSX.utils.aoa_to_sheet([["Entity","Source system","Phase","Current stage","Stages completed"]].concat(E.map(function(r){return[r.n,r.srcs.join(", "),r.ph,curStage(r),r.st.reduce(function(m,x){return m+(x?1:0)},0)+" / 7"]})));ws2["!cols"]=[{wch:40},{wch:24},{wch:12},{wch:32},{wch:16}];XLSX.utils.book_append_sheet(wb,ws2,"Entities")}
+  XLSX.writeFile(wb,name+".xlsx");pmClose()}
+ function viaCsv(){var q=function(v){v=String(v==null?"":v);return /[",\n\r]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v};
+  var csv=X.top.concat([X.hdr]).concat(X.rows).map(function(r){return r.map(q).join(",")}).join("\r\n");dl(new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8"}),name+".csv");pmClose()}
+ if(window.XLSX)return viaSheetJS();pmsg("Preparing Excel file…");
+ var s=document.createElement("script");s.src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js";s.onload=function(){try{viaSheetJS()}catch(e){viaCsv()}};s.onerror=viaCsv;document.head.appendChild(s)}
+
+/* ---------- wiring ---------- */
+(function(){
+ $("tabs").addEventListener("click",function(e){var b=e.target.closest(".tab");if(!b)return;var on=b.getAttribute("data-v")==="5";$("v5").style.display=on?"block":"none";if(on){$("gbar").style.visibility="hidden";if(!PL.ready||!PL.loading)planLoad()}});
+ $("pg").addEventListener("change",function(){PL.g=this.value;planRender()});
+ $("pq").addEventListener("input",planRender);$("pfs").addEventListener("change",planRender);
+ $("pvT").addEventListener("click",function(){PL.view="T";planRender()});$("pvG").addEventListener("click",function(){PL.view="G";planRender()});
+ $("pAddB").addEventListener("click",function(){openTask("")});$("pStepB").addEventListener("click",openStep);
+ $("pInfoB").addEventListener("click",function(){if(PL.g)openInfo()});$("pTplB").addEventListener("click",openTpl);$("pExpB").addEventListener("click",openExp);
+ $("pBody").addEventListener("click",function(e){var a=e.target.closest("[data-padd]");if(a){openTask("",a.getAttribute("data-padd"));return}
+  var rn=e.target.closest("[data-pren]");if(rn){openRename(rn.getAttribute("data-pren"));return}
+  var p=e.target.closest("[data-pid]");if(p){openTask(p.getAttribute("data-pid"));if(e.target.closest(".pib")&&/💬/.test(e.target.textContent)){var c=$("pcText");if(c)setTimeout(function(){c.focus()},30)}}});
+ $("pm").addEventListener("click",function(e){var t=e.target;if(t.id==="pm"||t.closest("#pmx")||t.closest("#pfCancel")){pmClose();return}
+  if(t.closest("#pfSave"))taskSave();
+  else if(t.closest("#pfDel")){if(PM.t&&confirm("Delete the task “"+PM.t.name+"”? This cannot be undone."))psave({op:"del",id:PM.t.id,ver:PM.t.ver},"Task deleted.")}
+  else if(t.closest("#pcAdd")){var tx=$("pcText").value.trim();if(!tx){pmsg("Write a comment first.","err");return}var id=PM.t.id;psave({op:"comment",id:id,text:tx},"Comment added.",function(){var l=$("pcList");if(l)l.innerHTML=cmHtml(id);$("pcText").value="";pmsg("Comment added.","ok")})}
+  else if(t.closest("#prSave")){var nn=+$("prN").value,ns=$("prS").value.trim();if(!ns){pmsg("Enter a step name.","err");return}psave({op:"step",g:PL.g,sn:PM.ren.sn,old:PM.ren.step,nsn:nn,step:ns},"Step renamed.")}
+  else if(t.closest("#piSave")){var I=ginfo(PL.g);psave({op:"info",g:PL.g,ver:I.ver||"",info:{pm:$("piPm").value.trim(),cc:$("piCc").value.trim(),ko:$("piKo").value,gl:$("piGl").value,sum:$("piSum").value.trim()}},"Project details saved.")}
+  else if(t.closest("#ptGo"))tplGo();
+  else if(t.closest("#pePdf"))exportPdf({cm:$("peCm").checked,gt:$("peGt").checked,en:$("peEn").checked});
+  else if(t.closest("#peXls"))exportXls({cm:$("peCm").checked,en:$("peEn").checked})});
+ $("pm").addEventListener("input",function(e){var id=e.target.id;if(id==="pfPrR")pfSync("r");else if(id==="pfPr")pfSync("n");else if(id==="pfStart"||id==="pfEnd")pfDays()});
+ $("pm").addEventListener("change",function(e){if(e.target.id==="pfStep"){var v=e.target.value;$("pfNewW").style.display=v==="__new"?"block":"none";if(!PM.t){var m=0;if(v!=="__new")gtasks(PL.g).forEach(function(x){if(x.sn+"|"+x.step===v)m=Math.max(m,x.tn)});$("pfTn").value=m+1}}});
+ document.addEventListener("keydown",function(e){if(e.key==="Escape"&&$("pm").style.display!=="none")pmClose()});
+})();
 </script>
 </body>
 </html>
