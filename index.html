@@ -227,13 +227,13 @@ body:not(.ed) .editcol{display:none}
 <div id="modal" class="modal" style="display:none" role="dialog" aria-modal="true" aria-labelledby="mt"><div class="mcard"><div class="mhead"><h2 id="mt"></h2><div class="hb"><button type="button" class="cpy" id="mcopyall" data-all="1">Copy all details</button><button type="button" id="mclose" aria-label="Close">✕</button></div></div><div id="mbody"></div></div></div>
 <div id="auth"><div class="acard">
 <h1>Samsotech eInvoicing Dashboard</h1><p class="asub">Sign in to continue</p>
-<form id="fLogin"><label>Username<input id="lu" autocomplete="username" autocapitalize="none" required></label><label>Password<input id="lp" type="password" autocomplete="current-password" required></label><button id="bLogin" type="submit">Sign in</button></form><p class="asub" style="margin:10px 0 0;font-size:11px">Page version 8</p>
+<form id="fLogin"><label>Username<input id="lu" autocomplete="username" autocapitalize="none" required></label><label>Password<input id="lp" type="password" autocomplete="current-password" required></label><button id="bLogin" type="submit">Sign in</button></form><p class="asub" style="margin:10px 0 0;font-size:11px">Page version 9</p>
 <form id="fChange" style="display:none"><p class="ahint"><b>Set a new password.</b> This is your first sign-in, so please replace the temporary password. Use at least 8 characters, with an uppercase letter, a lowercase letter and a number.</p><label>New password<input id="np" type="password" autocomplete="new-password" required></label><label>Confirm new password<input id="np2" type="password" autocomplete="new-password" required></label><button id="bChange" type="submit">Save password and continue</button></form>
 <div class="amsg" id="amsg" role="alert"></div>
 </div></div>
 <header><div class="wrap"><div class="top">
 <div><h1>Samsotech eInvoicing Dashboard</h1><p class="sub" id="sub">&nbsp;</p></div>
-<div class="stamp">Last refreshed<b id="when">Loading…</b><div class="live" id="live"><i></i><span id="livetxt">Connecting to Google Sheet…</span></div><button id="rf" type="button">Refresh now</button> <button id="lo" type="button">Sign out</button><div class="live" style="margin-top:6px">Signed in as&nbsp;<span id="who"></span></div><div class="live" style="margin-top:2px;opacity:.7">Page version 8 · copy icons</div></div>
+<div class="stamp">Last refreshed<b id="when">Loading…</b><div class="live" id="live"><i></i><span id="livetxt">Connecting to Google Sheet…</span></div><button id="rf" type="button">Refresh now</button> <button id="lo" type="button">Sign out</button><div class="live" style="margin-top:6px">Signed in as&nbsp;<span id="who"></span></div><div class="live" style="margin-top:2px;opacity:.7">Page version 9 · copy icons</div></div>
 </div></div></header>
 <div class="wrap"><main>
 <div id="banner"></div>
@@ -586,7 +586,7 @@ function saveU(){var b=$("uSave"),body;
  b.disabled=true;umsg("Saving…","");
  api(body).then(function(r){
   if(r.ok){var add=UMODE==="add",nm=add?body.values.n:(body.changes.n||UCUR.raw.n),ok=add?'Added "'+nm+'"'+(r.sl?" as serial number "+r.sl:"")+".":'Saved '+r.changed+(r.changed==1?" change":" changes")+' to "'+nm+'".';
-   return load().then(function(){if(add){$("uForm").innerHTML=formHtml({});dirty();umsg(ok,"ok")}else{backToList();var t=$("uTop");t.textContent=ok;t.className="ok"}})}
+   return load(true).then(function(){if(add){$("uForm").innerHTML=formHtml({});dirty();umsg(ok,"ok")}else{backToList();var t=$("uTop");t.textContent=ok;t.className="ok"}})}
   b.disabled=false;
   if(r.err==="auth"){drop();showAuth("login","Your session has expired. Please sign in again.");return}
   umsg(r.err==="forbidden"?"You do not have permission to edit data.":r.err==="conflict"?"This record was changed by someone else. Go back to the list, press Refresh now and edit it again.":r.err==="invalid"?(r.msg||"Some values are not valid."):"Could not save. "+(r.msg||r.err||""),"err")})
@@ -640,12 +640,16 @@ $("fChange").addEventListener("submit",function(e){e.preventDefault();var a=$("n
   else $("amsg").textContent="Could not save the password. "+(r.msg||"Please sign in again.")})
  .catch(function(x){busy("bChange",false,"Save password and continue");$("amsg").textContent="Could not reach the server. "+x.message})});
 $("lo").addEventListener("click",function(){var t=TOKEN;drop();api({a:"logout",t:t}).catch(function(){}).then(function(){location.reload()})});
-function load(){
+var DSIG="",LASTLOAD=0,LOADING=null;
+function load(force){if(LOADING&&!force)return LOADING;LOADING=load0().then(function(x){LOADING=null;return x},function(e){LOADING=null;throw e});return LOADING}
+function load0(){
  if(!TOKEN){showAuth("login");return Promise.resolve()}
  return api({a:"data",t:TOKEN}).then(function(r){
   if(r.err==="auth"){drop();showAuth("login","Your session has expired. Please sign in again.");return}
   if(r.err)throw new Error(r.msg||r.err);
-  ROLE=r.role||"Viewer";DV=r.dv||{};SRV_EX=Array.isArray(r.ex);if(SRV_EX)EX=r.ex;ALL=fromRows(r.rows);applyEx();hideAuth();renderAll();applyRole();if(typeof planOnData==="function")planOnData(r.plan||"");
+  LASTLOAD=Date.now();var sig=JSON.stringify([r.rows,r.role,r.ex,r.dv,r.plan]);
+  if(sig!==DSIG){DSIG=sig;ROLE=r.role||"Viewer";DV=r.dv||{};SRV_EX=Array.isArray(r.ex);if(SRV_EX)EX=r.ex;ALL=fromRows(r.rows);applyEx();hideAuth();renderAll();applyRole()}else hideAuth();
+  if(typeof planOnData==="function")planOnData(r.plan||"");
   var d=new Date();$("when").textContent=d.toLocaleString([], {day:"2-digit",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit",second:"2-digit"});
   setLive(true,"Live · auto-refresh every "+CFG.REFRESH_SEC+"s")})
  .catch(function(e){if(TOKEN)hideAuth();$("when").textContent="Not connected";setLive(false,e.message||"error");if(ALL.length){hideAuth();renderAll()}else{$("hl").textContent="Unable to load the dashboard data.";$("hp").textContent="Press Refresh now to try again."}})}
@@ -664,7 +668,7 @@ $("tabs").addEventListener("click",function(e){var b=e.target.closest(".tab");if
 ["q","ph","st"].forEach(function(id){document.getElementById(id).addEventListener("input",renderTable)});
 document.getElementById("rf").addEventListener("click",load);
 document.getElementById("gbar").addEventListener("change",function(e){var id=e.target.id;if(id==="gsel")GSEL=e.target.value;else if(id==="esel")ESEL=e.target.value;else return;renderAll()});
-document.addEventListener("visibilitychange",function(){if(!document.hidden)load()});
+document.addEventListener("visibilitychange",function(){if(!document.hidden&&Date.now()-LASTLOAD>20000)load()});
 if(TOKEN)showAuth("busy","Restoring your session…");
 load();setInterval(function(){if(TOKEN)load()},CFG.REFRESH_SEC*1000);
 </script>
@@ -678,7 +682,8 @@ var PSC={"Not started":"p-idle","In progress":"p-prog","Completed":"p-ok","On ho
 /* standard plan. ph: pre = before kick-off, core = kick-off to go-live, post = after go-live.
    task = [name, working days, owners, flag]; flag "opera" = optional Opera task, "gl" = the go-live day itself */
 var PTPL=[
- {step:"Project initiation",ph:"pre",t:[["Signed entity order form",3,"Samsotech, Finance"],["Validate TRN / TIN details",2,"Finance"],["EmaraTax onboarding – register entities on the EmaraTax portal",5,"Finance"],["Confirm EmaraTax registration and approvals",2,"Finance, Samsotech"]]},
+ /* pre tasks: the number is how many working days before kick-off the (1-day) task takes place */
+ {step:"Project initiation",ph:"pre",t:[["Signed entity order form",2,"Samsotech, Finance"],["Validate TRN / TIN details",1,"Finance"],["EmaraTax onboarding – register entities on the EmaraTax portal",1,"Finance"],["Confirm EmaraTax registration and approvals",1,"Finance, Samsotech"]]},
  {step:"Project kick-off",ph:"core",t:[["Kick-off meeting with client stakeholders",1,"Samsotech, Finance, IT"],["Confirm project team, roles and responsibilities (RACI)",2,"Samsotech, Finance, IT"],["Share data and requirements checklist",2,"Samsotech"],["Agree project plan and timeline",1,"Samsotech, Finance"]]},
  {step:"Gap assessment",ph:"core",t:[["Review current invoicing processes",3,"Samsotech, Finance"],["Map invoice data fields to PINT AE",4,"Samsotech, IT"],["Identify gaps and agree remediation actions",3,"Samsotech, Finance, IT"],["Gap assessment sign-off",1,"Finance"]]},
  {step:"Source system configuration",ph:"core",t:[["Upgrade Opera to a supported version",10,"IT","opera"],["Configure e-invoice output in the source system",8,"Samsotech, IT"],["Configure invoice templates and field mapping",5,"Samsotech"],["Internal unit testing",3,"Samsotech, IT"]]},
@@ -737,6 +742,7 @@ function planLoad(){if(PL.loading||!TOKEN)return Promise.resolve();PL.loading=tr
   if(r.err==="auth"){drop();showAuth("login","Your session has expired. Please sign in again.");return}
   if(r.err==="forbidden"){PL.acc="";planOnData("");return}
   if(r.err)throw new Error(r.msg||r.err);
+  var sig=JSON.stringify([r.acc,r.groups,r.tasks,r.comments,r.info]);if(PL.ready&&sig===PL.sig)return;PL.sig=sig;
   PL.acc=r.acc;PL.groups=r.groups;PL.tasks=r.tasks||[];PL.cm=r.comments||[];PL.info=r.info||{};PL.ready=true;document.body.classList.toggle("pedit",pedit());planRender()})
  .catch(function(e){PL.loading=false;pmsgMain("Could not load the project plans. "+(e.message||""),"err")})}
 function pmsgMain(t,c){var m=$("pMsg");m.textContent=t||"";m.className="pmsg"+(c?" "+c:"")}
@@ -856,7 +862,7 @@ function openInfo(){var I=ginfo(PL.g),G=PL.e?ginfo(PL.g,""):{},ed=pedit(),dis=ed
   '<div class="pnote">'+(PL.e?'Fields left blank use the group\'s project details'+(G.gl?' (group go-live: '+pf(G.gl)+')':'')+'. ':'')+'Tasks cannot end after the target go-live date. If kick-off or go-live are left blank, the report uses the first start date and last end date in the plan.</div>',"info")}
 function openTpl(){var E=gents(PL.g),op=E.some(function(r){return r.srcs.some(function(s){return typeof isOp==="function"?isOp(s):/opera/i.test(s)})}),ou=E.some(function(r){return typeof ouq==="function"&&ouq(r)});
  var I=geff(PL.g);
- pmOpen("Create plan from template · "+planName(),'<p style="margin-top:0">Creates the standard eInvoicing implementation plan for <b>'+esc(planName())+'</b>:</p><ul style="margin:0 0 12px 18px;padding:0;font-size:13px"><li><b>Project initiation</b> (signed order form, EmaraTax onboarding) is scheduled <b>before</b> the kick-off date.</li><li>The kick-off meeting is on the <b>kick-off date</b>; the following steps are fitted between kick-off and go-live (shortened in proportion if needed).</li><li>The <b>Go-live</b> task is on the <b>go-live date</b> exactly.</li><li><b>After go-live support</b> (hypercare, closure and handover) starts the next working day after go-live.</li></ul><div class="pfg">'+
+ pmOpen("Create plan from template · "+planName(),'<p style="margin-top:0">Creates the standard eInvoicing implementation plan for <b>'+esc(planName())+'</b>:</p><ul style="margin:0 0 12px 18px;padding:0;font-size:13px"><li><b>Project initiation</b> takes the 2 working days before kick-off: the signed order form on the first day, TRN / TIN validation and EmaraTax onboarding on the day before kick-off.</li><li>The kick-off meeting is on the <b>kick-off date</b>; the following steps are fitted between kick-off and go-live (shortened in proportion if needed).</li><li>The <b>Go-live</b> task is on the <b>go-live date</b> exactly.</li><li><b>After go-live support</b> (hypercare, closure and handover) starts the next working day after go-live.</li></ul><div class="pfg">'+
   pfld("Kick-off date",'<input id="ptKo" type="date" value="'+(I.ko||"")+'">')+pfld("Target go-live date",'<input id="ptGl" type="date" value="'+(I.gl||"")+'">')+'</div>'+
   '<label class="pchk"><input type="checkbox" id="ptOp"'+(op||ou?" checked":"")+'> Include “Upgrade Opera to a supported version” task'+(ou?' <span class="pill p-warn">Opera upgrade required</span>':'')+'</label>'+
   '<div id="ptFit" class="pnote" style="font-size:13px"></div>'+
@@ -879,17 +885,16 @@ function tplBuild(ko,gl){var L=tplList(),out=[],info={};
  if(avail<core.length)return{err:"Only "+avail+" working days between kick-off and go-live, but "+core.length+" tasks must fit. Choose an earlier kick-off or a later go-live."};
  var need=core.reduce(function(m,x){return m+x.d},0),D=fitDur(core.map(function(x){return x.d}),avail);
  function push(x,a,b){out.push({g:PL.g,e:PL.e,sn:x.sn,step:x.step,tn:x.tn,name:x.name,owner:x.own,start:ps(a),end:ps(b),pr:0,st:"Not started",rem:""})}
- var P=pre.reduce(function(m,x){return m+x.d},0),cur=P?backW(prevW(koD),P):null;
- pre.forEach(function(x){var b=addW(cur,x.d);push(x,cur,b);cur=nextW(b)});
+ pre.forEach(function(x){var day=backW(prevW(koD),x.d);push(x,day,day)});
  cur=new Date(koD);core.forEach(function(x,i){var b=addW(cur,D[i]);push(x,cur,b);cur=nextW(b)});
  glT.forEach(function(x){push(x,glD,glD)});
  cur=nextW(glD);post.forEach(function(x){var b=addW(cur,x.d);push(x,cur,b);cur=nextW(b)});
  out.sort(function(a,b){return a.sn-b.sn||a.tn-b.tn});
- info={need:need,avail:avail,shrink:need>avail,preStart:pre.length?out[0].start:"",postEnd:post.length?out[out.length-1].end:""};
+ var pS=out.filter(function(t){return t.sn===1});info={need:need,avail:avail,shrink:need>avail,preStart:pS.length?pS.reduce(function(m,t){return t.start<m?t.start:m},pS[0].start):"",postEnd:post.length?out[out.length-1].end:""};
  return{tasks:out,info:info}}
 function tplFit(){var b=$("ptFit");if(!b)return;var ko=$("ptKo").value,gl=$("ptGl").value,r=tplBuild(ko,gl);
  if(r.err){b.innerHTML='<span style="color:'+(ko&&gl?"var(--red)":"inherit")+'">'+esc(r.err)+'</span>';return}
- var i=r.info;b.innerHTML='Project initiation: <b>'+pf(i.preStart)+'</b> to the day before kick-off.<br>Kick-off to go-live: standard tasks need <b>'+i.need+'</b> working days, <b>'+i.avail+'</b> available'+(i.shrink?' – durations will be <b>shortened in proportion</b>.':' – fits without changes.')+'<br>Go-live: <b>'+pf(gl)+'</b>. After go-live support until <b>'+pf(i.postEnd)+'</b>.'+(!isWk(pd(ko))?'<br><span style="color:var(--warn)">Note: the kick-off date is on a weekend.</span>':'')}
+ var i=r.info;b.innerHTML='Project initiation: <b>'+pf(i.preStart)+'</b> and <b>'+pf(ps(prevW(pd(ko))))+'</b>. Kick-off meeting: <b>'+pf(ko)+'</b>.<br>Kick-off to go-live: standard tasks need <b>'+i.need+'</b> working days, <b>'+i.avail+'</b> available'+(i.shrink?' – durations will be <b>shortened in proportion</b>.':' – fits without changes.')+'<br>Go-live: <b>'+pf(gl)+'</b>. After go-live support until <b>'+pf(i.postEnd)+'</b>.'+(!isWk(pd(ko))?'<br><span style="color:var(--warn)">Note: the kick-off date is on a weekend.</span>':'')}
 function tplGo(){var ko=$("ptKo").value,gl=$("ptGl").value,r=tplBuild(ko,gl);if(r.err){pmsg(r.err,"err");return}
  psave({op:"bulk",tasks:r.tasks,ko:ko,gl:gl},"Plan created with "+r.tasks.length+" tasks: kick-off "+pf(ko)+", go-live "+pf(gl)+".")}
 /* re-align an existing plan to the go-live date */
