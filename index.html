@@ -228,13 +228,13 @@ body:not(.ed) .editcol{display:none}
 <div id="modal" class="modal" style="display:none" role="dialog" aria-modal="true" aria-labelledby="mt"><div class="mcard"><div class="mhead"><h2 id="mt"></h2><div class="hb"><button type="button" class="cpy" id="mcopyall" data-all="1">Copy all details</button><button type="button" id="mclose" aria-label="Close">✕</button></div></div><div id="mbody"></div></div></div>
 <div id="auth"><div class="acard">
 <h1>Samsotech eInvoicing Dashboard</h1><p class="asub">Sign in to continue</p>
-<form id="fLogin"><label>Username<input id="lu" autocomplete="username" autocapitalize="none" required></label><label>Password<input id="lp" type="password" autocomplete="current-password" required></label><button id="bLogin" type="submit">Sign in</button></form><p class="asub" style="margin:10px 0 0;font-size:11px">Page version 18</p>
+<form id="fLogin"><label>Username<input id="lu" autocomplete="username" autocapitalize="none" required></label><label>Password<input id="lp" type="password" autocomplete="current-password" required></label><button id="bLogin" type="submit">Sign in</button></form><p class="asub" style="margin:10px 0 0;font-size:11px">Page version 19</p>
 <form id="fChange" style="display:none"><p class="ahint"><b>Set a new password.</b> This is your first sign-in, so please replace the temporary password. Use at least 8 characters, with an uppercase letter, a lowercase letter and a number.</p><label>New password<input id="np" type="password" autocomplete="new-password" required></label><label>Confirm new password<input id="np2" type="password" autocomplete="new-password" required></label><button id="bChange" type="submit">Save password and continue</button></form>
 <div class="amsg" id="amsg" role="alert"></div>
 </div></div>
 <header><div class="wrap"><div class="top">
 <div><h1>Samsotech eInvoicing Dashboard</h1><p class="sub" id="sub">&nbsp;</p></div>
-<div class="stamp">Last refreshed<b id="when">Loading…</b><div class="live" id="live"><i></i><span id="livetxt">Connecting to Google Sheet…</span></div><button id="rf" type="button">Refresh now</button> <button id="lo" type="button">Sign out</button><div class="live" style="margin-top:6px">Signed in as&nbsp;<span id="who"></span></div><div class="live" style="margin-top:2px;opacity:.7">Page version 18 · copy icons</div></div>
+<div class="stamp">Last refreshed<b id="when">Loading…</b><div class="live" id="live"><i></i><span id="livetxt">Connecting to Google Sheet…</span></div><button id="rf" type="button">Refresh now</button> <button id="lo" type="button">Sign out</button><div class="live" style="margin-top:6px">Signed in as&nbsp;<span id="who"></span></div><div class="live" style="margin-top:2px;opacity:.7">Page version 19 · copy icons</div></div>
 </div></div></header>
 <div class="wrap"><main>
 <div id="banner"></div>
@@ -682,20 +682,23 @@ load();setInterval(function(){if(TOKEN)load()},CFG.REFRESH_SEC*1000);
 var PL={acc:"",groups:"*",tasks:[],cm:[],info:{},g:"",e:"",view:"T",loading:false,ready:false};
 var OWN=["Samsotech","Finance","IT"];
 /* default project summary: used when Project details has no summary of its own */
-var DEF_SUM=["Project Summary",
-"VICAS SMARTeIS is a cloud-based e-Invoicing solution designed to help UAE entities comply with Ministry of Finance (MoF) e-Invoicing requirements under the UAE PEPPOL-based framework.",
+var DEF_SUM=["VICAS SMARTeIS is a cloud-based e-Invoicing solution designed to help UAE entities comply with Ministry of Finance (MoF) e-Invoicing requirements under the UAE PEPPOL-based framework.",
 "Samsotech International, as the appointed Accredited Service Provider (ASP), will implement the solution to automate electronic invoice generation, validation, transmission, storage and regulatory reporting in line with UAE e-Invoicing regulations.",
+"",
 "Proposed Solution",
 "Samsotech will provide a secure, cloud-hosted platform supporting:",
+"",
 "* UAE-compliant invoice generation, validation and submission.",
 "* API-based integration with existing business systems.",
 "* Real-time invoice monitoring and reporting.",
 "* Secure invoice archiving and audit support.",
 "* Multi-currency and multi-language capabilities.",
+"",
 "Integration Architecture",
 "The solution will integrate with the entity's existing business systems through APIs or agreed integration methods. Samsotech's E-Invoicing Middleware will manage invoice processing, validation and transmission through the ASP network to ensure regulatory compliance."].join("\n");
 /* summary text -> report HTML: short lines without a full stop are headings, "* " lines are bullets */
-function sumHtml(t){var h="",ul=false;String(t||"").split(/\r?\n/).forEach(function(x){x=x.trim();if(!x){if(ul){h+="</ul>";ul=false}return}
+function sumHtml(t){var h='<h3 style="font-size:12px;color:#0b6e79;margin:0 0 6px;text-transform:uppercase;letter-spacing:.04em">Project Summary</h3>',ul=false;
+ String(t||"").replace(/^\s*project summary\s*\r?\n/i,"").split(/\r?\n/).forEach(function(x){x=x.trim();if(!x){if(ul){h+="</ul>";ul=false}return}
  if(/^[*•\-]\s+/.test(x)){if(!ul){h+='<ul style="margin:4px 0 10px 20px;padding:0">';ul=true}h+="<li>"+esc(x.replace(/^[*•\-]\s+/,""))+"</li>";return}
  if(ul){h+="</ul>";ul=false}
  if(x.length<=60&&!/[.:;,]$/.test(x))h+='<h3 style="font-size:12px;color:#0b6e79;margin:12px 0 4px;text-transform:uppercase;letter-spacing:.04em">'+esc(x)+"</h3>";else h+='<p style="margin:0 0 8px">'+esc(x)+"</p>"});
@@ -927,7 +930,7 @@ function openInfo(){var I=ginfo(PL.g),G=PL.e?ginfo(PL.g,""):{},ed=pedit(),dis=ed
  function ph(k){return G[k]?' placeholder="Group: '+esc(k==="ko"||k==="gl"?pf(G[k]):G[k])+'"':""}
  pmOpen("Project details · "+planName(),'<div class="pfg">'+pfld("Project manager",'<input id="piPm" type="text" value="'+esc(I.pm||"")+'"'+ph("pm")+dis+'>')+pfld("Client contact",'<input id="piCc" type="text" value="'+esc(I.cc||"")+'"'+ph("cc")+dis+'>')+
   pfld("Kick-off date",'<input id="piKo" type="date" value="'+(I.ko||"")+'"'+dis+'>')+pfld("Target go-live",'<input id="piGl" type="date" value="'+(I.gl||"")+'"'+dis+'>')+
-  pfld("Project summary (shown on the client report – the default text is filled in, edit as needed)",'<textarea id="piSum" style="min-height:110px"'+dis+'>'+esc(I.sum||DEF_SUM)+'</textarea>',true)+'</div>'+
+  pfld("Project summary (shown on the client report – the standard text is filled in; edit it for this client if needed)",'<textarea id="piSum" style="min-height:260px"'+dis+'>'+esc(I.sum||DEF_SUM)+'</textarea>',true)+'</div>'+
   (PL.e?'':entBox(I.ents||"",dis))+
   '<div class="pfoot">'+(ed?'<button type="button" class="btnp" id="piSave">Save details</button><button type="button" class="btns" id="pfCancel">Cancel</button>':'')+'<span id="pmm" class="pmsg"></span></div>'+
   '<div class="pnote">'+(PL.e?'Fields left blank use the group\'s project details'+(G.gl?' (group go-live: '+pf(G.gl)+')':'')+'. ':'')+'Tasks cannot end after the target go-live date. If kick-off or go-live are left blank, the report uses the first start date and last end date in the plan.</div>',"info")}
