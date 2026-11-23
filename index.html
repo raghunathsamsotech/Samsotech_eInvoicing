@@ -227,13 +227,13 @@ body:not(.ed) .editcol{display:none}
 <div id="modal" class="modal" style="display:none" role="dialog" aria-modal="true" aria-labelledby="mt"><div class="mcard"><div class="mhead"><h2 id="mt"></h2><div class="hb"><button type="button" class="cpy" id="mcopyall" data-all="1">Copy all details</button><button type="button" id="mclose" aria-label="Close">✕</button></div></div><div id="mbody"></div></div></div>
 <div id="auth"><div class="acard">
 <h1>Samsotech eInvoicing Dashboard</h1><p class="asub">Sign in to continue</p>
-<form id="fLogin"><label>Username<input id="lu" autocomplete="username" autocapitalize="none" required></label><label>Password<input id="lp" type="password" autocomplete="current-password" required></label><button id="bLogin" type="submit">Sign in</button></form><p class="asub" style="margin:10px 0 0;font-size:11px">Page version 12</p>
+<form id="fLogin"><label>Username<input id="lu" autocomplete="username" autocapitalize="none" required></label><label>Password<input id="lp" type="password" autocomplete="current-password" required></label><button id="bLogin" type="submit">Sign in</button></form><p class="asub" style="margin:10px 0 0;font-size:11px">Page version 12a</p>
 <form id="fChange" style="display:none"><p class="ahint"><b>Set a new password.</b> This is your first sign-in, so please replace the temporary password. Use at least 8 characters, with an uppercase letter, a lowercase letter and a number.</p><label>New password<input id="np" type="password" autocomplete="new-password" required></label><label>Confirm new password<input id="np2" type="password" autocomplete="new-password" required></label><button id="bChange" type="submit">Save password and continue</button></form>
 <div class="amsg" id="amsg" role="alert"></div>
 </div></div>
 <header><div class="wrap"><div class="top">
 <div><h1>Samsotech eInvoicing Dashboard</h1><p class="sub" id="sub">&nbsp;</p></div>
-<div class="stamp">Last refreshed<b id="when">Loading…</b><div class="live" id="live"><i></i><span id="livetxt">Connecting to Google Sheet…</span></div><button id="rf" type="button">Refresh now</button> <button id="lo" type="button">Sign out</button><div class="live" style="margin-top:6px">Signed in as&nbsp;<span id="who"></span></div><div class="live" style="margin-top:2px;opacity:.7">Page version 12 · copy icons</div></div>
+<div class="stamp">Last refreshed<b id="when">Loading…</b><div class="live" id="live"><i></i><span id="livetxt">Connecting to Google Sheet…</span></div><button id="rf" type="button">Refresh now</button> <button id="lo" type="button">Sign out</button><div class="live" style="margin-top:6px">Signed in as&nbsp;<span id="who"></span></div><div class="live" style="margin-top:2px;opacity:.7">Page version 12a · copy icons</div></div>
 </div></div></header>
 <div class="wrap"><main>
 <div id="banner"></div>
@@ -736,6 +736,7 @@ function pedit(){return PL.acc==="Edit"}
 window.planOnData=function(mode){PL.acc=mode||"";var tb=$("tabPlan");if(tb)tb.style.display=PL.acc?"":"none";
  document.body.classList.toggle("pedit",pedit());
  if(!PL.acc&&TAB==="5"){$("tabs").querySelector('[data-v="1"]').click();return}
+ if(PL.ready&&$("pm").style.display==="none")planRender();   /* entity / group lists come from the dashboard data: redraw when it arrives */
  if(TAB==="5"&&$("pm").style.display==="none")planLoad()};
 function planLoad(){if(PL.loading||!TOKEN)return Promise.resolve();PL.loading=true;if(!PL.ready)$("pBody").innerHTML='<div class="pempty">Loading project plans…</div>';
  return api({a:"plan",t:TOKEN}).then(function(r){PL.loading=false;
@@ -748,6 +749,7 @@ function planLoad(){if(PL.loading||!TOKEN)return Promise.resolve();PL.loading=tr
 function pmsgMain(t,c){var m=$("pMsg");m.textContent=t||"";m.className="pmsg"+(c?" "+c:"")}
 
 function planRender(){if(!PL.ready)return;
+ if(!ALL.length){$("pg").innerHTML='<option value="">Loading…</option>';$("pe").innerHTML='<option value="">Loading entities…</option>';$("pBody").innerHTML='<div class="pempty">Loading the entity list…</div>';return}
  var gs=pgroups(),sel=$("pg");if(!PL.g||gs.map(pn).indexOf(pn(PL.g))<0)PL.g=(GSEL&&gs.map(pn).indexOf(pn(GSEL))>=0)?GSEL:(gs[0]||"");
  sel.innerHTML=gs.map(function(g){var n=anyPlan(g);return '<option value="'+esc(g)+'"'+(pn(g)===pn(PL.g)?" selected":"")+'>'+esc(g)+(n?"":" (no plan yet)")+'</option>'}).join("")||'<option value="">No groups available</option>';
  var fs=$("pfs"),cur=fs.value;fs.innerHTML='<option value="">All statuses</option>'+PSTAT.concat(["Overdue"]).map(function(s){return '<option'+(s===cur?" selected":"")+'>'+s+'</option>'}).join("");
