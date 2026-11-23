@@ -228,13 +228,13 @@ body:not(.ed) .editcol{display:none}
 <div id="modal" class="modal" style="display:none" role="dialog" aria-modal="true" aria-labelledby="mt"><div class="mcard"><div class="mhead"><h2 id="mt"></h2><div class="hb"><button type="button" class="cpy" id="mcopyall" data-all="1">Copy all details</button><button type="button" id="mclose" aria-label="Close">✕</button></div></div><div id="mbody"></div></div></div>
 <div id="auth"><div class="acard">
 <h1>Samsotech eInvoicing Dashboard</h1><p class="asub">Sign in to continue</p>
-<form id="fLogin"><label>Username<input id="lu" autocomplete="username" autocapitalize="none" required></label><label>Password<input id="lp" type="password" autocomplete="current-password" required></label><button id="bLogin" type="submit">Sign in</button></form><p class="asub" style="margin:10px 0 0;font-size:11px">Page version 16</p>
+<form id="fLogin"><label>Username<input id="lu" autocomplete="username" autocapitalize="none" required></label><label>Password<input id="lp" type="password" autocomplete="current-password" required></label><button id="bLogin" type="submit">Sign in</button></form><p class="asub" style="margin:10px 0 0;font-size:11px">Page version 18</p>
 <form id="fChange" style="display:none"><p class="ahint"><b>Set a new password.</b> This is your first sign-in, so please replace the temporary password. Use at least 8 characters, with an uppercase letter, a lowercase letter and a number.</p><label>New password<input id="np" type="password" autocomplete="new-password" required></label><label>Confirm new password<input id="np2" type="password" autocomplete="new-password" required></label><button id="bChange" type="submit">Save password and continue</button></form>
 <div class="amsg" id="amsg" role="alert"></div>
 </div></div>
 <header><div class="wrap"><div class="top">
 <div><h1>Samsotech eInvoicing Dashboard</h1><p class="sub" id="sub">&nbsp;</p></div>
-<div class="stamp">Last refreshed<b id="when">Loading…</b><div class="live" id="live"><i></i><span id="livetxt">Connecting to Google Sheet…</span></div><button id="rf" type="button">Refresh now</button> <button id="lo" type="button">Sign out</button><div class="live" style="margin-top:6px">Signed in as&nbsp;<span id="who"></span></div><div class="live" style="margin-top:2px;opacity:.7">Page version 16 · copy icons</div></div>
+<div class="stamp">Last refreshed<b id="when">Loading…</b><div class="live" id="live"><i></i><span id="livetxt">Connecting to Google Sheet…</span></div><button id="rf" type="button">Refresh now</button> <button id="lo" type="button">Sign out</button><div class="live" style="margin-top:6px">Signed in as&nbsp;<span id="who"></span></div><div class="live" style="margin-top:2px;opacity:.7">Page version 18 · copy icons</div></div>
 </div></div></header>
 <div class="wrap"><main>
 <div id="banner"></div>
@@ -620,11 +620,14 @@ function drop(){TOKEN="";USER="";try{sessionStorage.removeItem("eiv_t");sessionS
 function $(id){return document.getElementById(id)}
 function api(b){
  if(!CFG.API_URL||CFG.API_URL.indexOf("http")!==0)return Promise.reject(new Error("API_URL is not set in index.html"));
- var ac=window.AbortController?new AbortController():null,tm=ac?setTimeout(function(){ac.abort()},120000):0;
- return fetch(CFG.API_URL,{method:"POST",body:JSON.stringify(b),redirect:"follow",signal:ac?ac.signal:undefined}).then(function(r){clearTimeout(tm);if(!r.ok)throw new Error("HTTP "+r.status);return r.json()},function(e){clearTimeout(tm);throw e})}
+ /* no time limit: the request waits for the server however long it takes; a dropped connection is retried once */
+ function go(){return fetch(CFG.API_URL,{method:"POST",body:JSON.stringify(b),redirect:"follow"}).then(function(r){if(!r.ok)throw new Error("HTTP "+r.status);return r.json()})}
+ return go().catch(function(e){if(/HTTP/.test(e.message))throw e;return new Promise(function(ok){setTimeout(ok,1500)}).then(go)})}
 function showAuth(view,msg){$("auth").style.display="flex";$("fLogin").style.display=view==="login"?"block":"none";$("fChange").style.display=view==="change"?"block":"none";$("amsg").textContent=msg||"";$("amsg").style.color=view==="busy"?"var(--mute)":""}
 function hideAuth(){$("auth").style.display="none";$("who").textContent=USER}
-function busy(id,on,t){var b=$(id);b.disabled=on;if(t)b.textContent=on?"Please wait…":t}
+var BUSYT={};
+function busy(id,on,t){var b=$(id);b.disabled=on;if(t)b.textContent=on?"Please wait…":t;clearTimeout(BUSYT[id]);
+ if(on)BUSYT[id]=setTimeout(function(){var m=$("amsg");if(m&&$("auth").style.display!=="none"){m.style.color="var(--mute)";m.textContent="The server is taking longer than usual. Please keep this page open…"}},10000)}
 function enter(r){TOKEN=r.t;USER=r.u;keep();$("lp").value="";$("np").value="";$("np2").value="";hideAuth();load()}
 $("fLogin").addEventListener("submit",function(e){e.preventDefault();$("amsg").textContent="";busy("bLogin",true,"Sign in");
  api({a:"login",u:$("lu").value,p:$("lp").value}).then(function(r){busy("bLogin",false,"Sign in");
@@ -678,6 +681,25 @@ load();setInterval(function(){if(TOKEN)load()},CFG.REFRESH_SEC*1000);
 /* ================= PROJECT PLAN ================= */
 var PL={acc:"",groups:"*",tasks:[],cm:[],info:{},g:"",e:"",view:"T",loading:false,ready:false};
 var OWN=["Samsotech","Finance","IT"];
+/* default project summary: used when Project details has no summary of its own */
+var DEF_SUM=["Project Summary",
+"VICAS SMARTeIS is a cloud-based e-Invoicing solution designed to help UAE entities comply with Ministry of Finance (MoF) e-Invoicing requirements under the UAE PEPPOL-based framework.",
+"Samsotech International, as the appointed Accredited Service Provider (ASP), will implement the solution to automate electronic invoice generation, validation, transmission, storage and regulatory reporting in line with UAE e-Invoicing regulations.",
+"Proposed Solution",
+"Samsotech will provide a secure, cloud-hosted platform supporting:",
+"* UAE-compliant invoice generation, validation and submission.",
+"* API-based integration with existing business systems.",
+"* Real-time invoice monitoring and reporting.",
+"* Secure invoice archiving and audit support.",
+"* Multi-currency and multi-language capabilities.",
+"Integration Architecture",
+"The solution will integrate with the entity's existing business systems through APIs or agreed integration methods. Samsotech's E-Invoicing Middleware will manage invoice processing, validation and transmission through the ASP network to ensure regulatory compliance."].join("\n");
+/* summary text -> report HTML: short lines without a full stop are headings, "* " lines are bullets */
+function sumHtml(t){var h="",ul=false;String(t||"").split(/\r?\n/).forEach(function(x){x=x.trim();if(!x){if(ul){h+="</ul>";ul=false}return}
+ if(/^[*•\-]\s+/.test(x)){if(!ul){h+='<ul style="margin:4px 0 10px 20px;padding:0">';ul=true}h+="<li>"+esc(x.replace(/^[*•\-]\s+/,""))+"</li>";return}
+ if(ul){h+="</ul>";ul=false}
+ if(x.length<=60&&!/[.:;,]$/.test(x))h+='<h3 style="font-size:12px;color:#0b6e79;margin:12px 0 4px;text-transform:uppercase;letter-spacing:.04em">'+esc(x)+"</h3>";else h+='<p style="margin:0 0 8px">'+esc(x)+"</p>"});
+ return h+(ul?"</ul>":"")}
 var PSTAT=["Not started","In progress","Completed","On hold","At risk"];
 var PSC={"Not started":"p-idle","In progress":"p-prog","Completed":"p-ok","On hold":"p-warn","At risk":"p-bad","Delayed":"p-bad","Overdue":"p-bad"};
 /* standard eInvoicing implementation template: [step, [[task, working days, flag]]] */
@@ -883,7 +905,7 @@ function psave(body,okMsg,after,waitReload){body.a="planSave";body.t=TOKEN;var b
   pmsgMain(okMsg,"ok");setTimeout(function(){pmsgMain("")},4000);
   if(waitReload)return planLoad(true).then(function(){if(after)after();else pmClose()});
   if(after)after();else pmClose();planLoad(true)})
- .catch(function(x){clearTimeout(slow);en(true);pmsg(x.name==="AbortError"?"The server did not answer in time. The change may still have been saved – the plan will reload.":"Could not reach the server. "+x.message,"err");planLoad(true)})}
+ .catch(function(x){clearTimeout(slow);en(true);pmsg("Could not reach the server. The change may still have been saved – the plan will reload. ("+x.message+")","err");planLoad(true)})}
 function taskSave(){var k=$("pfStep").value,sn,step;
  if(k==="__new"){sn=+$("pfNewN").value;step=$("pfNewS").value.trim();if(!step){pmsg("Enter a name for the new step.","err");return}}else{var i=k.indexOf("|");sn=+k.slice(0,i);step=k.slice(i+1)}
  var t={id:PM.t?PM.t.id:"",g:PM.t?PM.t.g:PL.g,sn:sn,step:step,tn:+$("pfTn").value||1,name:$("pfName").value.trim(),owner:ownVal(),e:PL.e,l:PM.t?PM.t.l||"":"",start:$("pfStart").value,end:$("pfEnd").value,pr:Math.round(+$("pfPr").value||0),st:$("pfSt").value,rem:$("pfRem").value.trim(),md:$("pfMd").value.trim()};
@@ -905,7 +927,7 @@ function openInfo(){var I=ginfo(PL.g),G=PL.e?ginfo(PL.g,""):{},ed=pedit(),dis=ed
  function ph(k){return G[k]?' placeholder="Group: '+esc(k==="ko"||k==="gl"?pf(G[k]):G[k])+'"':""}
  pmOpen("Project details · "+planName(),'<div class="pfg">'+pfld("Project manager",'<input id="piPm" type="text" value="'+esc(I.pm||"")+'"'+ph("pm")+dis+'>')+pfld("Client contact",'<input id="piCc" type="text" value="'+esc(I.cc||"")+'"'+ph("cc")+dis+'>')+
   pfld("Kick-off date",'<input id="piKo" type="date" value="'+(I.ko||"")+'"'+dis+'>')+pfld("Target go-live",'<input id="piGl" type="date" value="'+(I.gl||"")+'"'+dis+'>')+
-  pfld("Scope / summary (shown on the client report)",'<textarea id="piSum" style="min-height:110px"'+dis+'>'+esc(I.sum||"")+'</textarea>',true)+'</div>'+
+  pfld("Project summary (shown on the client report – the default text is filled in, edit as needed)",'<textarea id="piSum" style="min-height:110px"'+dis+'>'+esc(I.sum||DEF_SUM)+'</textarea>',true)+'</div>'+
   (PL.e?'':entBox(I.ents||"",dis))+
   '<div class="pfoot">'+(ed?'<button type="button" class="btnp" id="piSave">Save details</button><button type="button" class="btns" id="pfCancel">Cancel</button>':'')+'<span id="pmm" class="pmsg"></span></div>'+
   '<div class="pnote">'+(PL.e?'Fields left blank use the group\'s project details'+(G.gl?' (group go-live: '+pf(G.gl)+')':'')+'. ':'')+'Tasks cannot end after the target go-live date. If kick-off or go-live are left blank, the report uses the first start date and last end date in the plan.</div>',"info")}
@@ -992,7 +1014,7 @@ function openExp(){if(!PL.g)return;var L=gtasks(PL.g);if(!L.length){pmsgMain("Th
 function curStage(r){for(var i=0;i<7;i++)if(!r.st[i])return S[i]+(r.ip&&r.ip[i]?" (in progress)":"");return"Live"}
 function buildReport(o){var g=PL.g,L=gtasks(g),A=agg(L),H=health(A),I=geff(g),E=gents(g),SG=gsteps(L),now=new Date();
  var h='<div class="rc"><div><div class="b">Samsotech · eInvoicing implementation</div><h1>Project Plan</h1><div class="c">'+esc(g)+'</div>'+(PL.e||ginfo(g,"").ents?'<div style="font-size:13px;margin-top:2px;max-width:640px">'+esc(elist(PL.e||ginfo(g,"").ents).join(" · "))+'</div>':'')+'</div><div class="m">Status as of '+now.toLocaleDateString("en-GB",{day:"2-digit",month:"long",year:"numeric"})+'<br>Prepared by '+esc(USER||"")+'</div></div>';
- h+='<h2>1. Project overview</h2><table class="kv"><tbody>'+[["Client group",g]].concat([[E.length===1?"Entity":"Entities",E.map(function(r){return r.n}).join(", ")||"–"]]).concat([["Project manager",I.pm||"–"],["Client contact",I.cc||"–"],["Kick-off date",pf(I.ko||A.start)],["Target go-live",pf(I.gl||A.end)],["Planned duration",pf(A.start)+" – "+pf(A.end)+" ("+wdays(A.start,A.end)+" working days)"],["Entities in scope",String(E.length)]]).map(function(r){return '<tr><td>'+r[0]+'</td><td>'+esc(r[1])+'</td></tr>'}).join("")+(I.sum?'<tr><td>Scope / summary</td><td style="white-space:pre-wrap">'+esc(I.sum)+'</td></tr>':'')+'</tbody></table>';
+ h+='<h2>1. Project overview</h2><table class="kv"><tbody>'+[["Client group",g]].concat([[E.length===1?"Entity":"Entities",E.map(function(r){return r.n}).join(", ")||"–"]]).concat([["Project manager",I.pm||"–"],["Client contact",I.cc||"–"],["Kick-off date",pf(I.ko||A.start)],["Target go-live",pf(I.gl||A.end)],["Planned duration",pf(A.start)+" – "+pf(A.end)+" ("+wdays(A.start,A.end)+" working days)"],["Entities in scope",String(E.length)]]).map(function(r){return '<tr><td>'+r[0]+'</td><td>'+esc(r[1])+'</td></tr>'}).join("")+'</tbody></table><div style="margin-top:14px;border:1px solid #d5dde6;border-radius:6px;padding:12px 16px">'+sumHtml(I.sum||DEF_SUM)+'</div>';
  h+='<h2>2. Executive summary</h2><div class="rk"><div><small>Overall progress</small><b>'+pct(A.act)+'</b><br>Planned: '+pct(A.plan)+'</div><div><small>Schedule status</small><b style="font-size:13px">'+pill(H[0])+'</b></div><div><small>Tasks completed</small><b>'+A.done+' / '+A.n+'</b></div><div><small>Overdue tasks</small><b>'+A.late+'</b></div><div><small>Steps completed</small><b>'+SG.filter(function(s){return agg(s.L).act>=99.95}).length+' / '+SG.length+'</b></div></div>'+
   (o.md?'<div style="margin-top:10px;border:1px solid #d5dde6;border-radius:6px;padding:10px"><small style="font-size:9px;text-transform:uppercase;letter-spacing:.05em;color:#5b6b7e;font-weight:700">Total effort</small><br><b style="font-size:18px">'+mdf(mdSum(L))+' man-days</b> &nbsp; '+mdByHtml(L)+'</div>':'');
  h+='<h2>3. Step summary</h2><table><thead><tr><th>#</th><th>Step</th><th>Start</th><th>End</th><th>Working days</th>'+(o.md?'<th>Man-days</th>':'')+'<th>Progress</th><th>Status</th></tr></thead><tbody>'+SG.map(function(s){var a=agg(s.L);return '<tr><td>'+s.sn+'</td><td><b>'+esc(s.step)+'</b></td><td>'+pf(a.start)+'</td><td>'+pf(a.end)+'</td><td>'+wdays(a.start,a.end)+'</td>'+(o.md?'<td>'+mdf(mdSum(s.L))+'</td>':'')+'<td style="width:170px">'+pbar(a.act,null)+'</td><td>'+pill(stepStat(s.L,a))+'</td></tr>'}).join("")+'</tbody></table>';
