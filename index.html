@@ -228,13 +228,13 @@ body:not(.ed) .editcol{display:none}
 <div id="modal" class="modal" style="display:none" role="dialog" aria-modal="true" aria-labelledby="mt"><div class="mcard"><div class="mhead"><h2 id="mt"></h2><div class="hb"><button type="button" class="cpy" id="mcopyall" data-all="1">Copy all details</button><button type="button" id="mclose" aria-label="Close">✕</button></div></div><div id="mbody"></div></div></div>
 <div id="auth"><div class="acard">
 <h1>Samsotech eInvoicing Dashboard</h1><p class="asub">Sign in to continue</p>
-<form id="fLogin"><label>Username<input id="lu" autocomplete="username" autocapitalize="none" required></label><label>Password<input id="lp" type="password" autocomplete="current-password" required></label><button id="bLogin" type="submit">Sign in</button></form><p class="asub" style="margin:10px 0 0;font-size:11px">Page version 15</p>
+<form id="fLogin"><label>Username<input id="lu" autocomplete="username" autocapitalize="none" required></label><label>Password<input id="lp" type="password" autocomplete="current-password" required></label><button id="bLogin" type="submit">Sign in</button></form><p class="asub" style="margin:10px 0 0;font-size:11px">Page version 16</p>
 <form id="fChange" style="display:none"><p class="ahint"><b>Set a new password.</b> This is your first sign-in, so please replace the temporary password. Use at least 8 characters, with an uppercase letter, a lowercase letter and a number.</p><label>New password<input id="np" type="password" autocomplete="new-password" required></label><label>Confirm new password<input id="np2" type="password" autocomplete="new-password" required></label><button id="bChange" type="submit">Save password and continue</button></form>
 <div class="amsg" id="amsg" role="alert"></div>
 </div></div>
 <header><div class="wrap"><div class="top">
 <div><h1>Samsotech eInvoicing Dashboard</h1><p class="sub" id="sub">&nbsp;</p></div>
-<div class="stamp">Last refreshed<b id="when">Loading…</b><div class="live" id="live"><i></i><span id="livetxt">Connecting to Google Sheet…</span></div><button id="rf" type="button">Refresh now</button> <button id="lo" type="button">Sign out</button><div class="live" style="margin-top:6px">Signed in as&nbsp;<span id="who"></span></div><div class="live" style="margin-top:2px;opacity:.7">Page version 15 · copy icons</div></div>
+<div class="stamp">Last refreshed<b id="when">Loading…</b><div class="live" id="live"><i></i><span id="livetxt">Connecting to Google Sheet…</span></div><button id="rf" type="button">Refresh now</button> <button id="lo" type="button">Sign out</button><div class="live" style="margin-top:6px">Signed in as&nbsp;<span id="who"></span></div><div class="live" style="margin-top:2px;opacity:.7">Page version 16 · copy icons</div></div>
 </div></div></header>
 <div class="wrap"><main>
 <div id="banner"></div>
@@ -722,7 +722,14 @@ function pill(s){return '<span class="pill '+(PSC[s]||"p-idle")+'">'+esc(s)+'</s
 function canG(g){return PL.groups==="*"||PL.groups.indexOf(pn(g))>=0}
 function pgroups(){var m={},o=[];function add(g){if(!g||g==="Ungrouped"&&!ALL.some(function(r){return r.g===g}))return;var k=pn(g);if(!m[k]&&canG(g)){m[k]=1;o.push(g)}}
  ALL.forEach(function(r){add(r.g)});PL.tasks.forEach(function(t){add(t.g)});return o.sort(function(a,b){return a.toLowerCase()>b.toLowerCase()?1:-1})}
-function gtasks(g,e){if(e===undefined)e=PL.e;var k=pn(g),ke=pn(e);return PL.tasks.filter(function(t){return pn(t.g)===k&&pn(t.e)===ke}).sort(function(a,b){return a.sn-b.sn||(a.step>b.step?1:a.step<b.step?-1:0)||a.tn-b.tn||(a.start>b.start?1:-1)})}
+/* the group plan is stored once per entity (rows linked by t.l); the page shows one copy of each task */
+function gtasks(g,e){if(e===undefined)e=PL.e;var k=pn(g),ke=pn(e),L;
+ if(e)L=PL.tasks.filter(function(t){return pn(t.g)===k&&!t.l&&pn(t.e)===ke});
+ else{var en=gents(g).map(function(r){return pn(r.n)}),seen={};L=[];
+  PL.tasks.filter(function(t){return pn(t.g)===k&&(t.l?(!en.length||en.indexOf(pn(t.e))>=0):!t.e)})
+   .sort(function(a,b){return pn(a.e)<pn(b.e)?-1:pn(a.e)>pn(b.e)?1:0})
+   .forEach(function(t){var key=t.l||t.id;if(!seen[key]){seen[key]=1;L.push(t)}})}
+ return L.sort(function(a,b){return a.sn-b.sn||(a.step>b.step?1:a.step<b.step?-1:0)||a.tn-b.tn||(a.start>b.start?1:-1)})}
 function gsteps(L){var o=[],m={};L.forEach(function(t){var k=t.sn+"|"+t.step;if(!m[k]){m[k]={sn:t.sn,step:t.step,L:[]};o.push(m[k])}m[k].L.push(t)});return o}
 function gcm(id){return PL.cm.filter(function(c){return c.tid===id}).sort(function(a,b){return a.at<b.at?1:-1})}
 function ginfo(g,e){if(e===undefined)e=PL.e;return PL.info[pn(g)+"|"+pn(e)]||{}}
@@ -762,7 +769,7 @@ function planRender(){if(!PL.ready)return;
  sel.innerHTML=gs.map(function(g){var n=anyPlan(g);return '<option value="'+esc(g)+'"'+(pn(g)===pn(PL.g)?" selected":"")+'>'+esc(g)+(n?"":" (no plan yet)")+'</option>'}).join("")||'<option value="">No groups available</option>';
  var fs=$("pfs"),cur=fs.value;fs.innerHTML='<option value="">All statuses</option>'+PSTAT.concat(["Overdue"]).map(function(s){return '<option'+(s===cur?" selected":"")+'>'+s+'</option>'}).join("");
  /* one plan per group; the "Plan for" list only appears for plans made earlier for single entities */
- var lo=[],lm={};PL.tasks.forEach(function(t){if(t.e&&pn(t.g)===pn(PL.g)&&!lm[pn(t.e)]){lm[pn(t.e)]=1;lo.push(t.e)}});lo.sort();
+ var lo=[],lm={};PL.tasks.forEach(function(t){if(t.e&&!t.l&&pn(t.g)===pn(PL.g)&&!lm[pn(t.e)]){lm[pn(t.e)]=1;lo.push(t.e)}});lo.sort();
  if(PL.e&&!lm[pn(PL.e)])PL.e="";
  $("peW").style.display=lo.length?"":"none";
  $("pe").innerHTML='<option value="">Group plan</option>'+lo.map(function(v){return '<option value="'+esc(v)+'"'+(pn(v)===pn(PL.e)?" selected":"")+'>Earlier plan: '+esc(elabel(v))+'</option>'}).join("");
@@ -879,13 +886,13 @@ function psave(body,okMsg,after,waitReload){body.a="planSave";body.t=TOKEN;var b
  .catch(function(x){clearTimeout(slow);en(true);pmsg(x.name==="AbortError"?"The server did not answer in time. The change may still have been saved – the plan will reload.":"Could not reach the server. "+x.message,"err");planLoad(true)})}
 function taskSave(){var k=$("pfStep").value,sn,step;
  if(k==="__new"){sn=+$("pfNewN").value;step=$("pfNewS").value.trim();if(!step){pmsg("Enter a name for the new step.","err");return}}else{var i=k.indexOf("|");sn=+k.slice(0,i);step=k.slice(i+1)}
- var t={id:PM.t?PM.t.id:"",g:PM.t?PM.t.g:PL.g,sn:sn,step:step,tn:+$("pfTn").value||1,name:$("pfName").value.trim(),owner:ownVal(),e:PM.t?PM.t.e:PL.e,start:$("pfStart").value,end:$("pfEnd").value,pr:Math.round(+$("pfPr").value||0),st:$("pfSt").value,rem:$("pfRem").value.trim(),md:$("pfMd").value.trim()};
+ var t={id:PM.t?PM.t.id:"",g:PM.t?PM.t.g:PL.g,sn:sn,step:step,tn:+$("pfTn").value||1,name:$("pfName").value.trim(),owner:ownVal(),e:PL.e,l:PM.t?PM.t.l||"":"",start:$("pfStart").value,end:$("pfEnd").value,pr:Math.round(+$("pfPr").value||0),st:$("pfSt").value,rem:$("pfRem").value.trim(),md:$("pfMd").value.trim()};
  if(t.md!==""&&(isNaN(+t.md)||+t.md<0)){pmsg("Man-days must be a positive number, or blank for automatic.","err");return}
  if(!t.name){pmsg("Enter the task.","err");return}if(!t.start||!t.end){pmsg("Enter start and end dates.","err");return}if(t.end<t.start){pmsg("End date must be on or after the start date.","err");return}
  var gl=glOf(t.g,t.e);if(gl&&t.end>gl&&!isPost(t)){pmsg("The end date is after the target go-live date ("+pf(gl)+"). Move the task earlier, put it in the “After go-live support” step, or change the go-live date in Project details.","err");return}
  if(t.pr<0||t.pr>100){pmsg("Progress must be between 0 and 100.","err");return}
  if(t.st==="Completed")t.pr=100;else if(t.pr>=100)t.st="Completed";
- psave({op:"task",task:t,ver:PM.t?PM.t.ver:""},PM.t?"Task saved.":"Task added.")}
+ psave({op:"task",task:t,ver:PM.t?PM.t.ver:"",ents:planEnts()},PM.t?"Task saved.":"Task added.")}
 function openStep(){var S=gsteps(gtasks(PL.g));openTask("","__new");setTimeout(function(){var n=$("pfNewS");if(n)n.focus()},30)}
 function openRename(k){var i=k.indexOf("|"),sn=+k.slice(0,i),step=k.slice(i+1);
  pmOpen("Rename step",'<div class="pfg">'+pfld("Step number",'<input id="prN" type="number" min="1" max="99" value="'+sn+'">')+pfld("Step name",'<input id="prS" type="text" value="'+esc(step)+'">',true)+'</div><div class="pfoot"><button type="button" class="btnp" id="prSave">Save</button><button type="button" class="btns" id="pfCancel">Cancel</button><span id="pmm" class="pmsg"></span></div>',"ren");
@@ -938,7 +945,7 @@ function tplFit(){var b=$("ptFit");if(!b)return;var ko=$("ptKo").value,gl=$("ptG
  if(r.err){b.innerHTML='<span style="color:'+(ko&&gl?"var(--red)":"inherit")+'">'+esc(r.err)+'</span>';return}
  var i=r.info;b.innerHTML='Project initiation: <b>'+pf(i.preStart)+'</b> and <b>'+pf(ps(prevW(pd(ko))))+'</b>. Kick-off meeting: <b>'+pf(ko)+'</b>.<br>Kick-off to go-live: standard tasks need <b>'+i.need+'</b> working days, <b>'+i.avail+'</b> available'+(i.shrink?' – durations will be <b>shortened in proportion</b>.':' – fits without changes.')+'<br>Go-live: <b>'+pf(gl)+'</b>. After go-live support until <b>'+pf(i.postEnd)+'</b>.'+(!isWk(pd(ko))?'<br><span style="color:var(--warn)">Note: the kick-off date is on a weekend.</span>':'')}
 function tplGo(){var ko=$("ptKo").value,gl=$("ptGl").value,r=tplBuild(ko,gl);if(r.err){pmsg(r.err,"err");return}
- psave({op:"bulk",tasks:r.tasks,ko:ko,gl:gl},"Plan created with "+r.tasks.length+" tasks: kick-off "+pf(ko)+", go-live "+pf(gl)+".",null,true)}
+ psave({op:"bulk",tasks:r.tasks,ko:ko,gl:gl,ents:planEnts()},"Plan created with "+r.tasks.length+" tasks: kick-off "+pf(ko)+", go-live "+pf(gl)+".",null,true)}
 /* re-align an existing plan to the go-live date */
 function fitPlan(){var L=gtasks(PL.g),I=geff(PL.g),gl=I.gl;if(!gl||!L.length)return null;
  var post=L.filter(isPost),glT=L.filter(function(t){return!isPost(t)&&isGlTask(t)}),core=L.filter(function(t){return!isPost(t)&&!isGlTask(t)&&(!I.ko||t.start>=I.ko)});
@@ -949,7 +956,7 @@ function fitPlan(){var L=gtasks(PL.g),I=geff(PL.g),gl=I.gl;if(!gl||!L.length)ret
    else{var f=T>0?av/T:1;core.forEach(function(t){var a=Math.round(idx(t.start)*f),b=Math.max(a,Math.round(idx(t.end)*f));b=Math.min(b,av);a=Math.min(a,b);res[t.id]=[at(a),at(b)]})}}}
  glT.forEach(function(t){res[t.id]=[gl,gl]});
  if(post.length){var PA=agg(post),p0=pd(PA.start),n0=nextW(glD);if(PA.start!==ps(n0)){var off=function(d){return wdays(ps(p0),d)-1};post.forEach(function(t){var a=addW(n0,off(t.start)+1),b=addW(n0,off(t.end)+1);res[t.id]=[ps(a),ps(b)]})}}
- var list=L.filter(function(t){return res[t.id]&&(res[t.id][0]!==t.start||res[t.id][1]!==t.end)}).map(function(t){return{id:t.id,ver:t.ver,start:res[t.id][0],end:res[t.id][1]}});
+ var list=L.filter(function(t){return res[t.id]&&(res[t.id][0]!==t.start||res[t.id][1]!==t.end)}).map(function(t){return{id:t.id,l:t.l||"",ver:t.ver,start:res[t.id][0],end:res[t.id][1]}});
  return{err:err,list:list,gl:gl,n:core.length,post:post.length}}
 function openFit(){var F=fitPlan();if(!F)return;
  pmOpen("Fit plan to go-live · "+planName(),'<p style="margin-top:0">Target go-live: <b>'+pf(F.gl)+'</b>. This will:</p><ul style="margin:0 0 12px 18px;padding:0"><li>shorten the work between kick-off and go-live in proportion so it finishes by the working day before go-live (order and overlaps are kept);</li><li>put the <b>Go-live</b> task on '+pf(F.gl)+';</li><li>move <b>After go-live support</b> so it starts the next working day after go-live.</li></ul><p>Project initiation tasks before kick-off, progress, owners and comments are not changed. <b>'+F.list.length+'</b> task(s) will get new dates.</p>'+
@@ -963,6 +970,8 @@ function openEnts(change){var E=gents(PL.g,""),cur=elist(PL.e).map(pn);
   '<div style="display:flex;gap:8px;margin-bottom:8px"><button type="button" class="pib" id="peAll">Select all</button><button type="button" class="pib" id="peNone">Clear</button><span class="mu" id="peCnt" style="align-self:center;font-size:12px"></span></div>'+
   '<div class="pents">'+E.map(function(r){return '<label class="pchk"><input type="checkbox" value="'+esc(r.n)+'"'+(cur.indexOf(pn(r.n))>=0?" checked":"")+'> <span>'+esc(r.n)+'<span class="mu" style="font-weight:400;font-size:12px"> · '+esc(r.srcs.join(", ")||"no source system")+'</span></span></label>'}).join("")+'</div>'+
   '<div class="pfoot"><button type="button" class="btnp" id="peOk">'+(change?"Save entities":"Open plan")+'</button><button type="button" class="btns" id="pfCancel">Cancel</button><span id="pmm" class="pmsg"></span></div>',"ents");entCnt()}
+/* the entities whose copies make up the current plan (older single-entity plans: none) */
+function planEnts(){return PL.e?[]:gents(PL.g).map(function(r){return r.n})}
 function infoEnts(){var all=document.querySelectorAll(".pents input"),on=entSel();if(PL.e||!all.length)return undefined;if(!on.length)return null;return on.length===all.length?"":ekey(on)}
 function entSel(){var a=[];Array.prototype.forEach.call(document.querySelectorAll(".pents input:checked"),function(c){a.push(c.value)});return a}
 function entCnt(){var c=$("peCnt");if(c)c.textContent=entSel().length+" selected"}
@@ -1028,10 +1037,10 @@ function exportXls(o){var X=xlsRows(o),name="Project Plan - "+planName().replace
   var p=e.target.closest("[data-pid]");if(p){openTask(p.getAttribute("data-pid"));if(e.target.closest(".pib")&&/💬/.test(e.target.textContent)){var c=$("pcText");if(c)setTimeout(function(){c.focus()},30)}}});
  $("pm").addEventListener("click",function(e){var t=e.target;if(t.id==="pm"||t.closest("#pmx")||t.closest("#pfCancel")){pmClose();return}
   if(t.closest("#pfSave"))taskSave();
-  else if(t.closest("#pfDel")){if(PM.t&&confirm("Delete the task “"+PM.t.name+"”? This cannot be undone."))psave({op:"del",id:PM.t.id,ver:PM.t.ver},"Task deleted.")}
-  else if(t.closest("#pcAdd")){var tx=$("pcText").value.trim();if(!tx){pmsg("Write a comment first.","err");return}var id=PM.t.id;psave({op:"comment",id:id,text:tx},"Comment added.",function(){var l=$("pcList");if(l)l.innerHTML=cmHtml(id);$("pcText").value="";pmsg("Comment added.","ok")},true)}
+  else if(t.closest("#pfDel")){if(PM.t&&confirm("Delete the task “"+PM.t.name+"”? This cannot be undone."))psave({op:"del",id:PM.t.id,l:PM.t.l||"",ver:PM.t.ver},"Task deleted.")}
+  else if(t.closest("#pcAdd")){var tx=$("pcText").value.trim();if(!tx){pmsg("Write a comment first.","err");return}var id=PM.t.id;psave({op:"comment",id:id,l:PM.t.l||"",text:tx},"Comment added.",function(){var l=$("pcList");if(l)l.innerHTML=cmHtml(id);$("pcText").value="";pmsg("Comment added.","ok")},true)}
   else if(t.closest("#prSave")){var nn=+$("prN").value,ns=$("prS").value.trim();if(!ns){pmsg("Enter a step name.","err");return}psave({op:"step",g:PL.g,e:PL.e,sn:PM.ren.sn,old:PM.ren.step,nsn:nn,step:ns},"Step renamed.")}
-  else if(t.closest("#piSave")){var I=ginfo(PL.g);if(infoEnts()===null){pmsg("Tick at least one entity.","err");return}psave({op:"info",g:PL.g,e:PL.e,ver:I.ver||"",info:{pm:$("piPm").value.trim(),cc:$("piCc").value.trim(),ko:$("piKo").value,gl:$("piGl").value,sum:$("piSum").value.trim(),ents:infoEnts()}},"Project details saved.")}
+  else if(t.closest("#piSave")){var I=ginfo(PL.g);if(infoEnts()===null){pmsg("Tick at least one entity.","err");return}psave({op:"info",g:PL.g,e:PL.e,ver:I.ver||"",ents:PL.e?[]:(document.querySelectorAll(".pents input").length?entSel():planEnts()),info:{pm:$("piPm").value.trim(),cc:$("piCc").value.trim(),ko:$("piKo").value,gl:$("piGl").value,sum:$("piSum").value.trim(),ents:infoEnts()}},"Project details saved.")}
   else if(t.closest("#ptGo"))tplGo();
   else if(t.closest("#peAll")||t.closest("#peNone")){var on=!!t.closest("#peAll");Array.prototype.forEach.call(document.querySelectorAll(".pents input"),function(c){c.checked=on});entCnt()}
   else if(t.closest("#peOk"))entOk();
