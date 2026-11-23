@@ -227,13 +227,13 @@ body:not(.ed) .editcol{display:none}
 <div id="modal" class="modal" style="display:none" role="dialog" aria-modal="true" aria-labelledby="mt"><div class="mcard"><div class="mhead"><h2 id="mt"></h2><div class="hb"><button type="button" class="cpy" id="mcopyall" data-all="1">Copy all details</button><button type="button" id="mclose" aria-label="Close">✕</button></div></div><div id="mbody"></div></div></div>
 <div id="auth"><div class="acard">
 <h1>Samsotech eInvoicing Dashboard</h1><p class="asub">Sign in to continue</p>
-<form id="fLogin"><label>Username<input id="lu" autocomplete="username" autocapitalize="none" required></label><label>Password<input id="lp" type="password" autocomplete="current-password" required></label><button id="bLogin" type="submit">Sign in</button></form><p class="asub" style="margin:10px 0 0;font-size:11px">Page version 12.3</p>
+<form id="fLogin"><label>Username<input id="lu" autocomplete="username" autocapitalize="none" required></label><label>Password<input id="lp" type="password" autocomplete="current-password" required></label><button id="bLogin" type="submit">Sign in</button></form><p class="asub" style="margin:10px 0 0;font-size:11px">Page version 12</p>
 <form id="fChange" style="display:none"><p class="ahint"><b>Set a new password.</b> This is your first sign-in, so please replace the temporary password. Use at least 8 characters, with an uppercase letter, a lowercase letter and a number.</p><label>New password<input id="np" type="password" autocomplete="new-password" required></label><label>Confirm new password<input id="np2" type="password" autocomplete="new-password" required></label><button id="bChange" type="submit">Save password and continue</button></form>
 <div class="amsg" id="amsg" role="alert"></div>
 </div></div>
 <header><div class="wrap"><div class="top">
 <div><h1>Samsotech eInvoicing Dashboard</h1><p class="sub" id="sub">&nbsp;</p></div>
-<div class="stamp">Last refreshed<b id="when">Loading…</b><div class="live" id="live"><i></i><span id="livetxt">Connecting to Google Sheet…</span></div><button id="rf" type="button">Refresh now</button> <button id="lo" type="button">Sign out</button><div class="live" style="margin-top:6px">Signed in as&nbsp;<span id="who"></span></div><div class="live" style="margin-top:2px;opacity:.7">Page version 12.3 · copy icons</div></div>
+<div class="stamp">Last refreshed<b id="when">Loading…</b><div class="live" id="live"><i></i><span id="livetxt">Connecting to Google Sheet…</span></div><button id="rf" type="button">Refresh now</button> <button id="lo" type="button">Sign out</button><div class="live" style="margin-top:6px">Signed in as&nbsp;<span id="who"></span></div><div class="live" style="margin-top:2px;opacity:.7">Page version 12 · copy icons</div></div>
 </div></div></header>
 <div class="wrap"><main>
 <div id="banner"></div>
@@ -676,28 +676,6 @@ load();setInterval(function(){if(TOKEN)load()},CFG.REFRESH_SEC*1000);
 /* ================= PROJECT PLAN ================= */
 var PL={acc:"",groups:"*",tasks:[],cm:[],info:{},g:"",e:"",view:"T",loading:false,ready:false};
 var OWN=["Samsotech","Finance","IT"];
-/* standard project summary: filled into every Project details form that has no summary yet (users can edit it) */
-var DEF_SUM=["VICAS SMARTeIS is a cloud-based e-Invoicing solution designed to help UAE entities comply with Ministry of Finance (MoF) e-Invoicing requirements under the UAE PEPPOL-based framework.",
-"Samsotech International, as the appointed Accredited Service Provider (ASP), will implement the solution to automate electronic invoice generation, validation, transmission, storage and regulatory reporting in line with UAE e-Invoicing regulations.",
-"",
-"Proposed Solution",
-"Samsotech will provide a secure, cloud-hosted platform supporting:",
-"",
-"* UAE-compliant invoice generation, validation and submission.",
-"* API-based integration with existing business systems.",
-"* Real-time invoice monitoring and reporting.",
-"* Secure invoice archiving and audit support.",
-"* Multi-currency and multi-language capabilities.",
-"",
-"Integration Architecture",
-"The solution will integrate with the entity's existing business systems through APIs or agreed integration methods. Samsotech's E-Invoicing Middleware will manage invoice processing, validation and transmission through the ASP network to ensure regulatory compliance."].join("\n");
-/* summary text -> report HTML: short lines without a full stop are headings, "* " lines are bullets */
-function sumHtml(t){var h='<h3 style="font-size:12px;color:#0b6e79;margin:0 0 6px;text-transform:uppercase;letter-spacing:.04em">Project Summary</h3>',ul=false;
- String(t||"").replace(/^\s*project summary\s*\r?\n/i,"").split(/\r?\n/).forEach(function(x){x=x.trim();if(!x){if(ul){h+="</ul>";ul=false}return}
- if(/^[*•\-]\s+/.test(x)){if(!ul){h+='<ul style="margin:4px 0 10px 20px;padding:0">';ul=true}h+="<li>"+esc(x.replace(/^[*•\-]\s+/,""))+"</li>";return}
- if(ul){h+="</ul>";ul=false}
- if(x.length<=60&&!/[.:;,]$/.test(x))h+='<h3 style="font-size:12px;color:#0b6e79;margin:12px 0 4px;text-transform:uppercase;letter-spacing:.04em">'+esc(x)+"</h3>";else h+='<p style="margin:0 0 8px">'+esc(x)+"</p>"});
- return h+(ul?"</ul>":"")}
 var PSTAT=["Not started","In progress","Completed","On hold","At risk"];
 var PSC={"Not started":"p-idle","In progress":"p-prog","Completed":"p-ok","On hold":"p-warn","At risk":"p-bad","Delayed":"p-bad","Overdue":"p-bad"};
 /* standard eInvoicing implementation template: [step, [[task, working days, flag]]] */
@@ -724,9 +702,7 @@ function pd(s){var m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(s||"");return m?new Date(+
 function ps(d){return d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)+"-"+("0"+d.getDate()).slice(-2)}
 function pf(s){var d=pd(s);return d?d.toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"}):"–"}
 function isWk(d){var x=d.getDay();return x!==0&&x!==6}            /* UAE weekend: Saturday and Sunday */
-var WDM={};
-function wdays(a,b){var k=a+"|"+b;if(WDM[k]!==undefined)return WDM[k];return WDM[k]=wdays0(a,b)}
-function wdays0(a,b){var d=pd(a),e=pd(b);if(!d||!e||e<d)return 0;var n=0;for(var x=new Date(d);x<=e;x.setDate(x.getDate()+1))if(isWk(x))n++;return n}
+function wdays(a,b){var d=pd(a),e=pd(b);if(!d||!e||e<d)return 0;var n=0;for(var x=new Date(d);x<=e;x.setDate(x.getDate()+1))if(isWk(x))n++;return n}
 function firstW(d){var x=new Date(d);while(!isWk(x))x.setDate(x.getDate()+1);return x}
 function addW(d,n){var x=firstW(d),c=1;while(c<n){x.setDate(x.getDate()+1);if(isWk(x))c++}return x}
 function nextW(d){var x=new Date(d);x.setDate(x.getDate()+1);return firstW(x)}
@@ -743,14 +719,14 @@ function pbar(a,p){a=Math.max(0,Math.min(100,a));return '<div class="pbar"><div 
 function pill(s){return '<span class="pill '+(PSC[s]||"p-idle")+'">'+esc(s)+'</span>'}
 function canG(g){return PL.groups==="*"||PL.groups.indexOf(pn(g))>=0}
 function pgroups(){var m={},o=[];function add(g){if(!g||g==="Ungrouped"&&!ALL.some(function(r){return r.g===g}))return;var k=pn(g);if(!m[k]&&canG(g)){m[k]=1;o.push(g)}}
- ALL.forEach(function(r){add(r.g)});(PL.have||[]).forEach(add);return o.sort(function(a,b){return a.toLowerCase()>b.toLowerCase()?1:-1})}
+ ALL.forEach(function(r){add(r.g)});PL.tasks.forEach(function(t){add(t.g)});return o.sort(function(a,b){return a.toLowerCase()>b.toLowerCase()?1:-1})}
 function gtasks(g,e){if(e===undefined)e=PL.e;var k=pn(g),ke=pn(e);return PL.tasks.filter(function(t){return pn(t.g)===k&&pn(t.e)===ke}).sort(function(a,b){return a.sn-b.sn||(a.step>b.step?1:a.step<b.step?-1:0)||a.tn-b.tn||(a.start>b.start?1:-1)})}
 function gsteps(L){var o=[],m={};L.forEach(function(t){var k=t.sn+"|"+t.step;if(!m[k]){m[k]={sn:t.sn,step:t.step,L:[]};o.push(m[k])}m[k].L.push(t)});return o}
 function gcm(id){return PL.cm.filter(function(c){return c.tid===id}).sort(function(a,b){return a.at<b.at?1:-1})}
 function ginfo(g,e){if(e===undefined)e=PL.e;return PL.info[pn(g)+"|"+pn(e)]||{}}
 function geff(g,e){if(e===undefined)e=PL.e;var G=ginfo(g,""),O=e?ginfo(g,e):{},o={};["pm","cc","ko","gl","sum"].forEach(function(k){o[k]=O[k]||G[k]||""});return o}   /* entity value, else group value */
 function glOf(g,e){return geff(g,e).gl||""}
-function anyPlan(g){var k=pn(g);return (PL.have||[]).some(function(x){return pn(x)===k})||PL.tasks.some(function(t){return pn(t.g)===k})}
+function anyPlan(g){var k=pn(g);return PL.tasks.some(function(t){return pn(t.g)===k})}
 function planName(){return PL.g+(PL.e?" – "+PL.e:"")}
 function owners(v){var a=String(v||"").split(/\s*[,;\/]\s*/).filter(function(x){return x});return a}
 function ownChips(v){var a=owners(v);return a.length?a.map(function(x){return '<span class="och">'+esc(x)+'</span>'}).join(" "):'–'}
@@ -761,28 +737,18 @@ window.planOnData=function(mode){PL.acc=mode||"";var tb=$("tabPlan");if(tb)tb.st
  document.body.classList.toggle("pedit",pedit());
  if(!PL.acc&&TAB==="5"){$("tabs").querySelector('[data-v="1"]').click();return}
  if(TAB==="5"&&$("pm").style.display==="none")planLoad()};
-/* the group to load: the one selected, else the group filter, else the first group */
-function curGroup(){if(PL.g)return PL.g;var gs=pgroups();return (GSEL&&gs.map(pn).indexOf(pn(GSEL))>=0)?GSEL:(gs[0]||"")}
-/* one plan request at a time; a forced reload while one is running is queued */
-function planLoad(force){if(!TOKEN)return Promise.resolve();if(PL.loading){if(force)PL.again=true;return PL.loading}
- if(!PL.ready)$("pBody").innerHTML='<div class="pempty">Loading project plans…</div>';
- var want=curGroup();PL.loading=api({a:"plan",t:TOKEN,g:want}).then(function(r){
+function planLoad(){if(PL.loading||!TOKEN)return Promise.resolve();PL.loading=true;if(!PL.ready)$("pBody").innerHTML='<div class="pempty">Loading project plans…</div>';
+ return api({a:"plan",t:TOKEN}).then(function(r){PL.loading=false;
   if(r.err==="auth"){drop();showAuth("login","Your session has expired. Please sign in again.");return}
   if(r.err==="forbidden"){PL.acc="";planOnData("");return}
   if(r.err)throw new Error(r.msg||r.err);
-  PL.gl=pn(r.g||"");PL.have=r.have||[];
-  var sig=JSON.stringify([r.g,r.acc,r.groups,r.have,r.tasks,r.comments,r.info]);if(PL.ready&&sig===PL.sig){if(pn(PL.g)!==PL.gl)planRender();return}PL.sig=sig;
-  PL.acc=r.acc;PL.groups=r.groups;PL.tasks=(r.tasks||[]).map(function(t){if(t.st==="Completed")t.pr=100;return t});PL.cm=r.comments||[];PL.info=r.info||{};PL.ready=true;document.body.classList.toggle("pedit",pedit());
-  if($("pm").style.display==="none"||PM.kind!=="task")planRender();else{planRender();var l=$("pcList");if(l&&PM.t)l.innerHTML=cmHtml(PM.t.id)}})
- .catch(function(e){pmsgMain("Could not load the project plans. "+(e.message||""),"err")})
- .then(function(){var a=PL.again;PL.loading=null;PL.again=false;if(a)return planLoad()});
- return PL.loading}
+  var sig=JSON.stringify([r.acc,r.groups,r.tasks,r.comments,r.info]);if(PL.ready&&sig===PL.sig)return;PL.sig=sig;
+  PL.acc=r.acc;PL.groups=r.groups;PL.tasks=(r.tasks||[]).map(function(t){if(t.st==="Completed")t.pr=100;return t});PL.cm=r.comments||[];PL.info=r.info||{};PL.ready=true;document.body.classList.toggle("pedit",pedit());planRender()})
+ .catch(function(e){PL.loading=false;pmsgMain("Could not load the project plans. "+(e.message||""),"err")})}
 function pmsgMain(t,c){var m=$("pMsg");m.textContent=t||"";m.className="pmsg"+(c?" "+c:"")}
 
 function planRender(){if(!PL.ready)return;
  var gs=pgroups(),sel=$("pg");if(!PL.g||gs.map(pn).indexOf(pn(PL.g))<0)PL.g=(GSEL&&gs.map(pn).indexOf(pn(GSEL))>=0)?GSEL:(gs[0]||"");
- if(PL.gl!==undefined&&PL.gl!==pn(PL.g)){sel.innerHTML=gs.map(function(g){return '<option value="'+esc(g)+'"'+(pn(g)===pn(PL.g)?" selected":"")+'>'+esc(g)+(anyPlan(g)?"":" (no plan yet)")+'</option>'}).join("");
-  $("pKpi").innerHTML="";$("pMeta").innerHTML="";$("pWarn").innerHTML="";$("pBody").innerHTML='<div class="pempty">Loading the plan for '+esc(PL.g)+'…</div>';planLoad(true);return}
  sel.innerHTML=gs.map(function(g){var n=anyPlan(g);return '<option value="'+esc(g)+'"'+(pn(g)===pn(PL.g)?" selected":"")+'>'+esc(g)+(n?"":" (no plan yet)")+'</option>'}).join("")||'<option value="">No groups available</option>';
  var fs=$("pfs"),cur=fs.value;fs.innerHTML='<option value="">All statuses</option>'+PSTAT.concat(["Overdue"]).map(function(s){return '<option'+(s===cur?" selected":"")+'>'+s+'</option>'}).join("");
  var en={},eo=[];ALL.forEach(function(r){if(pn(r.g)===pn(PL.g)&&!en[pn(r.n)]){en[pn(r.n)]=1;eo.push(r.n)}});PL.tasks.forEach(function(t){if(t.e&&pn(t.g)===pn(PL.g)&&!en[pn(t.e)]){en[pn(t.e)]=1;eo.push(t.e)}});eo.sort();
@@ -888,25 +854,12 @@ function pfStat(){var n=$("pfPr"),r=$("pfPrR"),v=$("pfSt").value,p=+n.value||0;
  n.value=p;r.value=p}
 function pfDays(){var a=$("pfStart"),b=$("pfEnd");if(a&&b)$("pfDays").value=a.value&&b.value&&b.value>=a.value?wdays(a.value,b.value):"–";pfMdHint()}
 function pfMdHint(){var m=$("pfMd"),a=$("pfStart"),b=$("pfEnd");if(m&&a&&b)m.placeholder="Auto: "+mdf(mdAuto({start:a.value,end:b.value,owner:ownVal()}))}
-/* save: as soon as the server confirms, update the page and close the window; the full plan reloads in the background */
-function psave(body,okMsg,after){body.a="planSave";body.t=TOKEN;var b=document.querySelectorAll("#pmb .btnp,#pmb .btnd");
- function en(on){Array.prototype.forEach.call(b,function(x){x.disabled=!on})}
- en(false);pmsg("Saving…");var slow=setTimeout(function(){pmsg("Still saving – the server is busy, please wait…")},15000);
- return api(body).then(function(r){clearTimeout(slow);en(true);
+function psave(body,okMsg,after){body.a="planSave";body.t=TOKEN;var b=document.querySelectorAll("#pmb .btnp,#pmb .btnd");Array.prototype.forEach.call(b,function(x){x.disabled=true});pmsg("Saving…");
+ return api(body).then(function(r){Array.prototype.forEach.call(b,function(x){x.disabled=false});
   if(r.err==="auth"){pmClose();drop();showAuth("login","Your session has expired. Please sign in again.");return}
-  if(r.err){pmsg(r.err==="forbidden"?"You do not have permission to change this plan.":r.err==="conflict"?"Someone else changed this item. Close this window, it will reload with the latest plan.":r.err==="invalid"?(r.msg||"Some values are not valid."):"Could not save. "+(r.msg||r.err),"err");if(r.err==="conflict")planLoad(true);return}
-  planLocal(body);
-  if(after)after();else pmClose();
-  planRender();pmsgMain(okMsg+(body.op==="bulk"?" Loading the plan…":""),"ok");setTimeout(function(){pmsgMain("")},5000);
-  planLoad(true)})
- .catch(function(x){clearTimeout(slow);en(true);pmsg("Could not reach the server. "+x.message,"err")})}
-/* show a confirmed change straight away, before the background reload */
-function planLocal(b){try{
- if(b.op==="info"){var k=pn(b.g)+"|"+pn(b.e),o=PL.info[k]||{g:b.g,e:b.e||""};PL.info[k]=Object.assign({},o,b.info)}
- else if(b.op==="task"&&b.task.id){PL.tasks=PL.tasks.map(function(t){return t.id===b.task.id?Object.assign({},t,b.task):t})}
- else if(b.op==="del"){PL.tasks=PL.tasks.filter(function(t){return t.id!==b.id})}
- else if(b.op==="comment"){PL.cm=PL.cm.concat([{id:"new"+Date.now(),tid:b.id,g:PL.g,at:new Date().toISOString().slice(0,16).replace("T"," "),by:USER||"",text:b.text}])}
- PL.sig="";}catch(e){}}
+  if(r.err){pmsg(r.err==="forbidden"?"You do not have permission to change this plan.":r.err==="conflict"?"Someone else changed this item. Close this window, it will reload with the latest plan.":r.err==="invalid"?(r.msg||"Some values are not valid."):"Could not save. "+(r.msg||r.err),"err");if(r.err==="conflict")planLoad();return}
+  return planLoad().then(function(){if(after)after();else pmClose();pmsgMain(okMsg,"ok");setTimeout(function(){pmsgMain("")},4000)})})
+ .catch(function(x){Array.prototype.forEach.call(b,function(y){y.disabled=false});pmsg("Could not reach the server. "+x.message,"err")})}
 function taskSave(){var k=$("pfStep").value,sn,step;
  if(k==="__new"){sn=+$("pfNewN").value;step=$("pfNewS").value.trim();if(!step){pmsg("Enter a name for the new step.","err");return}}else{var i=k.indexOf("|");sn=+k.slice(0,i);step=k.slice(i+1)}
  var t={id:PM.t?PM.t.id:"",g:PM.t?PM.t.g:PL.g,sn:sn,step:step,tn:+$("pfTn").value||1,name:$("pfName").value.trim(),owner:ownVal(),e:PM.t?PM.t.e:PL.e,start:$("pfStart").value,end:$("pfEnd").value,pr:Math.round(+$("pfPr").value||0),st:$("pfSt").value,rem:$("pfRem").value.trim(),md:$("pfMd").value.trim()};
@@ -924,7 +877,7 @@ function openInfo(){var I=ginfo(PL.g),G=PL.e?ginfo(PL.g,""):{},ed=pedit(),dis=ed
  function ph(k){return G[k]?' placeholder="Group: '+esc(k==="ko"||k==="gl"?pf(G[k]):G[k])+'"':""}
  pmOpen("Project details · "+planName(),'<div class="pfg">'+pfld("Project manager",'<input id="piPm" type="text" value="'+esc(I.pm||"")+'"'+ph("pm")+dis+'>')+pfld("Client contact",'<input id="piCc" type="text" value="'+esc(I.cc||"")+'"'+ph("cc")+dis+'>')+
   pfld("Kick-off date",'<input id="piKo" type="date" value="'+(I.ko||"")+'"'+dis+'>')+pfld("Target go-live",'<input id="piGl" type="date" value="'+(I.gl||"")+'"'+dis+'>')+
-  pfld("Project summary (shown on the client report – the standard text is filled in; edit it for this client if needed)",'<textarea id="piSum" style="min-height:260px"'+dis+'>'+esc(I.sum||DEF_SUM)+'</textarea>',true)+'</div>'+
+  pfld("Scope / summary (shown on the client report)",'<textarea id="piSum" style="min-height:110px"'+dis+'>'+esc(I.sum||"")+'</textarea>',true)+'</div>'+
   '<div class="pfoot">'+(ed?'<button type="button" class="btnp" id="piSave">Save details</button><button type="button" class="btns" id="pfCancel">Cancel</button>':'')+'<span id="pmm" class="pmsg"></span></div>'+
   '<div class="pnote">'+(PL.e?'Fields left blank use the group\'s project details'+(G.gl?' (group go-live: '+pf(G.gl)+')':'')+'. ':'')+'Tasks cannot end after the target go-live date. If kick-off or go-live are left blank, the report uses the first start date and last end date in the plan.</div>',"info")}
 function openTpl(){var E=gents(PL.g),op=E.some(function(r){return r.srcs.some(function(s){return typeof isOp==="function"?isOp(s):/opera/i.test(s)})}),ou=E.some(function(r){return typeof ouq==="function"&&ouq(r)});
@@ -990,7 +943,7 @@ function openExp(){if(!PL.g)return;var L=gtasks(PL.g);if(!L.length){pmsgMain("Th
 function curStage(r){for(var i=0;i<7;i++)if(!r.st[i])return S[i]+(r.ip&&r.ip[i]?" (in progress)":"");return"Live"}
 function buildReport(o){var g=PL.g,L=gtasks(g),A=agg(L),H=health(A),I=geff(g),E=gents(g),SG=gsteps(L),now=new Date();
  var h='<div class="rc"><div><div class="b">Samsotech · eInvoicing implementation</div><h1>Project Plan</h1><div class="c">'+esc(g)+'</div>'+(PL.e?'<div style="font-size:14px;margin-top:2px">'+esc(PL.e)+'</div>':'')+'</div><div class="m">Status as of '+now.toLocaleDateString("en-GB",{day:"2-digit",month:"long",year:"numeric"})+'<br>Prepared by '+esc(USER||"")+'</div></div>';
- h+='<h2>1. Project overview</h2><table class="kv"><tbody>'+[["Client group",g]].concat(PL.e?[["Entity",PL.e]]:[]).concat([["Project manager",I.pm||"–"],["Client contact",I.cc||"–"],["Kick-off date",pf(I.ko||A.start)],["Target go-live",pf(I.gl||A.end)],["Planned duration",pf(A.start)+" – "+pf(A.end)+" ("+wdays(A.start,A.end)+" working days)"],["Entities in scope",String(E.length)]]).map(function(r){return '<tr><td>'+r[0]+'</td><td>'+esc(r[1])+'</td></tr>'}).join("")+'</tbody></table><div style="margin-top:14px;border:1px solid #d5dde6;border-radius:6px;padding:12px 16px">'+sumHtml(I.sum||DEF_SUM)+'</div>';
+ h+='<h2>1. Project overview</h2><table class="kv"><tbody>'+[["Client group",g]].concat(PL.e?[["Entity",PL.e]]:[]).concat([["Project manager",I.pm||"–"],["Client contact",I.cc||"–"],["Kick-off date",pf(I.ko||A.start)],["Target go-live",pf(I.gl||A.end)],["Planned duration",pf(A.start)+" – "+pf(A.end)+" ("+wdays(A.start,A.end)+" working days)"],["Entities in scope",String(E.length)]]).map(function(r){return '<tr><td>'+r[0]+'</td><td>'+esc(r[1])+'</td></tr>'}).join("")+(I.sum?'<tr><td>Scope / summary</td><td style="white-space:pre-wrap">'+esc(I.sum)+'</td></tr>':'')+'</tbody></table>';
  h+='<h2>2. Executive summary</h2><div class="rk"><div><small>Overall progress</small><b>'+pct(A.act)+'</b><br>Planned: '+pct(A.plan)+'</div><div><small>Schedule status</small><b style="font-size:13px">'+pill(H[0])+'</b></div><div><small>Tasks completed</small><b>'+A.done+' / '+A.n+'</b></div><div><small>Overdue tasks</small><b>'+A.late+'</b></div><div><small>Steps completed</small><b>'+SG.filter(function(s){return agg(s.L).act>=99.95}).length+' / '+SG.length+'</b></div></div>'+
   (o.md?'<div style="margin-top:10px;border:1px solid #d5dde6;border-radius:6px;padding:10px"><small style="font-size:9px;text-transform:uppercase;letter-spacing:.05em;color:#5b6b7e;font-weight:700">Total effort</small><br><b style="font-size:18px">'+mdf(mdSum(L))+' man-days</b> &nbsp; '+mdByHtml(L)+'</div>':'');
  h+='<h2>3. Step summary</h2><table><thead><tr><th>#</th><th>Step</th><th>Start</th><th>End</th><th>Working days</th>'+(o.md?'<th>Man-days</th>':'')+'<th>Progress</th><th>Status</th></tr></thead><tbody>'+SG.map(function(s){var a=agg(s.L);return '<tr><td>'+s.sn+'</td><td><b>'+esc(s.step)+'</b></td><td>'+pf(a.start)+'</td><td>'+pf(a.end)+'</td><td>'+wdays(a.start,a.end)+'</td>'+(o.md?'<td>'+mdf(mdSum(s.L))+'</td>':'')+'<td style="width:170px">'+pbar(a.act,null)+'</td><td>'+pill(stepStat(s.L,a))+'</td></tr>'}).join("")+'</tbody></table>';
@@ -1022,7 +975,7 @@ function exportXls(o){var X=xlsRows(o),name="Project Plan - "+planName().replace
 /* ---------- wiring ---------- */
 (function(){
  $("tabs").addEventListener("click",function(e){var b=e.target.closest(".tab");if(!b)return;var on=b.getAttribute("data-v")==="5";$("v5").style.display=on?"block":"none";if(on){$("gbar").style.visibility="hidden";if(!PL.ready||!PL.loading)planLoad()}});
- $("pg").addEventListener("change",function(){PL.g=this.value;PL.e="";planRender()});   /* planRender loads the group if needed */
+ $("pg").addEventListener("change",function(){PL.g=this.value;PL.e="";planRender()});
  $("pe").addEventListener("change",function(){PL.e=this.value;planRender()});$("pfo").addEventListener("change",planRender);$("pFitB").addEventListener("click",openFit);
  $("pq").addEventListener("input",planRender);$("pfs").addEventListener("change",planRender);
  $("pvT").addEventListener("click",function(){PL.view="T";planRender()});$("pvG").addEventListener("click",function(){PL.view="G";planRender()});
