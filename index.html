@@ -177,6 +177,7 @@ body:not(.ed) .editcol{display:none}
 .pnote{font-size:12px;color:var(--mute);margin-top:6px}
 .och{display:inline-block;font-size:11px;font-weight:600;padding:1px 8px;border-radius:10px;background:var(--brand-soft);color:var(--brand);margin:1px 0;white-space:nowrap}
 .pown{display:flex;flex-wrap:wrap;gap:6px 18px;align-items:center}.pown .pchk{margin:4px 0}.pown input[type=text]{flex:1;min-width:180px}
+.pents{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:0 16px;max-height:340px;overflow:auto;border:1px solid var(--line);border-radius:8px;padding:6px 12px}
 .pwarn{margin-top:12px;padding:10px 14px;border-radius:8px;background:var(--warn-soft);color:var(--warn);font-size:13px}
 .ppg select#pe{min-width:280px;font-size:14px}
 /* timeline */
@@ -227,13 +228,13 @@ body:not(.ed) .editcol{display:none}
 <div id="modal" class="modal" style="display:none" role="dialog" aria-modal="true" aria-labelledby="mt"><div class="mcard"><div class="mhead"><h2 id="mt"></h2><div class="hb"><button type="button" class="cpy" id="mcopyall" data-all="1">Copy all details</button><button type="button" id="mclose" aria-label="Close">✕</button></div></div><div id="mbody"></div></div></div>
 <div id="auth"><div class="acard">
 <h1>Samsotech eInvoicing Dashboard</h1><p class="asub">Sign in to continue</p>
-<form id="fLogin"><label>Username<input id="lu" autocomplete="username" autocapitalize="none" required></label><label>Password<input id="lp" type="password" autocomplete="current-password" required></label><button id="bLogin" type="submit">Sign in</button></form><p class="asub" style="margin:10px 0 0;font-size:11px">Page version 12</p>
+<form id="fLogin"><label>Username<input id="lu" autocomplete="username" autocapitalize="none" required></label><label>Password<input id="lp" type="password" autocomplete="current-password" required></label><button id="bLogin" type="submit">Sign in</button></form><p class="asub" style="margin:10px 0 0;font-size:11px">Page version 13</p>
 <form id="fChange" style="display:none"><p class="ahint"><b>Set a new password.</b> This is your first sign-in, so please replace the temporary password. Use at least 8 characters, with an uppercase letter, a lowercase letter and a number.</p><label>New password<input id="np" type="password" autocomplete="new-password" required></label><label>Confirm new password<input id="np2" type="password" autocomplete="new-password" required></label><button id="bChange" type="submit">Save password and continue</button></form>
 <div class="amsg" id="amsg" role="alert"></div>
 </div></div>
 <header><div class="wrap"><div class="top">
 <div><h1>Samsotech eInvoicing Dashboard</h1><p class="sub" id="sub">&nbsp;</p></div>
-<div class="stamp">Last refreshed<b id="when">Loading…</b><div class="live" id="live"><i></i><span id="livetxt">Connecting to Google Sheet…</span></div><button id="rf" type="button">Refresh now</button> <button id="lo" type="button">Sign out</button><div class="live" style="margin-top:6px">Signed in as&nbsp;<span id="who"></span></div><div class="live" style="margin-top:2px;opacity:.7">Page version 12 · copy icons</div></div>
+<div class="stamp">Last refreshed<b id="when">Loading…</b><div class="live" id="live"><i></i><span id="livetxt">Connecting to Google Sheet…</span></div><button id="rf" type="button">Refresh now</button> <button id="lo" type="button">Sign out</button><div class="live" style="margin-top:6px">Signed in as&nbsp;<span id="who"></span></div><div class="live" style="margin-top:2px;opacity:.7">Page version 13 · copy icons</div></div>
 </div></div></header>
 <div class="wrap"><main>
 <div id="banner"></div>
@@ -285,7 +286,7 @@ body:not(.ed) .editcol{display:none}
   <div class="ppbtns">
    <button type="button" class="btns" id="pInfoB">Project details</button>
    <button type="button" class="btns pe" id="pTplB">Create plan from template</button>
-   <button type="button" class="btns pe" id="pFitB" style="display:none">Fit to go-live</button><button type="button" class="btns pe" id="pStepB">+ Add step</button>
+   <button type="button" class="btns pe" id="pScopeB" style="display:none">Change entities</button><button type="button" class="btns pe" id="pFitB" style="display:none">Fit to go-live</button><button type="button" class="btns pe" id="pStepB">+ Add step</button>
    <button type="button" class="btnp pe" id="pAddB">+ Add task</button>
    <button type="button" class="btns" id="pExpB">Export</button>
   </div>
@@ -727,10 +728,14 @@ function ginfo(g,e){if(e===undefined)e=PL.e;return PL.info[pn(g)+"|"+pn(e)]||{}}
 function geff(g,e){if(e===undefined)e=PL.e;var G=ginfo(g,""),O=e?ginfo(g,e):{},o={};["pm","cc","ko","gl","sum"].forEach(function(k){o[k]=O[k]||G[k]||""});return o}   /* entity value, else group value */
 function glOf(g,e){return geff(g,e).gl||""}
 function anyPlan(g){var k=pn(g);return PL.tasks.some(function(t){return pn(t.g)===k})}
-function planName(){return PL.g+(PL.e?" – "+PL.e:"")}
+/* a plan covers the whole group (e = ""), one entity, or several entities stored as "A; B; C" */
+function elist(e){return String(e||"").split(/\s*;\s*/).filter(function(x){return x})}
+function ekey(a){var m={},o=[];a.forEach(function(x){x=String(x).trim();if(x&&!m[pn(x)]){m[pn(x)]=1;o.push(x)}});return o.sort(function(a,b){return a.toLowerCase()>b.toLowerCase()?1:-1}).join("; ")}
+function elabel(e){var a=elist(e);if(!a.length)return"Whole group";if(a.length===1)return a[0];return a.length+" entities: "+(a.length<=3?a.join(", "):a.slice(0,2).join(", ")+" +"+(a.length-2)+" more")}
+function planName(){var a=elist(PL.e);return PL.g+(!a.length?"":a.length===1?" – "+a[0]:a.length<=3?" – "+a.join(", "):" – "+a.length+" entities")}
 function owners(v){var a=String(v||"").split(/\s*[,;\/]\s*/).filter(function(x){return x});return a}
 function ownChips(v){var a=owners(v);return a.length?a.map(function(x){return '<span class="och">'+esc(x)+'</span>'}).join(" "):'–'}
-function gents(g,e){if(e===undefined)e=PL.e;return ALL.filter(function(r){return pn(r.g)===pn(g)&&(!e||pn(r.n)===pn(e))})}
+function gents(g,e){if(e===undefined)e=PL.e;var k=elist(e).map(pn);return ALL.filter(function(r){return pn(r.g)===pn(g)&&(!k.length||k.indexOf(pn(r.n))>=0)})}
 function pedit(){return PL.acc==="Edit"}
 
 window.planOnData=function(mode){PL.acc=mode||"";var tb=$("tabPlan");if(tb)tb.style.display=PL.acc?"":"none";
@@ -751,9 +756,14 @@ function planRender(){if(!PL.ready)return;
  var gs=pgroups(),sel=$("pg");if(!PL.g||gs.map(pn).indexOf(pn(PL.g))<0)PL.g=(GSEL&&gs.map(pn).indexOf(pn(GSEL))>=0)?GSEL:(gs[0]||"");
  sel.innerHTML=gs.map(function(g){var n=anyPlan(g);return '<option value="'+esc(g)+'"'+(pn(g)===pn(PL.g)?" selected":"")+'>'+esc(g)+(n?"":" (no plan yet)")+'</option>'}).join("")||'<option value="">No groups available</option>';
  var fs=$("pfs"),cur=fs.value;fs.innerHTML='<option value="">All statuses</option>'+PSTAT.concat(["Overdue"]).map(function(s){return '<option'+(s===cur?" selected":"")+'>'+s+'</option>'}).join("");
- var en={},eo=[];ALL.forEach(function(r){if(pn(r.g)===pn(PL.g)&&!en[pn(r.n)]){en[pn(r.n)]=1;eo.push(r.n)}});PL.tasks.forEach(function(t){if(t.e&&pn(t.g)===pn(PL.g)&&!en[pn(t.e)]){en[pn(t.e)]=1;eo.push(t.e)}});eo.sort();
- if(PL.e&&!en[pn(PL.e)])PL.e="";
- $("pe").innerHTML='<option value="">Whole group (all entities)'+(gtasks(PL.g,"").length?" ✓":"")+'</option>'+eo.map(function(n){return '<option value="'+esc(n)+'"'+(pn(n)===pn(PL.e)?" selected":"")+'>'+esc(n)+(gtasks(PL.g,n).length?" ✓":"")+'</option>'}).join("");
+ var en={},eo=[],mp={},mo=[];ALL.forEach(function(r){if(pn(r.g)===pn(PL.g)&&!en[pn(r.n)]){en[pn(r.n)]=1;eo.push(r.n)}});
+ PL.tasks.forEach(function(t){if(!t.e||pn(t.g)!==pn(PL.g))return;if(elist(t.e).length>1){if(!mp[pn(t.e)]){mp[pn(t.e)]=1;mo.push(t.e)}}else if(!en[pn(t.e)]){en[pn(t.e)]=1;eo.push(t.e)}});
+ if(PL.e&&elist(PL.e).length>1&&!mp[pn(PL.e)]){mp[pn(PL.e)]=1;mo.push(PL.e)}
+ eo.sort();mo.sort();if(PL.e&&elist(PL.e).length===1&&!en[pn(PL.e)])PL.e="";
+ function opt(v,l){return '<option value="'+esc(v)+'"'+(pn(v)===pn(PL.e)?" selected":"")+'>'+esc(l)+(gtasks(PL.g,v).length?" ✓":"")+'</option>'}
+ $("pe").innerHTML=opt("","Whole group (all entities)")+(mo.length?'<optgroup label="Plans for several entities">'+mo.map(function(v){return opt(v,elabel(v))}).join("")+'</optgroup>':'')+
+  '<optgroup label="Single entity">'+eo.map(function(n){return opt(n,n)}).join("")+'</optgroup><option value="__multi">+ Select several entities…</option>';
+ $("pScopeB").style.display=pedit()&&gtasks(PL.g,PL.e).length&&PL.e?"":"none";
  var fo=$("pfo"),fov=fo.value;fo.innerHTML='<option value="">All owners</option>'+OWN.map(function(o){return '<option'+(o===fov?" selected":"")+'>'+o+'</option>'}).join("");
  var g=PL.g,L=gtasks(g),A=agg(L),H=health(A),I=geff(g),E=gents(g),GL=glOf(g);
  var C=L.filter(function(t){return!isPost(t)}),CA=agg(C),gt=L.filter(isGlTask)[0];
@@ -762,7 +772,7 @@ function planRender(){if(!PL.ready)return;
  $("pWarn").innerHTML=over?'<div class="pwarn"><b>The plan is not aligned with the target go-live date of '+pf(GL)+'.</b> '+(CA.end>GL?'Work before go-live runs until '+pf(CA.end)+'. ':'')+(gt&&gt.end!==GL?'The Go-live task is on '+pf(gt.end)+'. ':'')+' '+(pedit()?'Use <b>Fit to go-live</b> to re-align the plan.':'Ask an editor to re-schedule the plan.')+'</div>':"";
  $("pTplB").style.display=pedit()&&g&&!L.length?"":"none";$("pAddB").disabled=!g;$("pStepB").disabled=!g;
  var left=A.end?Math.max(0,wdays(ps(nextW(t0())),A.end)):0;
- $("pMeta").innerHTML=g?['Project manager: <b>'+esc(I.pm||"–")+'</b>','Client contact: <b>'+esc(I.cc||"–")+'</b>','Kick-off: <b>'+pf(I.ko||A.start)+'</b>','Target go-live: <b>'+(I.gl?pf(I.gl):pf(A.end)+' (plan end)')+'</b>','Plan for: <b>'+esc(PL.e||"Whole group")+'</b>','Entities in scope: <b>'+E.length+'</b>'].map(function(x){return '<span>'+x+'</span>'}).join(""):"";
+ $("pMeta").innerHTML=g?['Project manager: <b>'+esc(I.pm||"–")+'</b>','Client contact: <b>'+esc(I.cc||"–")+'</b>','Kick-off: <b>'+pf(I.ko||A.start)+'</b>','Target go-live: <b>'+(I.gl?pf(I.gl):pf(A.end)+' (plan end)')+'</b>','Plan for: <b title="'+esc(elist(PL.e).join(", "))+'">'+esc(elabel(PL.e))+'</b>','Entities in scope: <b>'+E.length+'</b>'].map(function(x){return '<span>'+x+'</span>'}).join(""):"";
  $("pKpi").innerHTML=!L.length?"":
   '<div class="pk"><small>Overall progress</small><b>'+pct(A.act)+'</b>'+pbar(A.act,A.plan)+'<span>Planned by today: '+pct(A.plan)+'</span></div>'+
   '<div class="pk"><small>Schedule status</small><b style="font-size:16px;margin-top:8px">'+pill(H[0])+'</b><span>'+(A.plan-A.act>0.05?pct(A.plan-A.act)+" behind plan":"At or ahead of plan")+'</span></div>'+
@@ -933,6 +943,23 @@ function openFit(){var F=fitPlan();if(!F)return;
  pmOpen("Fit plan to go-live · "+planName(),'<p style="margin-top:0">Target go-live: <b>'+pf(F.gl)+'</b>. This will:</p><ul style="margin:0 0 12px 18px;padding:0"><li>shorten the work between kick-off and go-live in proportion so it finishes by the working day before go-live (order and overlaps are kept);</li><li>put the <b>Go-live</b> task on '+pf(F.gl)+';</li><li>move <b>After go-live support</b> so it starts the next working day after go-live.</li></ul><p>Project initiation tasks before kick-off, progress, owners and comments are not changed. <b>'+F.list.length+'</b> task(s) will get new dates.</p>'+
   '<div class="pfoot"><button type="button" class="btnp" id="pfitGo"'+(F.err||!F.list.length?" disabled":"")+'>Re-schedule</button><button type="button" class="btns" id="pfCancel">Cancel</button><span id="pmm" class="pmsg'+(F.err?" err":"")+'">'+esc(F.err||(!F.list.length?"Nothing to change.":""))+'</span></div>',"fit")}
 function fitGo(){var F=fitPlan();if(!F||F.err||!F.list.length)return;psave({op:"dates",list:F.list},"Plan re-aligned to go-live "+pf(F.gl)+".")}
+/* choose several entities for a plan (new plan), or change the entities of the current plan */
+function openEnts(change){var E=gents(PL.g,""),cur=elist(PL.e).map(pn);
+ if(!E.length){pmsgMain("There are no entities in this group.","err");return}
+ PM.ents=change;
+ pmOpen((change?"Change entities · ":"Plan for several entities · ")+PL.g,'<p style="margin-top:0">'+(change?'Choose the entities this plan covers. Tasks, comments and project details stay with the plan.':'Tick the entities to include in one project plan. If no plan exists for this selection yet, you can then create it from the template.')+'</p>'+
+  '<div style="display:flex;gap:8px;margin-bottom:8px"><button type="button" class="pib" id="peAll">Select all</button><button type="button" class="pib" id="peNone">Clear</button><span class="mu" id="peCnt" style="align-self:center;font-size:12px"></span></div>'+
+  '<div class="pents">'+E.map(function(r){return '<label class="pchk"><input type="checkbox" value="'+esc(r.n)+'"'+(cur.indexOf(pn(r.n))>=0?" checked":"")+'> <span>'+esc(r.n)+'<span class="mu" style="font-weight:400;font-size:12px"> · '+esc(r.srcs.join(", ")||"no source system")+'</span></span></label>'}).join("")+'</div>'+
+  '<div class="pfoot"><button type="button" class="btnp" id="peOk">'+(change?"Save entities":"Open plan")+'</button><button type="button" class="btns" id="pfCancel">Cancel</button><span id="pmm" class="pmsg"></span></div>',"ents");entCnt()}
+function entSel(){var a=[];Array.prototype.forEach.call(document.querySelectorAll(".pents input:checked"),function(c){a.push(c.value)});return a}
+function entCnt(){var c=$("peCnt");if(c)c.textContent=entSel().length+" selected"}
+function entOk(){var a=entSel();if(!a.length){pmsg("Tick at least one entity.","err");return}
+ var all=gents(PL.g,"").length,e=a.length===all&&!PM.ents?"":ekey(a);
+ if(a.length===all&&PM.ents)e=ekey(a);
+ if(!PM.ents){PL.e=e;pmClose();planRender();return}
+ if(pn(e)===pn(PL.e)){pmClose();return}
+ if(gtasks(PL.g,e).length){pmsg("There is already a plan for exactly these entities. Pick a different selection.","err");return}
+ psave({op:"scope",g:PL.g,old:PL.e,e:e},"Plan entities updated.",function(){PL.e=e;pmClose();planRender()})}
 function openExp(){if(!PL.g)return;var L=gtasks(PL.g);if(!L.length){pmsgMain("There is no plan to export for "+planName()+" yet.","err");return}
  pmOpen("Export project plan · "+planName(),'<p style="margin-top:0">Download a client-ready plan for <b>'+esc(planName())+'</b>.</p>'+
   '<label class="pchk"><input type="checkbox" id="peCm" checked> Include comments</label><label class="pchk"><input type="checkbox" id="peGt" checked> Include timeline (Gantt chart)</label><label class="pchk"><input type="checkbox" id="peEn" checked> Include entities in scope</label><label class="pchk"><input type="checkbox" id="peMd"'+(PL.md?" checked":"")+'> Include man-days</label>'+
@@ -942,8 +969,8 @@ function openExp(){if(!PL.g)return;var L=gtasks(PL.g);if(!L.length){pmsgMain("Th
 /* ---------- export ---------- */
 function curStage(r){for(var i=0;i<7;i++)if(!r.st[i])return S[i]+(r.ip&&r.ip[i]?" (in progress)":"");return"Live"}
 function buildReport(o){var g=PL.g,L=gtasks(g),A=agg(L),H=health(A),I=geff(g),E=gents(g),SG=gsteps(L),now=new Date();
- var h='<div class="rc"><div><div class="b">Samsotech · eInvoicing implementation</div><h1>Project Plan</h1><div class="c">'+esc(g)+'</div>'+(PL.e?'<div style="font-size:14px;margin-top:2px">'+esc(PL.e)+'</div>':'')+'</div><div class="m">Status as of '+now.toLocaleDateString("en-GB",{day:"2-digit",month:"long",year:"numeric"})+'<br>Prepared by '+esc(USER||"")+'</div></div>';
- h+='<h2>1. Project overview</h2><table class="kv"><tbody>'+[["Client group",g]].concat(PL.e?[["Entity",PL.e]]:[]).concat([["Project manager",I.pm||"–"],["Client contact",I.cc||"–"],["Kick-off date",pf(I.ko||A.start)],["Target go-live",pf(I.gl||A.end)],["Planned duration",pf(A.start)+" – "+pf(A.end)+" ("+wdays(A.start,A.end)+" working days)"],["Entities in scope",String(E.length)]]).map(function(r){return '<tr><td>'+r[0]+'</td><td>'+esc(r[1])+'</td></tr>'}).join("")+(I.sum?'<tr><td>Scope / summary</td><td style="white-space:pre-wrap">'+esc(I.sum)+'</td></tr>':'')+'</tbody></table>';
+ var h='<div class="rc"><div><div class="b">Samsotech · eInvoicing implementation</div><h1>Project Plan</h1><div class="c">'+esc(g)+'</div>'+(PL.e?'<div style="font-size:13px;margin-top:2px;max-width:640px">'+esc(elist(PL.e).join(" · "))+'</div>':'')+'</div><div class="m">Status as of '+now.toLocaleDateString("en-GB",{day:"2-digit",month:"long",year:"numeric"})+'<br>Prepared by '+esc(USER||"")+'</div></div>';
+ h+='<h2>1. Project overview</h2><table class="kv"><tbody>'+[["Client group",g]].concat(PL.e?[[elist(PL.e).length>1?"Entities":"Entity",elist(PL.e).join(", ")]]:[]).concat([["Project manager",I.pm||"–"],["Client contact",I.cc||"–"],["Kick-off date",pf(I.ko||A.start)],["Target go-live",pf(I.gl||A.end)],["Planned duration",pf(A.start)+" – "+pf(A.end)+" ("+wdays(A.start,A.end)+" working days)"],["Entities in scope",String(E.length)]]).map(function(r){return '<tr><td>'+r[0]+'</td><td>'+esc(r[1])+'</td></tr>'}).join("")+(I.sum?'<tr><td>Scope / summary</td><td style="white-space:pre-wrap">'+esc(I.sum)+'</td></tr>':'')+'</tbody></table>';
  h+='<h2>2. Executive summary</h2><div class="rk"><div><small>Overall progress</small><b>'+pct(A.act)+'</b><br>Planned: '+pct(A.plan)+'</div><div><small>Schedule status</small><b style="font-size:13px">'+pill(H[0])+'</b></div><div><small>Tasks completed</small><b>'+A.done+' / '+A.n+'</b></div><div><small>Overdue tasks</small><b>'+A.late+'</b></div><div><small>Steps completed</small><b>'+SG.filter(function(s){return agg(s.L).act>=99.95}).length+' / '+SG.length+'</b></div></div>'+
   (o.md?'<div style="margin-top:10px;border:1px solid #d5dde6;border-radius:6px;padding:10px"><small style="font-size:9px;text-transform:uppercase;letter-spacing:.05em;color:#5b6b7e;font-weight:700">Total effort</small><br><b style="font-size:18px">'+mdf(mdSum(L))+' man-days</b> &nbsp; '+mdByHtml(L)+'</div>':'');
  h+='<h2>3. Step summary</h2><table><thead><tr><th>#</th><th>Step</th><th>Start</th><th>End</th><th>Working days</th>'+(o.md?'<th>Man-days</th>':'')+'<th>Progress</th><th>Status</th></tr></thead><tbody>'+SG.map(function(s){var a=agg(s.L);return '<tr><td>'+s.sn+'</td><td><b>'+esc(s.step)+'</b></td><td>'+pf(a.start)+'</td><td>'+pf(a.end)+'</td><td>'+wdays(a.start,a.end)+'</td>'+(o.md?'<td>'+mdf(mdSum(s.L))+'</td>':'')+'<td style="width:170px">'+pbar(a.act,null)+'</td><td>'+pill(stepStat(s.L,a))+'</td></tr>'}).join("")+'</tbody></table>';
@@ -959,7 +986,7 @@ function exportPdf(o){var r=$("rpt"),t=document.title;r.innerHTML=buildReport(o)
  window.addEventListener("afterprint",done);setTimeout(function(){window.print();setTimeout(function(){if(document.body.classList.contains("prt")&&!window.matchMedia("print").matches)done()},1500)},80)}
 function xlsRows(o){var L=gtasks(PL.g),A=agg(L),I=geff(PL.g);var hdr=["Step No","Step","Task No","Task","Owner","Start date","End date","Working days"].concat(o.md?["Man-days","Man-days basis"]:[]).concat(["Progress %","Planned % (today)","Status","Overdue","Remarks"]).concat(o.cm?["Comments"]:[]);
  var rows=L.map(function(t){return[t.sn,t.step,t.sn+"."+t.tn,t.name,t.owner,t.start,t.end,wdays(t.start,t.end)].concat(o.md?[tmd(t),mdMan(t)?"Entered":"Automatic"]:[]).concat([t.pr,Math.round(tplan(t)),t.st,tlate(t)?"Yes":"",t.rem]).concat(o.cm?[gcm(t.id).slice().reverse().map(function(c){return c.at+" "+c.by+": "+c.text}).join("\n")]:[])});
- var top=[["Project plan",PL.g]].concat(PL.e?[["Entity",PL.e]]:[]).concat([["Target go-live",I.gl||""],["Status as of",ps(new Date())],["Project manager",I.pm||""],["Client contact",I.cc||""],["Overall progress %",Math.round(A.act*10)/10],["Planned progress % (today)",Math.round(A.plan*10)/10],["Schedule status",health(A)[0]]].concat(o.md?[["Total man-days",mdSum(L)]].concat(Object.keys(mdBy(L)).map(function(k){return["  "+k+" (man-days)",Math.round(mdBy(L)[k]*10)/10]})):[]).concat([[]]));
+ var top=[["Project plan",PL.g]].concat(PL.e?[[elist(PL.e).length>1?"Entities":"Entity",elist(PL.e).join(", ")]]:[]).concat([["Target go-live",I.gl||""],["Status as of",ps(new Date())],["Project manager",I.pm||""],["Client contact",I.cc||""],["Overall progress %",Math.round(A.act*10)/10],["Planned progress % (today)",Math.round(A.plan*10)/10],["Schedule status",health(A)[0]]].concat(o.md?[["Total man-days",mdSum(L)]].concat(Object.keys(mdBy(L)).map(function(k){return["  "+k+" (man-days)",Math.round(mdBy(L)[k]*10)/10]})):[]).concat([[]]));
  return{top:top,hdr:hdr,rows:rows}}
 function dl(blob,name){var a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},500)}
 function exportXls(o){var X=xlsRows(o),name="Project Plan - "+planName().replace(/[\\\/:*?"<>|]/g,"")+" - "+ps(new Date());
@@ -976,7 +1003,8 @@ function exportXls(o){var X=xlsRows(o),name="Project Plan - "+planName().replace
 (function(){
  $("tabs").addEventListener("click",function(e){var b=e.target.closest(".tab");if(!b)return;var on=b.getAttribute("data-v")==="5";$("v5").style.display=on?"block":"none";if(on){$("gbar").style.visibility="hidden";if(!PL.ready||!PL.loading)planLoad()}});
  $("pg").addEventListener("change",function(){PL.g=this.value;PL.e="";planRender()});
- $("pe").addEventListener("change",function(){PL.e=this.value;planRender()});$("pfo").addEventListener("change",planRender);$("pFitB").addEventListener("click",openFit);
+ $("pe").addEventListener("change",function(){if(this.value==="__multi"){openEnts(false);this.value=PL.e;return}PL.e=this.value;planRender()});
+ $("pScopeB").addEventListener("click",function(){openEnts(true)});$("pfo").addEventListener("change",planRender);$("pFitB").addEventListener("click",openFit);
  $("pq").addEventListener("input",planRender);$("pfs").addEventListener("change",planRender);
  $("pvT").addEventListener("click",function(){PL.view="T";planRender()});$("pvG").addEventListener("click",function(){PL.view="G";planRender()});
  $("pvM").addEventListener("click",function(){PL.md=!PL.md;try{localStorage.setItem("eiv_md",PL.md?"1":"0")}catch(e){}if(PL.md&&PL.view==="G")PL.view="T";planRender()});
@@ -992,11 +1020,13 @@ function exportXls(o){var X=xlsRows(o),name="Project Plan - "+planName().replace
   else if(t.closest("#prSave")){var nn=+$("prN").value,ns=$("prS").value.trim();if(!ns){pmsg("Enter a step name.","err");return}psave({op:"step",g:PL.g,e:PL.e,sn:PM.ren.sn,old:PM.ren.step,nsn:nn,step:ns},"Step renamed.")}
   else if(t.closest("#piSave")){var I=ginfo(PL.g);psave({op:"info",g:PL.g,e:PL.e,ver:I.ver||"",info:{pm:$("piPm").value.trim(),cc:$("piCc").value.trim(),ko:$("piKo").value,gl:$("piGl").value,sum:$("piSum").value.trim()}},"Project details saved.")}
   else if(t.closest("#ptGo"))tplGo();
+  else if(t.closest("#peAll")||t.closest("#peNone")){var on=!!t.closest("#peAll");Array.prototype.forEach.call(document.querySelectorAll(".pents input"),function(c){c.checked=on});entCnt()}
+  else if(t.closest("#peOk"))entOk();
   else if(t.closest("#pfitGo"))fitGo();
   else if(t.closest("#pePdf"))exportPdf({cm:$("peCm").checked,gt:$("peGt").checked,en:$("peEn").checked,md:$("peMd").checked});
   else if(t.closest("#peXls"))exportXls({cm:$("peCm").checked,en:$("peEn").checked,md:$("peMd").checked})});
  $("pm").addEventListener("input",function(e){var id=e.target.id;if(id==="pfPrR")pfSync("r");else if(id==="pfPr")pfSync("n");else if(id==="pfStart"||id==="pfEnd")pfDays();else if(id==="pfSt")pfStat();else if(id==="pfOwnX"||e.target.closest&&e.target.closest("#pfOwn"))pfMdHint();else if(id==="ptStart"||id==="ptGl"||id==="ptOp")tplFit()});
- $("pm").addEventListener("change",function(e){if(e.target.id==="pfSt"){pfStat();return}if(e.target.id==="pfStep"){var v=e.target.value;$("pfNewW").style.display=v==="__new"?"block":"none";if(!PM.t){var m=0;if(v!=="__new")gtasks(PL.g).forEach(function(x){if(x.sn+"|"+x.step===v)m=Math.max(m,x.tn)});$("pfTn").value=m+1}}});
+ $("pm").addEventListener("change",function(e){if(e.target.closest&&e.target.closest(".pents"))entCnt();if(e.target.id==="pfSt"){pfStat();return}if(e.target.id==="pfStep"){var v=e.target.value;$("pfNewW").style.display=v==="__new"?"block":"none";if(!PM.t){var m=0;if(v!=="__new")gtasks(PL.g).forEach(function(x){if(x.sn+"|"+x.step===v)m=Math.max(m,x.tn)});$("pfTn").value=m+1}}});
  document.addEventListener("keydown",function(e){if(e.key==="Escape"&&$("pm").style.display!=="none")pmClose()});
 })();
 </script>
