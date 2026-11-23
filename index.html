@@ -227,13 +227,13 @@ body:not(.ed) .editcol{display:none}
 <div id="modal" class="modal" style="display:none" role="dialog" aria-modal="true" aria-labelledby="mt"><div class="mcard"><div class="mhead"><h2 id="mt"></h2><div class="hb"><button type="button" class="cpy" id="mcopyall" data-all="1">Copy all details</button><button type="button" id="mclose" aria-label="Close">✕</button></div></div><div id="mbody"></div></div></div>
 <div id="auth"><div class="acard">
 <h1>Samsotech eInvoicing Dashboard</h1><p class="asub">Sign in to continue</p>
-<form id="fLogin"><label>Username<input id="lu" autocomplete="username" autocapitalize="none" required></label><label>Password<input id="lp" type="password" autocomplete="current-password" required></label><button id="bLogin" type="submit">Sign in</button></form><p class="asub" style="margin:10px 0 0;font-size:11px">Page version 10</p>
+<form id="fLogin"><label>Username<input id="lu" autocomplete="username" autocapitalize="none" required></label><label>Password<input id="lp" type="password" autocomplete="current-password" required></label><button id="bLogin" type="submit">Sign in</button></form><p class="asub" style="margin:10px 0 0;font-size:11px">Page version 11</p>
 <form id="fChange" style="display:none"><p class="ahint"><b>Set a new password.</b> This is your first sign-in, so please replace the temporary password. Use at least 8 characters, with an uppercase letter, a lowercase letter and a number.</p><label>New password<input id="np" type="password" autocomplete="new-password" required></label><label>Confirm new password<input id="np2" type="password" autocomplete="new-password" required></label><button id="bChange" type="submit">Save password and continue</button></form>
 <div class="amsg" id="amsg" role="alert"></div>
 </div></div>
 <header><div class="wrap"><div class="top">
 <div><h1>Samsotech eInvoicing Dashboard</h1><p class="sub" id="sub">&nbsp;</p></div>
-<div class="stamp">Last refreshed<b id="when">Loading…</b><div class="live" id="live"><i></i><span id="livetxt">Connecting to Google Sheet…</span></div><button id="rf" type="button">Refresh now</button> <button id="lo" type="button">Sign out</button><div class="live" style="margin-top:6px">Signed in as&nbsp;<span id="who"></span></div><div class="live" style="margin-top:2px;opacity:.7">Page version 10 · copy icons</div></div>
+<div class="stamp">Last refreshed<b id="when">Loading…</b><div class="live" id="live"><i></i><span id="livetxt">Connecting to Google Sheet…</span></div><button id="rf" type="button">Refresh now</button> <button id="lo" type="button">Sign out</button><div class="live" style="margin-top:6px">Signed in as&nbsp;<span id="who"></span></div><div class="live" style="margin-top:2px;opacity:.7">Page version 11 · copy icons</div></div>
 </div></div></header>
 <div class="wrap"><main>
 <div id="banner"></div>
@@ -688,7 +688,7 @@ var PTPL=[
  {step:"Gap assessment",ph:"core",t:[["Review current invoicing processes",3,"Samsotech, Finance"],["Map invoice data fields to PINT AE",4,"Samsotech, IT"],["Identify gaps and agree remediation actions",3,"Samsotech, Finance, IT"],["Gap assessment sign-off",1,"Finance"]]},
  {step:"Source system configuration",ph:"core",t:[["Upgrade Opera to a supported version",10,"IT","opera"],["Configure e-invoice output in the source system",8,"Samsotech, IT"],["Configure invoice templates and field mapping",5,"Samsotech"],["Internal unit testing",3,"Samsotech, IT"]]},
  {step:"ASP onboarding",ph:"core",t:[["ASP account set-up and agreement",3,"Samsotech, Finance"],["Connect source system to the ASP",5,"Samsotech, IT"],["Register Peppol participant IDs",3,"Samsotech"]]},
- {step:"Testing (UAT)",ph:"core",t:[["Prepare UAT test scenarios",2,"Samsotech"],["Execute user acceptance testing",5,"Finance, IT"],["Fix defects and retest",3,"Samsotech, IT"],["UAT sign-off",1,"Finance"]]},
+ {step:"Testing (UAT)",ph:"core",t:[["Prepare UAT test scenarios based on gap assessment",2,"Samsotech"],["Execute user acceptance testing",5,"Finance, IT"],["Fix defects and retest",3,"Samsotech, IT"],["Conduct training sessions for ASP portal users of the company, including finance, tax and operations teams",2,"Samsotech, Finance"],["UAT sign-off",1,"Finance"]]},
  {step:"Go-live (PROD)",ph:"core",t:[["Production cut-over",2,"Samsotech, IT"],["Go-live",1,"Samsotech, Finance, IT","gl"]]},
  {step:"After go-live support",ph:"post",t:[["Hypercare support",10,"Samsotech"],["Project closure and handover",1,"Samsotech, Finance"]]}
 ];
@@ -817,7 +817,7 @@ function openTask(id,preStep){var t=id?PL.tasks.filter(function(x){return x.id==
  PM.t=t;var h='<div class="pfg">'+
   pfld("Step",'<select id="pfStep"'+dis+'>'+S.map(function(s){var k=s.sn+"|"+s.step;return '<option value="'+esc(k)+'"'+(k===ps0?" selected":"")+'>'+s.sn+'. '+esc(s.step)+'</option>'}).join("")+(ed?'<option value="__new"'+(ps0==="__new"?" selected":"")+'>+ New step…</option>':'')+'</select>')+
   '<div class="pff" id="pfNewW" style="display:'+(ps0==="__new"?"block":"none")+'"><label>New step (number and name)</label><div style="display:flex;gap:8px"><input id="pfNewN" type="number" min="1" max="99" style="width:70px" value="'+(S.length?S[S.length-1].sn+1:1)+'"><input id="pfNewS" type="text" placeholder="e.g. Data migration"></div></div>'+
-  pfld("Task order",'<input id="pfTn" type="number" min="1" max="999" value="'+(t?t.tn:(ps0==="__new"?1:nextTn(ps0)))+'"'+dis+'>')+
+  pfld("Task number in step (later tasks move down)",'<input id="pfTn" type="number" min="1" max="999" value="'+(t?t.tn:(ps0==="__new"?1:nextTn(ps0)))+'"'+dis+'>')+
   pfld("Task",'<input id="pfName" type="text" value="'+esc(t?t.name:"")+'"'+dis+'>',true)+
   pfld("Owner (tick one or more)",ownBox(t?t.owner:"",dis),true)+
   pfld("Start date",'<input id="pfStart" type="date" value="'+st+'"'+dis+'>')+
