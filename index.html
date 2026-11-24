@@ -227,13 +227,13 @@ body:not(.ed) .editcol{display:none}
 <div id="modal" class="modal" style="display:none" role="dialog" aria-modal="true" aria-labelledby="mt"><div class="mcard"><div class="mhead"><h2 id="mt"></h2><div class="hb"><button type="button" class="cpy" id="mcopyall" data-all="1">Copy all details</button><button type="button" id="mclose" aria-label="Close">✕</button></div></div><div id="mbody"></div></div></div>
 <div id="auth"><div class="acard">
 <h1>Samsotech eInvoicing Dashboard</h1><p class="asub">Sign in to continue</p>
-<form id="fLogin"><label>Username<input id="lu" autocomplete="username" autocapitalize="none" required></label><label>Password<input id="lp" type="password" autocomplete="current-password" required></label><button id="bLogin" type="submit">Sign in</button></form><p class="asub" style="margin:10px 0 0;font-size:11px">Page version 12a</p>
+<form id="fLogin"><label>Username<input id="lu" autocomplete="username" autocapitalize="none" required></label><label>Password<input id="lp" type="password" autocomplete="current-password" required></label><button id="bLogin" type="submit">Sign in</button></form><p class="asub" style="margin:10px 0 0;font-size:11px">Page version 12b</p>
 <form id="fChange" style="display:none"><p class="ahint"><b>Set a new password.</b> This is your first sign-in, so please replace the temporary password. Use at least 8 characters, with an uppercase letter, a lowercase letter and a number.</p><label>New password<input id="np" type="password" autocomplete="new-password" required></label><label>Confirm new password<input id="np2" type="password" autocomplete="new-password" required></label><button id="bChange" type="submit">Save password and continue</button></form>
 <div class="amsg" id="amsg" role="alert"></div>
 </div></div>
 <header><div class="wrap"><div class="top">
 <div><h1>Samsotech eInvoicing Dashboard</h1><p class="sub" id="sub">&nbsp;</p></div>
-<div class="stamp">Last refreshed<b id="when">Loading…</b><div class="live" id="live"><i></i><span id="livetxt">Connecting to Google Sheet…</span></div><button id="rf" type="button">Refresh now</button> <button id="lo" type="button">Sign out</button><div class="live" style="margin-top:6px">Signed in as&nbsp;<span id="who"></span></div><div class="live" style="margin-top:2px;opacity:.7">Page version 12a · copy icons</div></div>
+<div class="stamp">Last refreshed<b id="when">Loading…</b><div class="live" id="live"><i></i><span id="livetxt">Connecting to Google Sheet…</span></div><button id="rf" type="button">Refresh now</button> <button id="lo" type="button">Sign out</button><div class="live" style="margin-top:6px">Signed in as&nbsp;<span id="who"></span></div><div class="live" style="margin-top:2px;opacity:.7">Page version 12b · copy icons</div></div>
 </div></div></header>
 <div class="wrap"><main>
 <div id="banner"></div>
@@ -738,14 +738,19 @@ window.planOnData=function(mode){PL.acc=mode||"";var tb=$("tabPlan");if(tb)tb.st
  if(!PL.acc&&TAB==="5"){$("tabs").querySelector('[data-v="1"]').click();return}
  if(PL.ready&&$("pm").style.display==="none")planRender();   /* entity / group lists come from the dashboard data: redraw when it arrives */
  if(TAB==="5"&&$("pm").style.display==="none")planLoad()};
-function planLoad(){if(PL.loading||!TOKEN)return Promise.resolve();PL.loading=true;if(!PL.ready)$("pBody").innerHTML='<div class="pempty">Loading project plans…</div>';
- return api({a:"plan",t:TOKEN}).then(function(r){PL.loading=false;
+/* one plan request at a time; a forced reload while one is running is queued */
+function planLoad(force){if(!TOKEN)return Promise.resolve();if(PL.loading){if(force)PL.again=true;return PL.loading}
+ if(!PL.ready)$("pBody").innerHTML='<div class="pempty">Loading project plans…</div>';
+ PL.loading=api({a:"plan",t:TOKEN}).then(function(r){
   if(r.err==="auth"){drop();showAuth("login","Your session has expired. Please sign in again.");return}
   if(r.err==="forbidden"){PL.acc="";planOnData("");return}
   if(r.err)throw new Error(r.msg||r.err);
   var sig=JSON.stringify([r.acc,r.groups,r.tasks,r.comments,r.info]);if(PL.ready&&sig===PL.sig)return;PL.sig=sig;
-  PL.acc=r.acc;PL.groups=r.groups;PL.tasks=(r.tasks||[]).map(function(t){if(t.st==="Completed")t.pr=100;return t});PL.cm=r.comments||[];PL.info=r.info||{};PL.ready=true;document.body.classList.toggle("pedit",pedit());planRender()})
- .catch(function(e){PL.loading=false;pmsgMain("Could not load the project plans. "+(e.message||""),"err")})}
+  PL.acc=r.acc;PL.groups=r.groups;PL.tasks=(r.tasks||[]).map(function(t){if(t.st==="Completed")t.pr=100;return t});PL.cm=r.comments||[];PL.info=r.info||{};PL.ready=true;document.body.classList.toggle("pedit",pedit());
+  if($("pm").style.display==="none"||PM.kind!=="task")planRender();else{planRender();var l=$("pcList");if(l&&PM.t)l.innerHTML=cmHtml(PM.t.id)}})
+ .catch(function(e){pmsgMain("Could not load the project plans. "+(e.message||""),"err")})
+ .then(function(){var a=PL.again;PL.loading=null;PL.again=false;if(a)return planLoad()});
+ return PL.loading}
 function pmsgMain(t,c){var m=$("pMsg");m.textContent=t||"";m.className="pmsg"+(c?" "+c:"")}
 
 function planRender(){if(!PL.ready)return;
@@ -856,12 +861,25 @@ function pfStat(){var n=$("pfPr"),r=$("pfPrR"),v=$("pfSt").value,p=+n.value||0;
  n.value=p;r.value=p}
 function pfDays(){var a=$("pfStart"),b=$("pfEnd");if(a&&b)$("pfDays").value=a.value&&b.value&&b.value>=a.value?wdays(a.value,b.value):"–";pfMdHint()}
 function pfMdHint(){var m=$("pfMd"),a=$("pfStart"),b=$("pfEnd");if(m&&a&&b)m.placeholder="Auto: "+mdf(mdAuto({start:a.value,end:b.value,owner:ownVal()}))}
-function psave(body,okMsg,after){body.a="planSave";body.t=TOKEN;var b=document.querySelectorAll("#pmb .btnp,#pmb .btnd");Array.prototype.forEach.call(b,function(x){x.disabled=true});pmsg("Saving…");
- return api(body).then(function(r){Array.prototype.forEach.call(b,function(x){x.disabled=false});
+/* save: as soon as the server confirms, update the page and close the window; the full plan reloads in the background */
+function psave(body,okMsg,after){body.a="planSave";body.t=TOKEN;var b=document.querySelectorAll("#pmb .btnp,#pmb .btnd");
+ function en(on){Array.prototype.forEach.call(b,function(x){x.disabled=!on})}
+ en(false);pmsg("Saving…");var slow=setTimeout(function(){pmsg("Still saving – the server is busy, please wait…")},15000);
+ return api(body).then(function(r){clearTimeout(slow);en(true);
   if(r.err==="auth"){pmClose();drop();showAuth("login","Your session has expired. Please sign in again.");return}
-  if(r.err){pmsg(r.err==="forbidden"?"You do not have permission to change this plan.":r.err==="conflict"?"Someone else changed this item. Close this window, it will reload with the latest plan.":r.err==="invalid"?(r.msg||"Some values are not valid."):"Could not save. "+(r.msg||r.err),"err");if(r.err==="conflict")planLoad();return}
-  return planLoad().then(function(){if(after)after();else pmClose();pmsgMain(okMsg,"ok");setTimeout(function(){pmsgMain("")},4000)})})
- .catch(function(x){Array.prototype.forEach.call(b,function(y){y.disabled=false});pmsg("Could not reach the server. "+x.message,"err")})}
+  if(r.err){pmsg(r.err==="forbidden"?"You do not have permission to change this plan.":r.err==="conflict"?"Someone else changed this item. Close this window, it will reload with the latest plan.":r.err==="invalid"?(r.msg||"Some values are not valid."):"Could not save. "+(r.msg||r.err),"err");if(r.err==="conflict")planLoad(true);return}
+  planLocal(body);
+  if(after)after();else pmClose();
+  planRender();pmsgMain(okMsg+(body.op==="bulk"?" Loading the plan…":""),"ok");setTimeout(function(){pmsgMain("")},5000);
+  planLoad(true)})
+ .catch(function(x){clearTimeout(slow);en(true);pmsg("Could not reach the server. "+x.message,"err")})}
+/* show a confirmed change straight away, before the background reload */
+function planLocal(b){try{
+ if(b.op==="info"){var k=pn(b.g)+"|"+pn(b.e),o=PL.info[k]||{g:b.g,e:b.e||""};PL.info[k]=Object.assign({},o,b.info)}
+ else if(b.op==="task"&&b.task.id){PL.tasks=PL.tasks.map(function(t){return t.id===b.task.id?Object.assign({},t,b.task):t})}
+ else if(b.op==="del"){PL.tasks=PL.tasks.filter(function(t){return t.id!==b.id})}
+ else if(b.op==="comment"){PL.cm=PL.cm.concat([{id:"new"+Date.now(),tid:b.id,g:PL.g,at:new Date().toISOString().slice(0,16).replace("T"," "),by:USER||"",text:b.text}])}
+ PL.sig="";}catch(e){}}
 function taskSave(){var k=$("pfStep").value,sn,step;
  if(k==="__new"){sn=+$("pfNewN").value;step=$("pfNewS").value.trim();if(!step){pmsg("Enter a name for the new step.","err");return}}else{var i=k.indexOf("|");sn=+k.slice(0,i);step=k.slice(i+1)}
  var t={id:PM.t?PM.t.id:"",g:PM.t?PM.t.g:PL.g,sn:sn,step:step,tn:+$("pfTn").value||1,name:$("pfName").value.trim(),owner:ownVal(),e:PM.t?PM.t.e:PL.e,start:$("pfStart").value,end:$("pfEnd").value,pr:Math.round(+$("pfPr").value||0),st:$("pfSt").value,rem:$("pfRem").value.trim(),md:$("pfMd").value.trim()};
