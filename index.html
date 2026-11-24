@@ -227,13 +227,13 @@ body:not(.ed) .editcol{display:none}
 <div id="modal" class="modal" style="display:none" role="dialog" aria-modal="true" aria-labelledby="mt"><div class="mcard"><div class="mhead"><h2 id="mt"></h2><div class="hb"><button type="button" class="cpy" id="mcopyall" data-all="1">Copy all details</button><button type="button" id="mclose" aria-label="Close">✕</button></div></div><div id="mbody"></div></div></div>
 <div id="auth"><div class="acard">
 <h1>Samsotech eInvoicing Dashboard</h1><p class="asub">Sign in to continue</p>
-<form id="fLogin"><label>Username<input id="lu" autocomplete="username" autocapitalize="none" required></label><label>Password<input id="lp" type="password" autocomplete="current-password" required></label><button id="bLogin" type="submit">Sign in</button></form><p class="asub" style="margin:10px 0 0;font-size:11px">Page version 12b</p>
+<form id="fLogin"><label>Username<input id="lu" autocomplete="username" autocapitalize="none" required></label><label>Password<input id="lp" type="password" autocomplete="current-password" required></label><button id="bLogin" type="submit">Sign in</button></form><p class="asub" style="margin:10px 0 0;font-size:11px">Page version 12c</p>
 <form id="fChange" style="display:none"><p class="ahint"><b>Set a new password.</b> This is your first sign-in, so please replace the temporary password. Use at least 8 characters, with an uppercase letter, a lowercase letter and a number.</p><label>New password<input id="np" type="password" autocomplete="new-password" required></label><label>Confirm new password<input id="np2" type="password" autocomplete="new-password" required></label><button id="bChange" type="submit">Save password and continue</button></form>
 <div class="amsg" id="amsg" role="alert"></div>
 </div></div>
 <header><div class="wrap"><div class="top">
 <div><h1>Samsotech eInvoicing Dashboard</h1><p class="sub" id="sub">&nbsp;</p></div>
-<div class="stamp">Last refreshed<b id="when">Loading…</b><div class="live" id="live"><i></i><span id="livetxt">Connecting to Google Sheet…</span></div><button id="rf" type="button">Refresh now</button> <button id="lo" type="button">Sign out</button><div class="live" style="margin-top:6px">Signed in as&nbsp;<span id="who"></span></div><div class="live" style="margin-top:2px;opacity:.7">Page version 12b · copy icons</div></div>
+<div class="stamp">Last refreshed<b id="when">Loading…</b><div class="live" id="live"><i></i><span id="livetxt">Connecting to Google Sheet…</span></div><button id="rf" type="button">Refresh now</button> <button id="lo" type="button">Sign out</button><div class="live" style="margin-top:6px">Signed in as&nbsp;<span id="who"></span></div><div class="live" style="margin-top:2px;opacity:.7">Page version 12c · copy icons</div></div>
 </div></div></header>
 <div class="wrap"><main>
 <div id="banner"></div>
@@ -676,6 +676,28 @@ load();setInterval(function(){if(TOKEN)load()},CFG.REFRESH_SEC*1000);
 /* ================= PROJECT PLAN ================= */
 var PL={acc:"",groups:"*",tasks:[],cm:[],info:{},g:"",e:"",view:"T",loading:false,ready:false};
 var OWN=["Samsotech","Finance","IT"];
+/* default project scope: filled into every Project details form that has no summary yet (users can edit it) */
+var DEF_SUM=["Project Summary",
+"VICAS SMARTeIS is a cloud-based e-Invoicing solution designed to help UAE entities comply with Ministry of Finance (MoF) e-Invoicing requirements under the UAE PEPPOL-based framework.",
+"Samsotech International, as the appointed Accredited Service Provider (ASP), will implement the solution to automate electronic invoice generation, validation, transmission, storage and regulatory reporting in line with UAE e-Invoicing regulations.",
+"",
+"Proposed Solution",
+"Samsotech will provide a secure, cloud-hosted platform supporting:",
+"",
+"* UAE-compliant invoice generation, validation and submission.",
+"* API-based integration with existing business systems.",
+"* Real-time invoice monitoring and reporting.",
+"* Secure invoice archiving and audit support.",
+"* Multi-currency and multi-language capabilities.",
+"",
+"Integration Architecture",
+"The solution will integrate with the entity's existing business systems through APIs or agreed integration methods. Samsotech's E-Invoicing Middleware will manage invoice processing, validation and transmission through the ASP network to ensure regulatory compliance."].join("\n");
+/* scope text -> report HTML: short lines without a full stop are headings, "* " lines are bullets */
+function sumHtml(t){var h="",ul=false;String(t||"").split(/\r?\n/).forEach(function(x){x=x.trim();if(!x){if(ul){h+="</ul>";ul=false}return}
+ if(/^[*•\-]\s+/.test(x)){if(!ul){h+='<ul style="margin:4px 0 10px 20px;padding:0">';ul=true}h+="<li>"+esc(x.replace(/^[*•\-]\s+/,""))+"</li>";return}
+ if(ul){h+="</ul>";ul=false}
+ if(x.length<=60&&!/[.:;,]$/.test(x))h+='<h3 style="font-size:12px;color:#0b6e79;margin:12px 0 4px;text-transform:uppercase;letter-spacing:.04em">'+esc(x)+"</h3>";else h+='<p style="margin:0 0 8px">'+esc(x)+"</p>"});
+ return h+(ul?"</ul>":"")}
 var PSTAT=["Not started","In progress","Completed","On hold","At risk"];
 var PSC={"Not started":"p-idle","In progress":"p-prog","Completed":"p-ok","On hold":"p-warn","At risk":"p-bad","Delayed":"p-bad","Overdue":"p-bad"};
 /* standard eInvoicing implementation template: [step, [[task, working days, flag]]] */
@@ -789,7 +811,7 @@ function tableHtml(F,o){var S=gsteps(F);if(!S.length)return '<div class="pempty"
  var h='<div class="tw"><table class="ptbl"><thead><tr><th>#</th><th>Task</th><th>Owner</th><th>Start</th><th>End</th><th class="r">Days</th>'+(o.md?'<th class="r">Man-days</th>':'')+'<th>Progress</th><th>Status</th>'+(o.cm?'<th>Latest comment</th>':'')+(o.act?'<th></th>':'')+'</tr></thead><tbody>';
  S.forEach(function(s){var A=agg(s.L),st=stepStat(s.L,A);
   h+='<tr class="pstep"><td><span class="sn">'+s.sn+'</span></td><td colspan="2">'+esc(s.step)+'</td><td>'+pf(A.start)+'</td><td>'+pf(A.end)+'</td><td class="r">'+(A.start?wdays(A.start,A.end):"")+'</td>'+(o.md?'<td class="r">'+mdf(mdSum(s.L))+'</td>':'')+'<td>'+pbar(A.act,o.act?A.plan:null)+'</td><td>'+pill(st)+'</td>'+(o.cm?'<td></td>':'')+
-   (o.act?'<td><div class="pact pe"><button type="button" class="pib" data-padd="'+s.sn+'|'+esc(s.step)+'" title="Add a task to this step">+ Task</button><button type="button" class="pib" data-pren="'+s.sn+'|'+esc(s.step)+'" title="Rename step">Rename</button></div></td>':'')+'</tr>';
+   (o.act?'<td><div class="pact pe"><button type="button" class="pib" data-padd="'+s.sn+'|'+esc(s.step)+'" title="Add a task to this step">+ Task</button><button type="button" class="pib" data-pren="'+s.sn+'|'+esc(s.step)+'" title="Rename step">Rename</button>'+(st!=="Completed"?'<button type="button" class="pib" data-pdone="'+s.sn+'|'+esc(s.step)+'" title="Mark this step and all its tasks as Completed">✓ Complete</button>':'')+'</div></td>':'')+'</tr>';
   s.L.forEach(function(t){var c=gcm(t.id),lt=tlate(t);
    h+='<tr class="ptask" data-pid="'+esc(t.id)+'"><td class="tn">'+s.sn+'.'+t.tn+'</td><td>'+esc(t.name)+(lt?' <span class="pill p-bad">Overdue</span>':'')+(t.rem?'<span class="rm">'+esc(t.rem)+'</span>':'')+'</td><td>'+ownChips(t.owner)+'</td><td>'+pf(t.start)+'</td><td>'+pf(t.end)+'</td><td class="r">'+wdays(t.start,t.end)+'</td>'+(o.md?'<td class="r"'+(mdMan(t)?'':' title="Automatic: working days × owners" style="color:var(--mute)"')+'>'+mdf(tmd(t))+'</td>':'')+'<td>'+pbar(t.pr,o.act?tplan(t):null)+'</td><td>'+pill(t.st||"Not started")+'</td>'+
     (o.cm?'<td>'+(c.length?'<b>'+esc(c[0].by)+'</b> · '+esc(c[0].at)+'<br>'+esc(c[0].text):'<span style="color:#5b6b7e">–</span>')+'</td>':'')+
@@ -873,11 +895,18 @@ function psave(body,okMsg,after){body.a="planSave";body.t=TOKEN;var b=document.q
   planRender();pmsgMain(okMsg+(body.op==="bulk"?" Loading the plan…":""),"ok");setTimeout(function(){pmsgMain("")},5000);
   planLoad(true)})
  .catch(function(x){clearTimeout(slow);en(true);pmsg("Could not reach the server. "+x.message,"err")})}
+/* mark a step (main task) Completed: every task in it becomes Completed / 100% */
+function stepDone(k){var i=k.indexOf("|"),sn=+k.slice(0,i),step=k.slice(i+1),L=gtasks(PL.g).filter(function(t){return t.sn===sn&&t.step===step}),open=L.filter(function(t){return t.st!=="Completed"}).length;
+ if(!open)return;
+ if(!confirm("Mark step "+sn+" “"+step+"” as Completed?\n\nAll "+L.length+" task(s) in this step will be set to Completed (100%)."))return;
+ pmsgMain("Marking step "+sn+" as completed…");
+ psave({op:"stepDone",g:PL.g,e:PL.e,sn:sn,step:step},"Step "+sn+" “"+step+"” marked as Completed.")}
 /* show a confirmed change straight away, before the background reload */
 function planLocal(b){try{
  if(b.op==="info"){var k=pn(b.g)+"|"+pn(b.e),o=PL.info[k]||{g:b.g,e:b.e||""};PL.info[k]=Object.assign({},o,b.info)}
  else if(b.op==="task"&&b.task.id){PL.tasks=PL.tasks.map(function(t){return t.id===b.task.id?Object.assign({},t,b.task):t})}
  else if(b.op==="del"){PL.tasks=PL.tasks.filter(function(t){return t.id!==b.id})}
+ else if(b.op==="stepDone"){PL.tasks=PL.tasks.map(function(t){return pn(t.g)===pn(b.g)&&pn(t.e)===pn(b.e)&&t.sn===b.sn&&t.step===b.step?Object.assign({},t,{pr:100,st:"Completed"}):t})}
  else if(b.op==="comment"){PL.cm=PL.cm.concat([{id:"new"+Date.now(),tid:b.id,g:PL.g,at:new Date().toISOString().slice(0,16).replace("T"," "),by:USER||"",text:b.text}])}
  PL.sig="";}catch(e){}}
 function taskSave(){var k=$("pfStep").value,sn,step;
@@ -897,7 +926,7 @@ function openInfo(){var I=ginfo(PL.g),G=PL.e?ginfo(PL.g,""):{},ed=pedit(),dis=ed
  function ph(k){return G[k]?' placeholder="Group: '+esc(k==="ko"||k==="gl"?pf(G[k]):G[k])+'"':""}
  pmOpen("Project details · "+planName(),'<div class="pfg">'+pfld("Project manager",'<input id="piPm" type="text" value="'+esc(I.pm||"")+'"'+ph("pm")+dis+'>')+pfld("Client contact",'<input id="piCc" type="text" value="'+esc(I.cc||"")+'"'+ph("cc")+dis+'>')+
   pfld("Kick-off date",'<input id="piKo" type="date" value="'+(I.ko||"")+'"'+dis+'>')+pfld("Target go-live",'<input id="piGl" type="date" value="'+(I.gl||"")+'"'+dis+'>')+
-  pfld("Scope / summary (shown on the client report)",'<textarea id="piSum" style="min-height:110px"'+dis+'>'+esc(I.sum||"")+'</textarea>',true)+'</div>'+
+  pfld("Project scope (shown on the client report – the standard scope is filled in; edit it for this client if needed)",'<textarea id="piSum" style="min-height:280px"'+dis+'>'+esc(I.sum||DEF_SUM)+'</textarea>',true)+'</div>'+
   '<div class="pfoot">'+(ed?'<button type="button" class="btnp" id="piSave">Save details</button><button type="button" class="btns" id="pfCancel">Cancel</button>':'')+'<span id="pmm" class="pmsg"></span></div>'+
   '<div class="pnote">'+(PL.e?'Fields left blank use the group\'s project details'+(G.gl?' (group go-live: '+pf(G.gl)+')':'')+'. ':'')+'Tasks cannot end after the target go-live date. If kick-off or go-live are left blank, the report uses the first start date and last end date in the plan.</div>',"info")}
 function openTpl(){var E=gents(PL.g),op=E.some(function(r){return r.srcs.some(function(s){return typeof isOp==="function"?isOp(s):/opera/i.test(s)})}),ou=E.some(function(r){return typeof ouq==="function"&&ouq(r)});
@@ -963,7 +992,7 @@ function openExp(){if(!PL.g)return;var L=gtasks(PL.g);if(!L.length){pmsgMain("Th
 function curStage(r){for(var i=0;i<7;i++)if(!r.st[i])return S[i]+(r.ip&&r.ip[i]?" (in progress)":"");return"Live"}
 function buildReport(o){var g=PL.g,L=gtasks(g),A=agg(L),H=health(A),I=geff(g),E=gents(g),SG=gsteps(L),now=new Date();
  var h='<div class="rc"><div><div class="b">Samsotech · eInvoicing implementation</div><h1>Project Plan</h1><div class="c">'+esc(g)+'</div>'+(PL.e?'<div style="font-size:14px;margin-top:2px">'+esc(PL.e)+'</div>':'')+'</div><div class="m">Status as of '+now.toLocaleDateString("en-GB",{day:"2-digit",month:"long",year:"numeric"})+'<br>Prepared by '+esc(USER||"")+'</div></div>';
- h+='<h2>1. Project overview</h2><table class="kv"><tbody>'+[["Client group",g]].concat(PL.e?[["Entity",PL.e]]:[]).concat([["Project manager",I.pm||"–"],["Client contact",I.cc||"–"],["Kick-off date",pf(I.ko||A.start)],["Target go-live",pf(I.gl||A.end)],["Planned duration",pf(A.start)+" – "+pf(A.end)+" ("+wdays(A.start,A.end)+" working days)"],["Entities in scope",String(E.length)]]).map(function(r){return '<tr><td>'+r[0]+'</td><td>'+esc(r[1])+'</td></tr>'}).join("")+(I.sum?'<tr><td>Scope / summary</td><td style="white-space:pre-wrap">'+esc(I.sum)+'</td></tr>':'')+'</tbody></table>';
+ h+='<h2>1. Project overview</h2><table class="kv"><tbody>'+[["Client group",g]].concat(PL.e?[["Entity",PL.e]]:[]).concat([["Project manager",I.pm||"–"],["Client contact",I.cc||"–"],["Kick-off date",pf(I.ko||A.start)],["Target go-live",pf(I.gl||A.end)],["Planned duration",pf(A.start)+" – "+pf(A.end)+" ("+wdays(A.start,A.end)+" working days)"],["Entities in scope",String(E.length)]]).map(function(r){return '<tr><td>'+r[0]+'</td><td>'+esc(r[1])+'</td></tr>'}).join("")+'</tbody></table><div style="margin-top:14px;border:1px solid #d5dde6;border-radius:6px;padding:4px 16px 8px">'+sumHtml(I.sum||DEF_SUM)+'</div>';
  h+='<h2>2. Executive summary</h2><div class="rk"><div><small>Overall progress</small><b>'+pct(A.act)+'</b><br>Planned: '+pct(A.plan)+'</div><div><small>Schedule status</small><b style="font-size:13px">'+pill(H[0])+'</b></div><div><small>Tasks completed</small><b>'+A.done+' / '+A.n+'</b></div><div><small>Overdue tasks</small><b>'+A.late+'</b></div><div><small>Steps completed</small><b>'+SG.filter(function(s){return agg(s.L).act>=99.95}).length+' / '+SG.length+'</b></div></div>'+
   (o.md?'<div style="margin-top:10px;border:1px solid #d5dde6;border-radius:6px;padding:10px"><small style="font-size:9px;text-transform:uppercase;letter-spacing:.05em;color:#5b6b7e;font-weight:700">Total effort</small><br><b style="font-size:18px">'+mdf(mdSum(L))+' man-days</b> &nbsp; '+mdByHtml(L)+'</div>':'');
  h+='<h2>3. Step summary</h2><table><thead><tr><th>#</th><th>Step</th><th>Start</th><th>End</th><th>Working days</th>'+(o.md?'<th>Man-days</th>':'')+'<th>Progress</th><th>Status</th></tr></thead><tbody>'+SG.map(function(s){var a=agg(s.L);return '<tr><td>'+s.sn+'</td><td><b>'+esc(s.step)+'</b></td><td>'+pf(a.start)+'</td><td>'+pf(a.end)+'</td><td>'+wdays(a.start,a.end)+'</td>'+(o.md?'<td>'+mdf(mdSum(s.L))+'</td>':'')+'<td style="width:170px">'+pbar(a.act,null)+'</td><td>'+pill(stepStat(s.L,a))+'</td></tr>'}).join("")+'</tbody></table>';
@@ -1004,6 +1033,7 @@ function exportXls(o){var X=xlsRows(o),name="Project Plan - "+planName().replace
  $("pInfoB").addEventListener("click",function(){if(PL.g)openInfo()});$("pTplB").addEventListener("click",openTpl);$("pExpB").addEventListener("click",openExp);
  $("pBody").addEventListener("click",function(e){var a=e.target.closest("[data-padd]");if(a){openTask("",a.getAttribute("data-padd"));return}
   var rn=e.target.closest("[data-pren]");if(rn){openRename(rn.getAttribute("data-pren"));return}
+  var dn=e.target.closest("[data-pdone]");if(dn){stepDone(dn.getAttribute("data-pdone"));return}
   var p=e.target.closest("[data-pid]");if(p){openTask(p.getAttribute("data-pid"));if(e.target.closest(".pib")&&/💬/.test(e.target.textContent)){var c=$("pcText");if(c)setTimeout(function(){c.focus()},30)}}});
  $("pm").addEventListener("click",function(e){var t=e.target;if(t.id==="pm"||t.closest("#pmx")||t.closest("#pfCancel")){pmClose();return}
   if(t.closest("#pfSave"))taskSave();
