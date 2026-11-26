@@ -219,6 +219,12 @@ body:not(.ed) .editcol{display:none}
  #rpt,#rpt *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
  #rpt .pb{break-before:page}#rpt tr,#rpt .gtr,#rpt .rk{break-inside:avoid}#rpt thead{display:table-header-group}
 }
+/* Assessment tab */
+.asm{padding-bottom:12px}.asmbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}.asmbar h2{margin:0}
+.asmbtns{display:flex;gap:8px}.asmbtns a{text-decoration:none;display:inline-flex;align-items:center}
+.asmwrap{position:relative;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fff}
+#asmFrame{display:block;width:100%;height:calc(100vh - 230px);min-height:620px;border:0;background:#fff}
+.asmload{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#5b6b7e;font-size:14px;pointer-events:none}
 </style>
 </head>
 <body>
@@ -227,17 +233,17 @@ body:not(.ed) .editcol{display:none}
 <div id="modal" class="modal" style="display:none" role="dialog" aria-modal="true" aria-labelledby="mt"><div class="mcard"><div class="mhead"><h2 id="mt"></h2><div class="hb"><button type="button" class="cpy" id="mcopyall" data-all="1">Copy all details</button><button type="button" id="mclose" aria-label="Close">✕</button></div></div><div id="mbody"></div></div></div>
 <div id="auth"><div class="acard">
 <h1>Samsotech eInvoicing Dashboard</h1><p class="asub">Sign in to continue</p>
-<form id="fLogin"><label>Username<input id="lu" autocomplete="username" autocapitalize="none" required></label><label>Password<input id="lp" type="password" autocomplete="current-password" required></label><button id="bLogin" type="submit">Sign in</button></form><p class="asub" style="margin:10px 0 0;font-size:11px">Page version 12c</p>
+<form id="fLogin"><label>Username<input id="lu" autocomplete="username" autocapitalize="none" required></label><label>Password<input id="lp" type="password" autocomplete="current-password" required></label><button id="bLogin" type="submit">Sign in</button></form><p class="asub" style="margin:10px 0 0;font-size:11px">Page version 12d</p>
 <form id="fChange" style="display:none"><p class="ahint"><b>Set a new password.</b> This is your first sign-in, so please replace the temporary password. Use at least 8 characters, with an uppercase letter, a lowercase letter and a number.</p><label>New password<input id="np" type="password" autocomplete="new-password" required></label><label>Confirm new password<input id="np2" type="password" autocomplete="new-password" required></label><button id="bChange" type="submit">Save password and continue</button></form>
 <div class="amsg" id="amsg" role="alert"></div>
 </div></div>
 <header><div class="wrap"><div class="top">
 <div><h1>Samsotech eInvoicing Dashboard</h1><p class="sub" id="sub">&nbsp;</p></div>
-<div class="stamp">Last refreshed<b id="when">Loading…</b><div class="live" id="live"><i></i><span id="livetxt">Connecting to Google Sheet…</span></div><button id="rf" type="button">Refresh now</button> <button id="lo" type="button">Sign out</button><div class="live" style="margin-top:6px">Signed in as&nbsp;<span id="who"></span></div><div class="live" style="margin-top:2px;opacity:.7">Page version 12c · copy icons</div></div>
+<div class="stamp">Last refreshed<b id="when">Loading…</b><div class="live" id="live"><i></i><span id="livetxt">Connecting to Google Sheet…</span></div><button id="rf" type="button">Refresh now</button> <button id="lo" type="button">Sign out</button><div class="live" style="margin-top:6px">Signed in as&nbsp;<span id="who"></span></div><div class="live" style="margin-top:2px;opacity:.7">Page version 12d · copy icons</div></div>
 </div></div></header>
 <div class="wrap"><main>
 <div id="banner"></div>
-<div class="toprow"><div class="tabs" id="tabs"><button type="button" class="tab on" data-v="1">Implementation Status</button><button type="button" class="tab" data-v="2">Order Summary</button><button type="button" class="tab" data-v="3">Source System Analysis</button><button type="button" class="tab" id="tabUpd" data-v="4" style="display:none">Update Data</button><button type="button" class="tab" id="tabPlan" data-v="5" style="display:none">Project Plan</button></div>
+<div class="toprow"><div class="tabs" id="tabs"><button type="button" class="tab on" data-v="1">Implementation Status</button><button type="button" class="tab" data-v="2">Order Summary</button><button type="button" class="tab" data-v="3">Source System Analysis</button><button type="button" class="tab" id="tabUpd" data-v="4" style="display:none">Update Data</button><button type="button" class="tab" id="tabPlan" data-v="5" style="display:none">Project Plan</button><button type="button" class="tab" id="tabAsm" data-v="6">Assessment</button></div>
 <div class="gbar" id="gbar"></div></div>
 <div id="v1">
 <section class="card summary">
@@ -276,6 +282,13 @@ body:not(.ed) .editcol{display:none}
 <section class="card" style="margin-bottom:14px"><h2>Entity vs source system</h2>
 <div class="tools"><input id="sfq" type="search" placeholder="Search entity" aria-label="Search entity"><select id="sf1" aria-label="Source system"></select><select id="sf2" aria-label="Configuration status"></select></div>
 <div class="tw"><table><thead><tr><th>#</th><th>Entity</th><th>Group</th><th>Source systems</th><th>Source system configuration</th><th></th></tr></thead><tbody id="stb"></tbody></table></div>
+</section>
+</div>
+<div id="v6" style="display:none">
+<section class="card asm">
+ <div class="asmbar"><h2>Assessment</h2><div class="asmbtns"><button type="button" class="btns" id="asmReload">Reload</button><a class="btns" id="asmOpen" target="_blank" rel="noopener">Open in new tab</a></div></div>
+ <div class="asmwrap"><div class="asmload" id="asmLoad">Loading the assessment…</div><iframe id="asmFrame" title="Assessment" allow="clipboard-read; clipboard-write; fullscreen" referrerpolicy="no-referrer-when-downgrade"></iframe></div>
+ <div class="legend" id="asmNote">If the assessment does not appear here (a blank area or a “refused to connect” message), use <b>Open in new tab</b>. The assessment app must allow being shown inside other sites – see the set-up note.</div>
 </section>
 </div>
 <div id="v5" style="display:none">
@@ -320,7 +333,7 @@ body:not(.ed) .editcol{display:none}
 </main></div>
 <script>
 /* ===== CONFIGURATION ===== */
-var CFG={REFRESH_SEC:60,API_URL:"https://script.google.com/macros/s/AKfycbyMtzdsWVg899LFab0txpSSdhAAO5MFAK6KgOIIl00E_ZVn1nvb8T_x-Eg4BL4TVbr7/exec"};   // data is read from the Google Sheet by Code.gs (see getSheetData)
+var CFG={ASSESS_URL:"https://script.google.com/macros/s/AKfycbwJlh9HVA840VSZPVAIWkjpnBSi9O-KZF0sKGfS3PgO6kRILNol0X1hXKQLbxNdn_1o/exec",REFRESH_SEC:60,API_URL:"https://script.google.com/macros/s/AKfycbyMtzdsWVg899LFab0txpSSdhAAO5MFAK6KgOIIl00E_ZVn1nvb8T_x-Eg4BL4TVbr7/exec"};   // data is read from the Google Sheet by Code.gs (see getSheetData)
 var FB=[]; /* no embedded data: the page always reads the live sheet */
 var S=["Project kick-off","EmaraTax onboard","Gap assessment","Source system config","ASP onboarding","Testing (UAT)","Go-live (PROD)"];
 var KEYS=["projectkick","emaratax","gapassess","sourcesystemconf",["sqportal","asponboard","aspportal"],"testing","go-live"];
@@ -665,6 +678,13 @@ initUpd();
 ["sfq","sf1","sf2"].forEach(function(id){$(id).addEventListener("input",renderSrc)});
 ["xq","xf1","xf2","xf3"].forEach(function(id){$(id).addEventListener("input",renderTx)});
 $("tabs").addEventListener("click",function(e){var b=e.target.closest(".tab");if(!b)return;TAB=b.getAttribute("data-v");Array.prototype.forEach.call(document.querySelectorAll(".tab"),function(x){x.className="tab"+(x===b?" on":"")});$("v1").style.display=TAB==="1"?"block":"none";$("v2").style.display=TAB==="2"?"block":"none";$("v3").style.display=TAB==="3"?"block":"none";$("v4").style.display=TAB==="4"?"block":"none";$("gbar").style.visibility=TAB==="4"?"hidden":"visible"});
+/* Assessment tab: the assessment web app is shown inside the page (loaded the first time the tab is opened) */
+(function(){var f=$("asmFrame"),ld=$("asmLoad"),loaded=false;$("asmOpen").href=CFG.ASSESS_URL;
+ function load(){ld.style.display="flex";f.src=CFG.ASSESS_URL}
+ f.addEventListener("load",function(){if(f.src)ld.style.display="none"});
+ $("asmReload").addEventListener("click",load);
+ $("tabs").addEventListener("click",function(e){var b=e.target.closest(".tab");if(!b)return;var on=b.getAttribute("data-v")==="6";$("v6").style.display=on?"block":"none";
+  if(on){$("gbar").style.visibility="hidden";if(!loaded){loaded=true;load()}}})})();
 ["q","ph","st"].forEach(function(id){document.getElementById(id).addEventListener("input",renderTable)});
 document.getElementById("rf").addEventListener("click",load);
 document.getElementById("gbar").addEventListener("change",function(e){var id=e.target.id;if(id==="gsel")GSEL=e.target.value;else if(id==="esel")ESEL=e.target.value;else return;renderAll()});
