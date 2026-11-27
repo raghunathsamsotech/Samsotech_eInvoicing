@@ -219,11 +219,15 @@ body:not(.ed) .editcol{display:none}
  #rpt,#rpt *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
  #rpt .pb{break-before:page}#rpt tr,#rpt .gtr,#rpt .rk{break-inside:avoid}#rpt thead{display:table-header-group}
 }
+/* web-address fields */
+.fld.fw{grid-column:1/-1}.fv.urlv{flex-wrap:nowrap;align-items:flex-start}.fv.urlv a{color:var(--brand);font-weight:600;overflow-wrap:anywhere;word-break:break-all;min-width:0;flex:1}
+.ff input.urlin{width:100%;font:inherit;font-size:13px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
 /* Assessment tab */
 .asm{padding-bottom:12px}.asmbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}.asmbar h2{margin:0}
 .asmbtns{display:flex;gap:8px}.asmbtns a{text-decoration:none;display:inline-flex;align-items:center}
 .asmwrap{position:relative;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fff}
-#asmFrame{display:block;width:100%;height:calc(100vh - 230px);min-height:620px;border:0;background:#fff}
+#asmFrame{display:block;width:100%;height:calc(100vh - 120px);min-height:760px;border:0;background:#fff}
+body.asmwide .wrap{max-width:none;padding-left:12px;padding-right:12px}body.asmwide .asm{padding:12px}body.asmwide .asmbar{margin-bottom:8px}
 .asmload{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#5b6b7e;font-size:14px;pointer-events:none}
 </style>
 </head>
@@ -233,13 +237,13 @@ body:not(.ed) .editcol{display:none}
 <div id="modal" class="modal" style="display:none" role="dialog" aria-modal="true" aria-labelledby="mt"><div class="mcard"><div class="mhead"><h2 id="mt"></h2><div class="hb"><button type="button" class="cpy" id="mcopyall" data-all="1">Copy all details</button><button type="button" id="mclose" aria-label="Close">✕</button></div></div><div id="mbody"></div></div></div>
 <div id="auth"><div class="acard">
 <h1>Samsotech eInvoicing Dashboard</h1><p class="asub">Sign in to continue</p>
-<form id="fLogin"><label>Username<input id="lu" autocomplete="username" autocapitalize="none" required></label><label>Password<input id="lp" type="password" autocomplete="current-password" required></label><button id="bLogin" type="submit">Sign in</button></form><p class="asub" style="margin:10px 0 0;font-size:11px">Page version 12d</p>
+<form id="fLogin"><label>Username<input id="lu" autocomplete="username" autocapitalize="none" required></label><label>Password<input id="lp" type="password" autocomplete="current-password" required></label><button id="bLogin" type="submit">Sign in</button></form><p class="asub" style="margin:10px 0 0;font-size:11px">Page version 12e</p>
 <form id="fChange" style="display:none"><p class="ahint"><b>Set a new password.</b> This is your first sign-in, so please replace the temporary password. Use at least 8 characters, with an uppercase letter, a lowercase letter and a number.</p><label>New password<input id="np" type="password" autocomplete="new-password" required></label><label>Confirm new password<input id="np2" type="password" autocomplete="new-password" required></label><button id="bChange" type="submit">Save password and continue</button></form>
 <div class="amsg" id="amsg" role="alert"></div>
 </div></div>
 <header><div class="wrap"><div class="top">
 <div><h1>Samsotech eInvoicing Dashboard</h1><p class="sub" id="sub">&nbsp;</p></div>
-<div class="stamp">Last refreshed<b id="when">Loading…</b><div class="live" id="live"><i></i><span id="livetxt">Connecting to Google Sheet…</span></div><button id="rf" type="button">Refresh now</button> <button id="lo" type="button">Sign out</button><div class="live" style="margin-top:6px">Signed in as&nbsp;<span id="who"></span></div><div class="live" style="margin-top:2px;opacity:.7">Page version 12d · copy icons</div></div>
+<div class="stamp">Last refreshed<b id="when">Loading…</b><div class="live" id="live"><i></i><span id="livetxt">Connecting to Google Sheet…</span></div><button id="rf" type="button">Refresh now</button> <button id="lo" type="button">Sign out</button><div class="live" style="margin-top:6px">Signed in as&nbsp;<span id="who"></span></div><div class="live" style="margin-top:2px;opacity:.7">Page version 12e · copy icons</div></div>
 </div></div></header>
 <div class="wrap"><main>
 <div id="banner"></div>
@@ -500,6 +504,8 @@ var CPF=["de","ie","ph","trn","tin"];
 function cbtn(t,l){return '<button type="button" class="cpy ic" data-v="'+esc(t)+'" aria-label="Copy '+esc(l)+'" title="Copy '+esc(l)+'">'+CPI+'</button>'}
 function fld(l,v,c){return '<div class="fld"><div class="fl">'+esc(l)+'</div><div class="fv">'+(v===""?'<span class="mu">–</span>':v+(c?cbtn(c,l):''))+'</div></div>'}
 function tfld(l,v){v=String(v==null?"":v);return fld(l,v===""?"":esc(v))}
+function ufld(l,v){v=String(v==null?"":v).trim();var h=hrefOf(v);
+ return '<div class="fld fw"><div class="fl">'+esc(l)+'</div><div class="fv urlv">'+(v===""?'<span class="mu">–</span>':(h?'<a href="'+esc(h)+'" target="_blank" rel="noopener">'+esc(v)+'</a>':'<span>'+esc(v)+'</span>')+cbtn(v,l))+'</div></div>'}
 function cfld(l,v){v=String(v==null?"":v);return fld(l,v===""?"":'<span>'+esc(v)+'</span>',v)}
 var MCUR=null;
 function details(r){var f=r.f;return[["Entity name",r.n],["Group",r.g],["Transaction count",r.raw.tx===""?"":fmt(r.tx)],["Order status",r.wo],["ASP provider",r.asp],["Assigned engineer",r.eng==="Unassigned"?"":r.eng],["Source system",r.srcs.join(", ")],["Version",f.ver],["Opera upgrade required",ouq(r)?"Yes":"No"],["Overage rate per transaction",r.raw.ov],["DOF name",f.dn],["DOF email",f.de],["IT email",f.ie],["Phone",f.ph],["TRN",f.trn],["TIN",f.tin],["Implementation phase",r.ph]].concat(EX.map(function(x){return[x.label,r.raw[x.id]||""]}))}
@@ -507,8 +513,9 @@ function openM(r){var f=r.f;MCUR=r;$("mt").textContent=r.n;
  $("mbody").innerHTML='<div class="mrow m5">'+tfld("Entity name",r.n)+tfld("Group",r.g)+tfld("Transaction count",r.raw.tx===""?"":fmt(r.tx))+fld("Order status",'<span class="pill '+woCls(r.wo)+'">'+esc(r.wo)+'</span>')+tfld("ASP provider",r.asp)+tfld("Assigned engineer",r.eng==="Unassigned"?"":r.eng)+'</div>'+
   '<div class="mrow m3">'+tfld("Source system",r.srcs.join(", "))+tfld("Version",f.ver)+fld("Opera upgrade required",ouq(r)?'<span class="pill p-warn">Yes</span>':'No')+tfld("Overage rate per transaction",r.raw.ov)+'</div>'+
   '<div class="mrow m4">'+tfld("DOF name",f.dn)+cfld("DOF email",f.de)+cfld("IT email",f.ie)+cfld("Phone",f.ph)+'</div>'+
-  '<div class="mrow m3">'+cfld("TRN",f.trn)+cfld("TIN",f.tin)+tfld("Implementation phase",r.ph)+'</div>'+
-  (EX.length?'<div class="mrow m4"><h4>Additional details</h4>'+EX.map(function(x){return cfld(x.label,r.raw[x.id]||"")}).join("")+'</div>':'');
+  '<div class="mrow m3">'+cfld("TRN",f.trn)+cfld("TIN",f.tin)+tfld("Implementation phase",r.ph)+
+   EX.filter(function(x){return !isUrlX(x)}).map(function(x){return cfld(x.label,r.raw[x.id]||"")}).join("")+
+   EX.filter(isUrlX).map(function(x){return ufld(x.label,r.raw[x.id]||"")}).join("")+'</div>';
  $("modal").style.display="flex";$("mclose").focus()}
 function closeM(){$("modal").style.display="none";MCUR=null}
 function fbCopy(t,done){var a=document.createElement("textarea");a.value=t;a.style.position="fixed";a.style.opacity="0";document.body.appendChild(a);a.select();try{document.execCommand("copy");done()}catch(x){}document.body.removeChild(a)}
@@ -549,13 +556,19 @@ var FTYPE0={n:"text",eng:"list",g:"list",pp:"list",asp:"list",wo:"list",tx:"num"
 var FSEC=FSEC0,FLB=Object.assign({},FLB0),FTYPE=Object.assign({},FTYPE0);
 function applyEx(){FLB=Object.assign({},FLB0);FTYPE=Object.assign({},FTYPE0);
  EX.forEach(function(x){FLB[x.id]=x.label;FTYPE[x.id]=x.type==="list"?"list":"text"});
- FSEC=EX.length?FSEC0.concat([["Additional details",EX.map(function(x){return x.id})]]):FSEC0}
+ var xs=EX.filter(function(x){return !isUrlX(x)}).concat(EX.filter(isUrlX)).map(function(x){return x.id});
+ FSEC=FSEC0.map(function(sec){return sec[0]==="Tax details"?[sec[0],sec[1].concat(xs)]:sec})}
+/* web-address columns (e.g. "Production URL"): shown full width with a clickable link */
+function isUrlX(x){return /\b(url|link|website|web\s*site|portal|address\s*\(web\))\b/i.test(x.label||"")}
+function isUrlId(id){return EX.some(function(x){return x.id===id&&isUrlX(x)})}
+function hrefOf(v){v=String(v||"").trim();return /^https?:\/\//i.test(v)?v:(/^[\w.-]+\.[a-z]{2,}(\/|$)/i.test(v)?"https://"+v:"")}
 function optsFor(id){
  if(DV[id]&&DV[id].length)return{list:DV[id],strict:true};
  if(FTYPE[id]==="stage")return{list:["Completed","In Progress"],strict:true};
  var set={},o=[];ALL.forEach(function(r){(id==="src"?r.srcs:[r.raw[id]]).forEach(function(v){if(v&&!set[v.toLowerCase()]){set[v.toLowerCase()]=1;o.push(v)}})});
  o.sort();return{list:o,strict:false}}
 function ctl(id,val){var nid="u_"+id,t=FTYPE[id];
+ if(isUrlId(id))return '<input type="text" class="urlin" id="'+nid+'" value="'+esc(val)+'" inputmode="url" spellcheck="false" autocomplete="off" placeholder="https://…">';
  if(t==="flag")return '<label class="cb flag"><input type="checkbox" id="'+nid+'"'+(yes(val)?' checked':'')+'> Opera upgrade required</label><div class="mu" style="font-size:11px;margin-top:4px">Applies to Opera V5 / Opera Cloud only</div>';
  var o=optsFor(id),list,low=String(val).toLowerCase();
  if(t==="multi"){var cur=splitSrc(val),cl=cur.map(function(x){return x.toLowerCase()});list=o.list.slice();
@@ -567,7 +580,7 @@ function ctl(id,val){var nid="u_"+id,t=FTYPE[id];
   return '<input type="text" id="'+nid+'" list="dl_'+id+'" value="'+esc(val)+'" autocomplete="off"><datalist id="dl_'+id+'">'+o.list.map(function(v){return '<option value="'+esc(v)+'">'}).join("")+'</datalist>'}
  if(t==="num")return '<input type="text" inputmode="decimal" id="'+nid+'" value="'+esc(val)+'">';
  return '<input type="text" id="'+nid+'" value="'+esc(val)+'">'}
-function formHtml(raw){return FSEC.map(function(s){return '<div class="fsec"><h3>'+s[0]+'</h3><div class="fg">'+s[1].map(function(id){return '<div class="ff"'+(id==="src"?' style="grid-column:1/-1"':'')+'><div class="fl flc"><span>'+esc(FLB[id])+'</span>'+(CPF.indexOf(id)>=0||id.indexOf("x_")===0?'<button type="button" class="cpy ic" data-f="'+id+'" aria-label="Copy '+esc(FLB[id])+'" title="Copy current value">'+CPI+'</button>':'')+'</div>'+ctl(id,raw[id]||"")+'</div>'}).join("")+'</div></div>'}).join("")}
+function formHtml(raw){return FSEC.map(function(s){return '<div class="fsec"><h3>'+s[0]+'</h3><div class="fg">'+s[1].map(function(id){return '<div class="ff"'+(id==="src"||isUrlId(id)?' style="grid-column:1/-1"':'')+'><div class="fl flc"><span>'+esc(FLB[id])+'</span>'+(CPF.indexOf(id)>=0||id.indexOf("x_")===0?'<button type="button" class="cpy ic" data-f="'+id+'" aria-label="Copy '+esc(FLB[id])+'" title="Copy current value">'+CPI+'</button>':'')+'</div>'+ctl(id,raw[id]||"")+'</div>'}).join("")+'</div></div>'}).join("")}
 function getVal(id){
  if(FTYPE[id]==="flag"){var b=$("u_"+id);return b&&b.checked?"Yes":""}
  if(FTYPE[id]==="multi"){var box=$("u_src"),o=[];if(box)Array.prototype.forEach.call(box.querySelectorAll("input:checked"),function(c){o.push(c.value)});var x=$("u_srcx");if(x&&x.value)o=o.concat(splitSrc(x.value));return splitSrc(o.join(", ")).join(", ")}
@@ -604,7 +617,7 @@ function saveU(){var b=$("uSave"),body;
   if(r.err==="auth"){drop();showAuth("login","Your session has expired. Please sign in again.");return}
   umsg(r.err==="forbidden"?"You do not have permission to edit data.":r.err==="conflict"?"This record was changed by someone else. Go back to the list, press Refresh now and edit it again.":r.err==="invalid"?(r.msg||"Some values are not valid."):"Could not save. "+(r.msg||r.err||""),"err")})
  .catch(function(x){b.disabled=false;umsg("Could not reach the server. "+x.message,"err")})}
-function applyRole(){var ed=ROLE==="Editor";document.body.className=ed?"ed":"";$("tabUpd").style.display=ed?"":"none";
+function applyRole(){var ed=ROLE==="Editor";document.body.className=(ed?"ed":"")+(TAB==="6"?" asmwide":"")+(typeof PL!=="undefined"&&PL.acc==="Edit"?" pedit":"");$("tabUpd").style.display=ed?"":"none";
  if(ed&&UMODE==="upd"&&$("uListWrap").style.display!=="none")renderUList();
  if(!ed&&TAB==="4")$("tabs").querySelector('[data-v="1"]').click()}
 function initUpd(){$("uq").addEventListener("input",renderUList);$("ug").addEventListener("change",renderUList);$("ue").addEventListener("change",renderUList);$("uBack").addEventListener("click",backToList);
@@ -683,7 +696,7 @@ $("tabs").addEventListener("click",function(e){var b=e.target.closest(".tab");if
  function load(){ld.style.display="flex";f.src=CFG.ASSESS_URL}
  f.addEventListener("load",function(){if(f.src)ld.style.display="none"});
  $("asmReload").addEventListener("click",load);
- $("tabs").addEventListener("click",function(e){var b=e.target.closest(".tab");if(!b)return;var on=b.getAttribute("data-v")==="6";$("v6").style.display=on?"block":"none";
+ $("tabs").addEventListener("click",function(e){var b=e.target.closest(".tab");if(!b)return;var on=b.getAttribute("data-v")==="6";$("v6").style.display=on?"block":"none";document.body.classList.toggle("asmwide",on);
   if(on){$("gbar").style.visibility="hidden";if(!loaded){loaded=true;load()}}})})();
 ["q","ph","st"].forEach(function(id){document.getElementById(id).addEventListener("input",renderTable)});
 document.getElementById("rf").addEventListener("click",load);
